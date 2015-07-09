@@ -536,6 +536,191 @@ impl HasArea for Circle {
                     <section>
                         <h1>No NULL!</h1>
                     </section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Optional Values
+```rust
+enum Option<T> {
+    None,
+    Some(T),
+}
+
+fn first(v: &Vec<i64>) -> Option<i64> {
+    if v.len() > 0 {
+        Some(v[0])
+    } else {
+        None
+    }
+}
+
+fn main() {
+    let foo: Vec<i64> = vec![1, 2, 3];
+    let bar: Vec<i64> = vec![];
+
+    println!("{:?}", first(&foo));
+    println!("{:?}", first(&bar));
+}
+```
+```bash
+$ ./main
+Some(1)
+None
+```
+                        </script>
+                    </section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Optional Values
+```rust
+fn printer(v: &Vec<i64>) {
+    if let Some(val) = first(&v) {
+        println!("{}", val);
+    }
+
+    match first(v) {
+        Some(val) => println!("Found {}", val),
+        None => println!("No Value Found"),
+    };
+}
+
+fn main() {
+    let foo: Vec<i64> = vec![1, 2, 3];
+    let bar: Vec<i64> = vec![];
+
+    printer(&foo);
+    printer(&bar);
+}
+```
+```bash
+$ ./main
+1
+Found 1
+No Value Found
+
+```
+                        </script>
+                    </section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Result Type
+```rust
+#[must_use]
+enum Result<T, E> {
+    Ok(T),
+    Err(E),
+}
+
+fn first(v: &Vec<i64>) -> Result<i64,&str> {
+    if v.len() > 0 {
+        Ok(v[0])
+    } else {
+        Err("Empty List")
+    }
+}
+
+fn main() {
+    let foo: Vec<i64> = vec![];
+
+    match first(&foo) {
+        Ok(val) => println!("Found {}", val),
+        Err(err) => println!("{}", err),
+    }
+}
+```
+```bash
+$ ./main
+Empty List
+```
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h1>Cargo, Testing, Docs, and Crates</h1>
+                    </section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Cargo
+```bash
+$ cargo new example
+$ tree example/
+example/
+├── Cargo.toml
+└── src
+    └── lib.rs
+$ cat example/Cargo.toml
+[package]
+name = "example"
+version = "0.1.0"
+authors = ["Gary M. Josack <gary@byoteki.com>"]
+
+```
+                        </script>
+                    </section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Testing
+```rust
+fn add_two(num: i64) -> i64 {
+    num + 2
+}
+
+#[test]
+fn test_add_two() {
+    assert_eq!(4, add_two(2));
+    assert_eq!(5, add_two(3));
+```
+```bash
+$ cargo test
+   Compiling example v0.1.0 (file:///home/gary/example)
+     Running target/debug/example-29e8c7bd8db3c665
+
+running 1 test
+test test_add_two ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured
+
+   Doc-tests example
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured
+```
+                        </script>
+                    </section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Doc Tests
+```rust
+/// This function adds two to its argument.
+///
+/// ` ``
+/// use example::add_two;
+///
+/// let num = add_two(2.0);
+/// ` ``
+pub fn add_two(num: i64) -> i64 {
+    num + 2
+}
+```
+```bash
+   Doc-tests example
+
+running 1 test
+test add_two_0 ... FAILED
+
+failures:
+
+---- add_two_0 stdout ----
+    <anon>:5:23: 5:26 error: mismatched types:
+(expected i64,
+    found floating-point variable) [E0308]
+<anon>:5     let num = add_two(2.0);
+                               ^~~
+```
+                        </script>
+                    </section>
                 </section>
 
                 <section>
