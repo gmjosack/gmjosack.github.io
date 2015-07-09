@@ -16,9 +16,10 @@
 
 		<link rel="stylesheet" href="../static/reveal.js-3.1.0/css/reveal.css">
 		<link rel="stylesheet" href="../static/reveal.js-3.1.0/css/theme/beige.css" id="theme">
+		<link rel="stylesheet" href="../static/css/slides.css">
 
 		<!-- Code syntax highlighting -->
-		<link rel="stylesheet" href="../static/reveal.js-3.1.0/lib/css/zenburn.css">
+		<link rel="stylesheet" href="../static/reveal.js-3.1.0/lib/css/agate.css">
 
 		<!-- Printing and PDF exports -->
 		<script>
@@ -41,13 +42,187 @@
                     <br><br>
 					<h1>Intro to Rust</h1>
                     <h3>Why you might want to learn yet another language</h3>
+
+                    <!-- This seems to be needed at least once to get syntax highlighting to work
+                         in markdown sections. It has a nice hr effect here so use it to bootstrap
+                         syntax highlighting for the rest of the slides.
+                    -->
+					<pre><code data-trim></code></pre>
 					<p>
 						<small>Created by <a href="https://github.com/gmjosack/">Gary M. Josack</a></small>
 					</p>
-                    <br>
                     <p>
-                        <small><a href="https://gmjosack.github.io/slides/intro-to-rust/index.html">https://gmjosack.github.io/slides/intro-to-rust/index.html</a></small>
+                        <small><a href="https://gmjosack.github.io/slides/intro-to-rust">https://gmjosack.github.io/slides/intro-to-rust</a></small>
                     </p>
+
+				</section>
+
+                <section>
+                    <section>
+                        <h1>Info!</h1>
+                    </section>
+                    <section>
+                        <h2>Where does Rust come from?</h2>
+                        <p>Mozilla Research</p>
+                        <p>Servo</p>
+                        <p>Community</p>
+                        <aside class="notes">
+                            Rust comes out of Mozilla Research with the goals of being Safe, Fast, and concurrent.
+                            Rust has been refined through experiences writing Servo, an experimental web browser layout engine.
+                            Rust is developed in the open and has a large amount of community contributors.
+                        </aside>
+                    </section>
+                    <section>
+                        <h2>Rust's Goals?</h2>
+                        <p>Safe, Fast, Concurrent</p>
+                        <p>Zero Cost Abstractions</p>
+                        <p>Guaranteed Memory Safety</p>
+                        <p>No garbage collection</p>
+                        <p>Concurrency without data races</p>
+                    </section>
+                    <section>
+                        <h2>Release Cycle</h2>
+                        <p>6 week cycle</p>
+                        <p>Stable, Beta, Nightly</p>
+                        <p>Unstable Features</p>
+                    </section>
+                    <section>
+                        <h2>Resources</h2>
+                        <p>http://www.rust-lang.org/</p>
+                        <p>https://play.rust-lang.org/</p>
+                        <p>https://www.reddit.com/r/rust</p>
+                        <p>IRC: irc.mozilla.org (#rust)</p>
+                    </section>
+                </section>
+
+                <section>
+                    <h1>Getting Started</h1>
+                </section>
+
+                <section>
+                    <section>
+                        <h1>Usual Suspects</h1>
+                    </section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Variables
+                            ```rust
+                            // Immutable Binding
+                            let immutable = vec![1, 2, 3];
+
+                            // Mutable Binding
+                            let mut mutable = vec![4, 5, 6];
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Functions
+                            ```rust
+                            fn function_name(arg1: int, arg2: String) -> Option<int> {
+                                ...
+                            }
+                            ```
+                        </script>
+                    </section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Conditionals and Loops
+                            ```rust
+                            fn some_fn() {
+                                let mut foo = 1;
+
+                                if foo > 10 {
+                                    return;
+                                }
+
+                                while foo < 10 {
+                                    foo += 1;
+                                }
+
+                                // Loop forever
+                                loop { break; }
+                            }
+                            ```
+                        </script>
+                    </section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Hullo, World!
+                            ```rust
+                            fn main() {
+                                println!("Hello, World!");
+                            }
+                            ```
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <h1>What's New?</h1>
+                </section>
+
+                <section>
+                    <section>
+                        <h1>Ownership and Move Semantics</h1>
+                    </section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ```rust
+                            fn print_foo(some_vec: Vec<i64>) {
+                                println!("{:?}", some_vec);
+                            }
+
+                            fn main() {
+                                let foo = vec![1, 2, 3];
+                                print_foo(foo);
+                                println!("{:?}", foo);
+                            }
+
+                            ```
+                            ```bash
+                            $ rustc main.rs
+                            main.rs:8:22: 8:25 error: use of moved value: `foo` [E0382]
+                            main.rs:8     println!("{:?}", foo);
+                                                           ^~~
+                            ```
+                        </script>
+                    </section>
+                </section>
+
+
+                <section data-markdown>
+                    <script type="text/template">
+                        ## Access.log
+                        ```rust
+                        use std::collections::HashMap;
+                        use std::fs::File;
+                        use std::io::{BufRead,BufReader};
+
+                        fn main() {
+                            let mut counts = HashMap::<String,i64>::new();
+                            let reader = BufReader::new(
+                                File::open("/home/gary/access.log").unwrap()
+                            );
+
+                            for line in reader.lines() {
+                                let line = line.unwrap();
+                                let parts: Vec<&str> = line.split('\t').collect();
+                                let ip: String = parts[1].into();
+                                *counts.entry(ip).or_insert(0) += 1;
+                            }
+
+                            for (ip, count) in counts {
+                                println!("{}: {}", ip, count);
+                            }
+                        }
+                        ```
+                    </script>
+                </section>
+
+				<section>
+					<h1>THE END</h1>
 				</section>
 
 			</div>
