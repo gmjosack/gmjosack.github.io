@@ -1,58 +1,140 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="gmjosackApp">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Josack.com</title>
+  <title>gmjosack</title>
 
   <link rel="stylesheet"
-        href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
   <link rel="stylesheet"
-        href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap-theme.min.css">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
 
-  <link rel="stylesheet" href="/static/css/josack.css">
+  <link rel="stylesheet" href="static/css/navbar.css">
+  <link rel="stylesheet" href="static/css/gmjosack.css">
 
 </head>
 <body>
-  <div class="container">
+  <div class="container-fluid">
+
+    <!-- NavBar -->
+    <div class="row" ng-controller="NavigationController">
+      <nav class="navbar navbar-static-top navbar-default" role="navigation">
+        <div class="navbar-header">
+          <button type="button"
+                  class="navbar-toggle collapsed"
+                  data-toggle="collapse"
+                  data-target="#gmjosack-navbar"
+          >
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#/">gmjosack.</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="gmjosack-navbar">
+          <ul class="nav navbar-nav">
+            <li ng-class="{active: isActive('/blog')}">
+              <a title="Blog" href="#/blog">Blog</a>
+            </li>
+            <li ng-class="{active: isActive('/resume')}">
+              <a title="Resume" href="#/resume">Resume</a>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a title="Github" href="https://github.com/gmjosack">
+                <i class="fa fa-fw fa-lg fa-github"></i>
+              </a>
+            </li>
+            <li>
+              <a title="Hacker News" href="https://news.ycombinator.com/user?id=gmjosack">
+                <i class="fa fa-fw fa-lg fa-hacker-news"></i>
+              </a>
+            </li>
+            <li>
+              <a title="Reddit" href="https://www.reddit.com/user/gmjosack">
+                <i class="fa fa-fw fa-lg fa-reddit"></i>
+              </a>
+            </li>
+            <li>
+              <a title="Twitter" href="https://twitter.com/gmjosack">
+                <i class="fa fa-fw fa-lg fa-twitter"></i>
+              </a>
+            </li>
+            <li>
+              <a title="LinkedIn" href="https://www.linkedin.com/in/gmjosack">
+                <i class="fa fa-fw fa-lg fa-linkedin"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+
+
+    <!-- Main Content -->
     <div class="row">
       <div class="col-md-12">
-        <h2>Projects</h2>
-
-        <h3>Tools</h3>
-        <ul>
-          <li>
-            <a href="//github.com/gmjosack/gsh">
-                GSH - Gary's Shell. A Pluggable Distributed SSH Tool.
-            </a>
-          </li>
-          <li>
-            <a href="//github.com/gmjosack/pygerduty">
-                PygerDuty - Python Client Library for PagerDuty.
-            </a>
-          </li>
-          <li>
-            <a href="//github.com/gmjosack/nss_http">
-                nss_http - NSS plugin for getting users over http.
-            </a>
-          </li>
-          <li>
-            <a href="//github.com/gmjosack/tattrdb">
-                TAttrDB - Tag and Attribute Database for hosts.
-            </a>
-          </li>
-          <li>
-            <a href="//github.com/gmjosack/annex">
-                Annex - Simple plugin system for Python programs.
-            </a>
-          </li>
-          <li><a href="//github.com/gmjosack?tab=repositories">More</a></li>
-        </ul>
+        <ng-view></ng-view>
       </div>
     </div>
   </div>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-route.min.js"></script>
+  <script type="text/javascript">
+    (function() {
+        "use strict";
+
+        var app = angular.module("gmjosackApp", ["ngRoute"]);
+
+        app.config(function($routeProvider) {
+            $routeProvider
+            .when("/", {
+                templateUrl: "static/templates/index.html",
+                controller: "IndexController"
+            })
+            .when("/blog", {
+                templateUrl: "static/templates/blog.html",
+                controller: "BlogController"
+            })
+            .when("/resume", {
+                templateUrl: "static/templates/resume.html",
+                controller: "ResumeController"
+            })
+            .otherwise({redirectTo: "/"});
+        });
+
+        app.controller("NavigationController", function($scope, $location) {
+            $scope.isActive = function(str){
+                var path = $location.path();
+                console.log(path);
+                console.log(str);
+                return path === str;
+            };
+        });
+
+        app.controller("IndexController", function($scope) {
+        });
+
+        app.controller("BlogController", function($scope) {
+        });
+
+        app.controller("ResumeController", function($scope) {
+        });
+
+
+    })();
+
+  </script>
 </body>
 </html>
 
