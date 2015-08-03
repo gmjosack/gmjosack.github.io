@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>gmjosack</title>
+  <title>{% block title %}gmjosack{% endblock %}</title>
 
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
@@ -14,7 +14,7 @@
 
   <link rel="stylesheet" href="static/css/navbar.css">
   <link rel="stylesheet" href="static/css/gmjosack.css">
-  
+  {% block style %}{% endblock %}
 
 </head>
 <body>
@@ -39,10 +39,10 @@
 
         <div class="collapse navbar-collapse" id="gmjosack-navbar">
           <ul class="nav navbar-nav">
-            <li >
+            <li {% if active_page == "blog" %}class="active"{% endif %}>
               <a title="Blog" href="blog.html">Blog</a>
             </li>
-            <li >
+            <li {% if active_page == "resume" %}class="active"{% endif %}>
               <a title="Resume" href="resume.html">Resume</a>
             </li>
           </ul>
@@ -80,42 +80,15 @@
     <!-- Main Content -->
     <div class="row">
       <div class="col-md-12">
-        
-<h3>Projects</h3>
-<dl class="dl-horizontal">
-
-  <dt><a href="https://github.com/gmjosack/gsh">gsh</a></dt>
-  <dd>Gary's Shell. A Pluggable Distributed SSH Tool</dd>
-
-  <dt><a href="https://github.com/gmjosack/pygerduty">pygerduty</a></dt>
-  <dd>Python Client Library for PagerDuty</dd>
-
-  <dt><a href="https://github.com/gmjosack/nss_http">nss_http</a></dt>
-  <dd>NSS plugin for getting users over http</dd>
-
-  <dt><a href="https://github.com/gmjosack/tattrdb">tattrdb</a></dt>
-  <dd>Tag and Attribute Database for hosts</dd>
-
-  <dt><a href="https://github.com/gmjosack/annex">annex</a></dt>
-  <dd>Simple plugin system for Python programs</dd>
-
-  <dt><a href="https://github.com/dropbox/trapperkeeper">trapperkeeper</a></dt>
-  <dd>SNMP trap collection and aggregation system</dd>
-
-  <dt><a href="https://github.com/dropbox/nsot">nsot</a></dt>
-  <dd>Inventory for various components of your network</dd>
-
-  <dt></dt>
-  <dd><a href="https://github.com/gmjosack">More</a></dd>
-</dl>
-
+        {% block content %}{% endblock %}
       </div>
     </div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
-  
+  {% block script %}{% endblock %}
 
 </body>
 </html>
+
