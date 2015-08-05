@@ -1,6 +1,85 @@
 {% extends "base.html" %}
 {% set active_page = "resume" %}
+{% set jobs = [
+    {
+        "company": "Dropbox",
+        "roles": [
+            {
+                "title": "Site Reliability Engineer",
+                "start_date": "October 2012",
+                "end_date": "Present",
+            },
+        ],
+    },
+    {
+        "company": "Google (YouTube)",
+        "roles": [
+            {
+                "title": "Site Reliability Engineer",
+                "start_date": "November 2010",
+                "end_date": "October 2012",
+            },
+        ],
+    },
+    {
+        "company": "CBS Interactive",
+        "roles": [
+            {
+                "title": "Senior Systems Administrator",
+                "start_date": "March 2010",
+                "end_date": "August 2010",
+            },
+            {
+                "title": "Systems Administrator",
+                "start_date": "June 2009",
+                "end_date": "March 2010",
+            },
+            {
+                "title": "Junior Systems Administrator",
+                "start_date": "November 2007",
+                "end_date": "June 2009",
+            },
+            {
+                "title": "Operations Specialist",
+                "start_date": "August 2006",
+                "end_date": "November 2007",
+            },
+        ],
+    },
+    {
+        "company": "Affinity Internet",
+        "roles": [
+            {
+                "title": "NOC Engineer",
+                "start_date": "May 2005",
+                "end_date": "August 2006",
+            },
+            {
+                "title": "Sales Consultant / Web Agent",
+                "start_date": "December 2003",
+                "end_date": "May 2005",
+            },
+            {
+                "title": "Technical Support Specialist",
+                "start_date": "August 2003",
+                "end_date": "December 2003",
+            },
+        ],
+    },
+] %}
 
 {% block content %}
-under construction
+<h3></h3>
+
+<ul>
+    {% for job in jobs %}
+    <li><strong>{{job["company"]}}</strong> {{job["roles"][-1]["start_date"]}} - {{job["roles"][0]["end_date"]}}</li>
+    <ul>
+        {% for role in job["roles"] %}
+            <li>{{role["title"]}}</li>
+        {% endfor %}
+    </ul>
+    {% endfor %}
+</ul>
+
 {% endblock %}

@@ -37,7 +37,7 @@ class MakeEnvironment(object):
         with open(dest, "w") as out_file:
             out_file.write(out)
 
-    def generate_blog_post(self, src):
+    def generate_post(self, src):
         with open(src) as post_file:
             text = post_file.read()
         return self.markdown.render(text)
@@ -49,15 +49,15 @@ def main():
     make_env = MakeEnvironment()
 
     make_env.write_template("index.html", "../index.html")
-    make_env.write_template("blog.html", "../blog.html")
+    make_env.write_template("posts.html", "../posts.html")
     make_env.write_template("resume.html", "../resume.html")
 
-    for post in glob.glob("blog-posts/*.md"):
-        post_html = make_env.generate_blog_post(post)
+    for post in glob.glob("posts/*.md"):
+        post_html = make_env.generate_post(post)
         post_name = post.rsplit("/")[-1][:-3]
         make_env.write_template(
-            "blog-post.html",
-            "../blog/{}.html".format(post_name),
+            "post.html",
+            "../posts/{}.html".format(post_name),
             {"post": post_html}
         )
 
