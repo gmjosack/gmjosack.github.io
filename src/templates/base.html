@@ -6,77 +6,69 @@
   <title>{% block title %}gmjosack{% endblock %}</title>
 
   <link rel="stylesheet"
+        href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,700">
+
+  <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap-theme.min.css">
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
 
-  <link rel="stylesheet" href="/static/css/navbar.css">
   <link rel="stylesheet" href="/static/css/gmjosack.css">
   <link rel="stylesheet" href="/static/css/syntax.css">
   {% block style %}{% endblock %}
 
 </head>
 <body>
-  <div class="container-fluid">
+  <div class="container">
 
     <!-- NavBar -->
-    <div class="row">
-      <nav class="navbar navbar-static-top navbar-default" role="navigation">
-        <div class="navbar-header">
-          <button type="button"
-                  class="navbar-toggle collapsed"
-                  data-toggle="collapse"
-                  data-target="#gmjosack-navbar"
-          >
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="/">gmjosack.</a>
-        </div>
+    <header>
+      <div class="menu show-menu">
+        <ul class="nav">
+          <li class="page {% if active_page == "index" %}active{% endif %}">
+            <a title="Home" href="/">Home</a>
+          </li>
+          <li class="page {% if active_page == "posts" %}active{% endif %}">
+            <a title="Posts" href="/posts.html">Posts</a>
+          </li>
+          <li class="page {% if active_page == "resume" %}active{% endif %}">
+            <a title="Resume" href="/resume.html">Resume</a>
+          </li>
+          <li>
+            <div class="vertical-divider"></div>
+          </li>
+          <li class="ext-badge">
+            <a title="Github" href="https://github.com/gmjosack">
+              <i class="fa fa-fw fa-lg fa-github"></i>
+            </a>
+          </li>
+          <li class="ext-badge">
+            <a title="Hacker News" href="https://news.ycombinator.com/user?id=gmjosack">
+              <i class="fa fa-fw fa-lg fa-hacker-news"></i>
+            </a>
+          </li>
+          <li class="ext-badge">
+            <a title="Reddit" href="https://www.reddit.com/user/gmjosack">
+              <i class="fa fa-fw fa-lg fa-reddit"></i>
+            </a>
+          </li>
+          <li class="ext-badge">
+            <a title="Twitter" href="https://twitter.com/gmjosack">
+              <i class="fa fa-fw fa-lg fa-twitter"></i>
+            </a>
+          </li>
+          <li class="ext-badge">
+            <a title="LinkedIn" href="https://www.linkedin.com/in/gmjosack">
+              <i class="fa fa-fw fa-lg fa-linkedin"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </header>
 
-        <div class="collapse navbar-collapse" id="gmjosack-navbar">
-          <ul class="nav navbar-nav">
-            <li {% if active_page == "posts" %}class="active"{% endif %}>
-              <a title="Posts" href="/posts.html">Posts</a>
-            </li>
-            <li {% if active_page == "resume" %}class="active"{% endif %}>
-              <a title="Resume" href="/resume.html">Resume</a>
-            </li>
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <li>
-              <a title="Github" href="https://github.com/gmjosack">
-                <i class="fa fa-fw fa-lg fa-github"></i>
-              </a>
-            </li>
-            <li>
-              <a title="Hacker News" href="https://news.ycombinator.com/user?id=gmjosack">
-                <i class="fa fa-fw fa-lg fa-hacker-news"></i>
-              </a>
-            </li>
-            <li>
-              <a title="Reddit" href="https://www.reddit.com/user/gmjosack">
-                <i class="fa fa-fw fa-lg fa-reddit"></i>
-              </a>
-            </li>
-            <li>
-              <a title="Twitter" href="https://twitter.com/gmjosack">
-                <i class="fa fa-fw fa-lg fa-twitter"></i>
-              </a>
-            </li>
-            <li>
-              <a title="LinkedIn" href="https://www.linkedin.com/in/gmjosack">
-                <i class="fa fa-fw fa-lg fa-linkedin"></i>
-              </a>
-            </li>
-          </ul>
-        </div>
-      </nav>
-    </div>
+    <hr class="header-separator">
 
     <!-- Main Content -->
     <div class="content-row row">

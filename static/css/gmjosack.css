@@ -1,37 +1,85 @@
 body {
-    background-color: #607d8b;
+
+    /* Background image comes from http://subtlepatterns.com/
+     * and is CC BY-SA 3.0 - Subtle Patterns © Atle Mo.
+     *
+     * http://subtlepatterns.com/skulls/
+     */
+    background-image:url("/static/images/skulls/skulls.png");
+
+    /* Force scrollbar so collapsed divs don't jerk
+     * the page around when they grow larger than
+     * the page.
+     */
+    overflow-y: scroll;
+    margin: 0;
+    color: #191919;
+    font: 400 14px/20px "Open Sans", sans-serif;
 }
 
-.content {
-    background-color: #f7fbfd;
-
-    -webkit-box-shadow:
-         2px 4px 3px 0px rgba(0, 0, 0, .20);
-    -moz-box-shadow:
-         2px 4px 3px 0px rgba(0, 0, 0, .20);
-    box-shadow:
-         2px 4px 3px 0px rgba(0, 0, 0, .20);
+body a {
+    font-weight: 700;
 }
 
-.navbar {
-    margin-bottom: 0;
-    -webkit-box-shadow:
-        -2px 4px 3px 0px rgba(0, 0, 0, .20),
-         2px 4px 3px 0px rgba(0, 0, 0, .20);
-    -moz-box-shadow:
-        -2px 4px 3px 0px rgba(0, 0, 0, .20),
-         2px 4px 3px 0px rgba(0, 0, 0, .20);
-    box-shadow:
-        -2px 4px 3px 0px rgba(0, 0, 0, .20),
-         2px 4px 3px 0px rgba(0, 0, 0, .20);
+html, body {
+    height: 100%;
 }
 
-.navbar-right>li>a {
-    padding-left: 5px;
-    padding-right: 5px;
+.container {
+    min-height: 100%;
+    background: white;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
 }
 
-.navbar-right {
-    margin-right: 10px;
+.header-separator {
+    margin: 0;
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
 }
 
+.nav {
+    text-align: center;
+}
+
+.nav li {
+    display: inline-block;
+    margin: 0 6px;
+    padding: 20px 0;
+
+    line-height: 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.nav li.ext-badge {
+    margin: 0;
+}
+
+.nav li a:hover {
+    background: 0 0;
+}
+
+.nav>li {
+    position: relative;
+}
+
+.nav li a {
+    position: relative;
+    color: #141414;
+    padding: 0 2px;
+    padding-bottom: 1px;
+    border-bottom: 2px solid transparent;
+}
+
+.nav li.active a, .nav li.page a:hover {
+    border-bottom: 2px solid #141414;
+}
+
+.vertical-divider {
+    border-left: 1px solid #38546d;
+    border-right: 1px solid #16222c;
+    display: inline-block;
+    height: 10px;
+}
