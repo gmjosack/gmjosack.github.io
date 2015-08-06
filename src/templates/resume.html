@@ -71,12 +71,12 @@
 {% block content %}
 <h3></h3>
 
-<ul>
+<ul class="resume">
     {% for job in jobs %}
-    <li><strong>{{job["company"]}}</strong> {{job["roles"][-1]["start_date"]}} - {{job["roles"][0]["end_date"]}}</li>
-    <ul>
+    <li class="job"><span class="company">{{job["company"]}}</span> <span class="job-dates">{{job["roles"][-1]["start_date"]}} - {{job["roles"][0]["end_date"]}}</span></li>
+    <ul class="roles">
         {% for role in job["roles"] %}
-            <li>{{role["title"]}}</li>
+            <li class="role"><span class="title">{{role["title"]}}</span></li>
         {% endfor %}
     </ul>
     {% endfor %}
