@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>gmjosack</title>
+
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,700">
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap-theme.min.css">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="/static/css/gmjosack.css">
+  <link rel="stylesheet" href="/static/css/syntax.css">
+  
+
+</head>
+<body>
+  <div class="container">
+
+    <!-- NavBar -->
+    <header>
+      <div class="menu show-menu">
+        <ul class="nav">
+          <li class="page ">
+            <a title="Home" href="/">Home</a>
+          </li>
+          <li class="page ">
+            <a title="Posts" href="/posts.html">Posts</a>
+          </li>
+          <li class="page ">
+            <a title="Resume" href="/resume.html">Resume</a>
+          </li>
+          <li>
+            <div class="vertical-divider"></div>
+          </li>
+          <li class="ext-badge">
+            <a title="Github" href="https://github.com/gmjosack">
+              <i class="fa fa-fw fa-lg fa-github"></i>
+            </a>
+          </li>
+          <li class="ext-badge">
+            <a title="Hacker News" href="https://news.ycombinator.com/user?id=gmjosack">
+              <i class="fa fa-fw fa-lg fa-hacker-news"></i>
+            </a>
+          </li>
+          <li class="ext-badge">
+            <a title="Reddit" href="https://www.reddit.com/user/gmjosack">
+              <i class="fa fa-fw fa-lg fa-reddit"></i>
+            </a>
+          </li>
+          <li class="ext-badge">
+            <a title="Twitter" href="https://twitter.com/gmjosack">
+              <i class="fa fa-fw fa-lg fa-twitter"></i>
+            </a>
+          </li>
+          <li class="ext-badge">
+            <a title="LinkedIn" href="https://www.linkedin.com/in/gmjosack">
+              <i class="fa fa-fw fa-lg fa-linkedin"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </header>
+
+    <hr class="header-separator">
+
+    <!-- Main Content -->
+    <div class="content-row row">
+      <div class="content col-md-10 col-md-offset-1">
+        
+<h6>Saturday, August 27, 2011</h6>
+<h1>My First 2D Pixel Shader(s) - Part 3</h1>
+<p><em>This is part 3 of a 3 part series on 2D Pixel Shaders. For part 1 <a href="/posts/my-first-2d-pixel-shaders-part-1.html">click here</a>, for part 2 <a href="/posts/my-first-2d-pixel-shaders-part-2.html">click here</a>.</em></p>
+<p>At the end of our last lesson we'd learned a bit about how to modify pixel shaders based on color information and coordinate information. We went through some really cool effects but some of them weren't especially efficient considering all of the conditional statements that it would go through for every pixel every frame.</p>
+<p>The primary focus of this part of the series is going to be passing in parameters and at the end I'll go into detail explaining how to do the following:</p>
+<iframe allowfullscreen="" frameborder="0" height="345" src="http://www.youtube.com/embed/J1xr9kbQXKI" width="420">&nbsp;</iframe><h2>Passing Parameters</h2>
+<p>Since starting this series our code has been modified incrementally many times so I'm going to start by presenting a clean PixelShaderFunction and Draw method then I'll describe what's new.</p>
+<p><em>Draw()</em></p>
+<div class="highlight"><pre><span class="n">GraphicsDevice</span><span class="p">.</span><span class="n">Clear</span><span class="p">(</span><span class="n">Color</span><span class="p">.</span><span class="n">CornflowerBlue</span><span class="p">);</span>
+
+<span class="n">spriteBatch</span><span class="p">.</span><span class="n">Begin</span><span class="p">(</span><span class="n">SpriteSortMode</span><span class="p">.</span><span class="n">Immediate</span><span class="p">,</span> <span class="n">BlendState</span><span class="p">.</span><span class="n">AlphaBlend</span><span class="p">);</span>
+<span class="n">spriteBatch</span><span class="p">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">texture</span><span class="p">,</span> <span class="k">new</span> <span class="n">Vector2</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">),</span> <span class="n">Color</span><span class="p">.</span><span class="n">White</span><span class="p">);</span>
+<span class="n">effect</span><span class="p">.</span><span class="n">Parameters</span><span class="p">[</span><span class="s">&quot;param1&quot;</span><span class="p">].</span><span class="n">SetValue</span><span class="p">(.</span><span class="m">7f</span><span class="p">);</span>
+<span class="n">effect</span><span class="p">.</span><span class="n">CurrentTechnique</span><span class="p">.</span><span class="n">Passes</span><span class="p">[</span><span class="m">0</span><span class="p">].</span><span class="n">Apply</span><span class="p">();</span>
+<span class="n">spriteBatch</span><span class="p">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">texture</span><span class="p">,</span> <span class="k">new</span> <span class="n">Vector2</span><span class="p">(</span><span class="n">texture</span><span class="p">.</span><span class="n">Width</span><span class="p">+</span><span class="m">10</span><span class="p">,</span> <span class="m">0</span><span class="p">),</span> <span class="n">Color</span><span class="p">.</span><span class="n">White</span><span class="p">);</span>
+<span class="n">spriteBatch</span><span class="p">.</span><span class="n">End</span><span class="p">();</span>
+
+<span class="k">base</span><span class="p">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">gameTime</span><span class="p">);</span>
+</pre></div>
+<p><em>Effect1.fx</em></p>
+<div class="highlight"><pre><span class="n">sampler</span> <span class="n">s0</span><span class="p">;</span>
+<span class="kt">float</span> <span class="n">param1</span><span class="p">;</span>
+
+<span class="n">float4</span> <span class="nf">PixelShaderFunction</span><span class="p">(</span><span class="n">float2</span> <span class="n">coords</span><span class="p">:</span> <span class="n">TEXCOORD0</span><span class="p">)</span> <span class="p">:</span> <span class="n">COLOR0</span>
+<span class="p">{</span>
+
+<span class="n">float4</span> <span class="n">color</span> <span class="p">=</span> <span class="n">tex2D</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="n">coords</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">coords</span><span class="p">.</span><span class="n">y</span> <span class="p">&gt;</span> <span class="n">param1</span><span class="p">)</span>
+    <span class="n">color</span> <span class="p">=</span> <span class="n">float4</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">);</span>
+
+<span class="k">return</span> <span class="n">color</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">technique</span> <span class="n">Technique1</span>
+<span class="p">{</span>
+    <span class="n">pass</span> <span class="n">Pass1</span>
+    <span class="p">{</span>
+        <span class="n">PixelShader</span> <span class="p">=</span> <span class="n">compile</span> <span class="n">ps_2_0</span> <span class="n">PixelShaderFunction</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p><img src="http://2.bp.blogspot.com/-TWa0WF_nzIE/Tll-FtDkzhI/AAAAAAAAAFU/iVGudZ96M6s/shadertut12.PNG"></p>
+<p>This shader is not much different than what we've done so far. The shader itself is just checking if the y coordinate is greater than some value. If so, zero out the pixel. The only thing different here is the variable we're comparing against, <code>param1</code>.</p>
+<p>At the top of our shader file you can see we're now declaring a variable</p>
+<div class="highlight"><pre><span class="kt">float</span> <span class="n">param1</span><span class="p">;</span>
+</pre></div>
+<p>The only line that should appear new to you at this point is in our <code>Draw()</code> method:</p>
+<div class="highlight"><pre><span class="n">effect</span><span class="p">.</span><span class="n">Parameters</span><span class="p">[</span><span class="s">&quot;param1&quot;</span><span class="p">].</span><span class="n">SetValue</span><span class="p">(.</span><span class="m">7f</span><span class="p">);</span>
+</pre></div>
+<p>And that's all it takes to pass parameters to your shader functions. You can test by changing the above line to:</p>
+<div class="highlight"><pre><span class="n">effect</span><span class="p">.</span><span class="n">Parameters</span><span class="p">[</span><span class="s">&quot;param1&quot;</span><span class="p">].</span><span class="n">SetValue</span><span class="p">(.</span><span class="m">3f</span><span class="p">);</span>
+</pre></div>
+<p>and you should see:</p>
+<p><img border="0" height="120" width="119" src="http://3.bp.blogspot.com/-aI1UoCQ0RAk/TlmAKKeTpCI/AAAAAAAAAFc/q3HzMBuIvu4/shadertut13.PNG" /></p>
+<h2>Passing Textures</h2>
+<p>Where it gets really interesting is passing in textures. I'm going to start my showing a similar rainbow effect from part2. In our Game class we're going to need to add a new Texture2D:</p>
+<p><img src="http://1.bp.blogspot.com/-w-ghvZCNDrQ/TlmHhLwpMoI/AAAAAAAAAFk/LJbmmmFlEFM/surge-rainbow.png"></p>
+<p>In your <code>Draw()</code> method replace the parameter we were passing before with the following:</p>
+<div class="highlight"><pre><span class="n">effect</span><span class="p">.</span><span class="n">Parameters</span><span class="p">[</span><span class="s">&quot;rainbow&quot;</span><span class="p">].</span><span class="n">SetValue</span><span class="p">(</span><span class="n">rainbow</span><span class="p">);</span>
+</pre></div>
+<p>rainbow being the Texture2D object from the image above.</p>
+<p>at the top of our .fx file we're going to remove our old param1 declaration and add the following two lines:</p>
+<div class="highlight"><pre><span class="n">texture</span> <span class="n">rainbow</span><span class="p">;</span>
+<span class="n">sampler</span> <span class="n">rainbow_sampler</span> <span class="p">=</span> <span class="n">sampler_state</span><span class="p">{</span><span class="n">Texture</span> <span class="p">=</span> <span class="n">rainbow</span><span class="p">;};</span>
+</pre></div>
+<p>We're going to be passing in the texture, stored in rainbow then converting it into a sampler that can be used by tex2D. In our PixelShaderFunction we're going to have the following:</p>
+<div class="highlight"><pre><span class="n">float4</span> <span class="n">color</span> <span class="p">=</span> <span class="n">tex2D</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="n">coords</span><span class="p">);</span>
+<span class="n">float4</span> <span class="n">rainbow_color</span> <span class="p">=</span> <span class="n">tex2D</span><span class="p">(</span><span class="n">rainbow_sampler</span><span class="p">,</span> <span class="n">coords</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">color</span><span class="p">.</span><span class="n">a</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rainbow_color</span><span class="p">;</span>
+</pre></div>
+<p>You can see we're using the same coords the get the colors for each sampler then if the pixel for our main is non transparent we return the pixel from the new texture at the same coordinates. This will give you the following result:</p>
+<p><img border="0" height="120" width="133" src="http://4.bp.blogspot.com/-CW2I-SpUCQo/TlmJ9AisNdI/AAAAAAAAAFs/4oUqvZ_Not0/shadertut14.PNG" /></p>
+<h2>RenderTargets, Additive Blending, and Lights! Oh my!</h2>
+<p>So a lot of people have been reading this series just to get to this point. This series is primarily about HLSL shaders but in this segment I'm going to introduce you to a couple new features in XNA, not specific to HLSL or Shaders in general. We're going to again start out with the code. I've commented the relevant sections.</p>
+<div class="highlight"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">Game1</span> <span class="p">:</span> <span class="n">Microsoft</span><span class="p">.</span><span class="n">Xna</span><span class="p">.</span><span class="n">Framework</span><span class="p">.</span><span class="n">Game</span>
+<span class="p">{</span>
+    <span class="n">GraphicsDeviceManager</span> <span class="n">graphics</span><span class="p">;</span>
+    <span class="n">SpriteBatch</span> <span class="n">spriteBatch</span><span class="p">;</span>
+
+    <span class="n">Texture2D</span> <span class="n">lightMask</span><span class="p">;</span>
+    <span class="n">Texture2D</span> <span class="n">surge</span><span class="p">;</span>
+
+    <span class="n">RenderTarget2D</span> <span class="n">lightsTarget</span><span class="p">;</span>
+    <span class="n">RenderTarget2D</span> <span class="n">mainTarget</span><span class="p">;</span>
+
+    <span class="n">Effect</span> <span class="n">lightingEffect</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nf">Game1</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">graphics</span> <span class="p">=</span> <span class="k">new</span> <span class="n">GraphicsDeviceManager</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+        <span class="n">Content</span><span class="p">.</span><span class="n">RootDirectory</span> <span class="p">=</span> <span class="s">&quot;Content&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">LoadContent</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="n">spriteBatch</span> <span class="p">=</span> <span class="k">new</span> <span class="n">SpriteBatch</span><span class="p">(</span><span class="n">GraphicsDevice</span><span class="p">);</span>
+
+        <span class="n">lightMask</span> <span class="p">=</span> <span class="n">Content</span><span class="p">.</span><span class="n">Load</span><span class="p">&lt;</span><span class="n">Texture2D</span><span class="p">&gt;(</span><span class="s">&quot;lightmask&quot;</span><span class="p">);</span>
+        <span class="n">surge</span> <span class="p">=</span> <span class="n">Content</span><span class="p">.</span><span class="n">Load</span><span class="p">&lt;</span><span class="n">Texture2D</span><span class="p">&gt;(</span><span class="s">&quot;surge&quot;</span><span class="p">);</span>
+
+        <span class="n">lightingEffect</span> <span class="p">=</span> <span class="n">Content</span><span class="p">.</span><span class="n">Load</span><span class="p">&lt;</span><span class="n">Effect</span><span class="p">&gt;(</span><span class="s">&quot;Effect1&quot;</span><span class="p">);</span>
+
+        <span class="kt">var</span> <span class="n">pp</span> <span class="p">=</span> <span class="n">GraphicsDevice</span><span class="p">.</span><span class="n">PresentationParameters</span><span class="p">;</span>
+        <span class="n">lightsTarget</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RenderTarget2D</span><span class="p">(</span>
+            <span class="n">GraphicsDevice</span><span class="p">,</span> <span class="n">pp</span><span class="p">.</span><span class="n">BackBufferWidth</span><span class="p">,</span> <span class="n">pp</span><span class="p">.</span><span class="n">BackBufferHeight</span><span class="p">);</span>
+        <span class="n">mainTarget</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RenderTarget2D</span><span class="p">(</span>
+            <span class="n">GraphicsDevice</span><span class="p">,</span> <span class="n">pp</span><span class="p">.</span><span class="n">BackBufferWidth</span><span class="p">,</span> <span class="n">pp</span><span class="p">.</span><span class="n">BackBufferHeight</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">protected</span> <span class="k">override</span> <span class="k">void</span> <span class="nf">Draw</span><span class="p">(</span><span class="n">GameTime</span> <span class="n">gameTime</span><span class="p">)</span>
+    <span class="p">{</span>
+
+        <span class="c1">// Create a Light Mask to pass to the pixel shader</span>
+        <span class="n">GraphicsDevice</span><span class="p">.</span><span class="n">SetRenderTarget</span><span class="p">(</span><span class="n">lightsTarget</span><span class="p">);</span>
+        <span class="n">GraphicsDevice</span><span class="p">.</span><span class="n">Clear</span><span class="p">(</span><span class="n">Color</span><span class="p">.</span><span class="n">Black</span><span class="p">);</span>
+        <span class="n">spriteBatch</span><span class="p">.</span><span class="n">Begin</span><span class="p">(</span><span class="n">SpriteSortMode</span><span class="p">.</span><span class="n">Immediate</span><span class="p">,</span> <span class="n">BlendState</span><span class="p">.</span><span class="n">Additive</span><span class="p">);</span>
+        <span class="n">spriteBatch</span><span class="p">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">lightMask</span><span class="p">,</span> <span class="k">new</span> <span class="n">Vector2</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">),</span> <span class="n">Color</span><span class="p">.</span><span class="n">White</span><span class="p">);</span>
+        <span class="n">spriteBatch</span><span class="p">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">lightMask</span><span class="p">,</span> <span class="k">new</span> <span class="n">Vector2</span><span class="p">(</span><span class="m">100</span><span class="p">,</span> <span class="m">0</span><span class="p">),</span> <span class="n">Color</span><span class="p">.</span><span class="n">White</span><span class="p">);</span>
+        <span class="n">spriteBatch</span><span class="p">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">lightMask</span><span class="p">,</span> <span class="k">new</span> <span class="n">Vector2</span><span class="p">(</span><span class="m">200</span><span class="p">,</span> <span class="m">200</span><span class="p">),</span> <span class="n">Color</span><span class="p">.</span><span class="n">White</span><span class="p">);</span>
+        <span class="n">spriteBatch</span><span class="p">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">lightMask</span><span class="p">,</span> <span class="k">new</span> <span class="n">Vector2</span><span class="p">(</span><span class="m">300</span><span class="p">,</span> <span class="m">300</span><span class="p">),</span> <span class="n">Color</span><span class="p">.</span><span class="n">White</span><span class="p">);</span>
+        <span class="n">spriteBatch</span><span class="p">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">lightMask</span><span class="p">,</span> <span class="k">new</span> <span class="n">Vector2</span><span class="p">(</span><span class="m">500</span><span class="p">,</span> <span class="m">200</span><span class="p">),</span> <span class="n">Color</span><span class="p">.</span><span class="n">White</span><span class="p">);</span>
+        <span class="n">spriteBatch</span><span class="p">.</span><span class="n">End</span><span class="p">();</span>
+
+        <span class="c1">// Draw the main scene to the Render Target</span>
+        <span class="n">GraphicsDevice</span><span class="p">.</span><span class="n">SetRenderTarget</span><span class="p">(</span><span class="n">mainTarget</span><span class="p">);</span>
+        <span class="n">GraphicsDevice</span><span class="p">.</span><span class="n">Clear</span><span class="p">(</span><span class="n">Color</span><span class="p">.</span><span class="n">CornflowerBlue</span><span class="p">);</span>
+        <span class="n">spriteBatch</span><span class="p">.</span><span class="n">Begin</span><span class="p">();</span>
+        <span class="n">spriteBatch</span><span class="p">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">surge</span><span class="p">,</span> <span class="k">new</span> <span class="n">Vector2</span><span class="p">(</span><span class="m">100</span><span class="p">,</span> <span class="m">0</span><span class="p">),</span> <span class="n">Color</span><span class="p">.</span><span class="n">White</span><span class="p">);</span>
+        <span class="n">spriteBatch</span><span class="p">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">surge</span><span class="p">,</span> <span class="k">new</span> <span class="n">Vector2</span><span class="p">(</span><span class="m">250</span><span class="p">,</span> <span class="m">250</span><span class="p">),</span> <span class="n">Color</span><span class="p">.</span><span class="n">White</span><span class="p">);</span>
+        <span class="n">spriteBatch</span><span class="p">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">surge</span><span class="p">,</span> <span class="k">new</span> <span class="n">Vector2</span><span class="p">(</span><span class="m">550</span><span class="p">,</span> <span class="m">225</span><span class="p">),</span> <span class="n">Color</span><span class="p">.</span><span class="n">White</span><span class="p">);</span>
+        <span class="n">spriteBatch</span><span class="p">.</span><span class="n">End</span><span class="p">();</span>
+
+        <span class="c1">// Draw the main scene with a pixel</span>
+        <span class="n">GraphicsDevice</span><span class="p">.</span><span class="n">SetRenderTarget</span><span class="p">(</span><span class="k">null</span><span class="p">);</span>
+        <span class="n">GraphicsDevice</span><span class="p">.</span><span class="n">Clear</span><span class="p">(</span><span class="n">Color</span><span class="p">.</span><span class="n">CornflowerBlue</span><span class="p">);</span>
+        <span class="n">spriteBatch</span><span class="p">.</span><span class="n">Begin</span><span class="p">(</span><span class="n">SpriteSortMode</span><span class="p">.</span><span class="n">Immediate</span><span class="p">,</span> <span class="n">BlendState</span><span class="p">.</span><span class="n">AlphaBlend</span><span class="p">);</span>
+        <span class="n">lightingEffect</span><span class="p">.</span><span class="n">Parameters</span><span class="p">[</span><span class="s">&quot;lightMask&quot;</span><span class="p">].</span><span class="n">SetValue</span><span class="p">(</span><span class="n">lightsTarget</span><span class="p">);</span>
+        <span class="n">lightingEffect</span><span class="p">.</span><span class="n">CurrentTechnique</span><span class="p">.</span><span class="n">Passes</span><span class="p">[</span><span class="m">0</span><span class="p">].</span><span class="n">Apply</span><span class="p">();</span>
+        <span class="n">spriteBatch</span><span class="p">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">mainTarget</span><span class="p">,</span> <span class="n">Vector2</span><span class="p">.</span><span class="n">Zero</span><span class="p">,</span> <span class="n">Color</span><span class="p">.</span><span class="n">White</span><span class="p">);</span>
+        <span class="n">spriteBatch</span><span class="p">.</span><span class="n">End</span><span class="p">();</span>
+
+        <span class="k">base</span><span class="p">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">gameTime</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>Alright, this might seem like a pretty big step where we're coming from but lets break it down into the main talking points. First we have a new texture we haven't used before:</p>
+<p><img src="http://2.bp.blogspot.com/-z44zGdsaFOk/TlmUaERuDII/AAAAAAAAAF0/9auy6SFhMeo/lightmask.png"></p>
+<p>This doesn't have to have a black background, it can be a white to transparent gradient, but that wouldn't show up well on the blog and black will work fine. We'll get to how we make use of this texture in a moment.</p>
+<h3>RenderTarget2D</h3>
+<p>You've probably noticed I've used two render targets here. A super high level overview of render targets is something other than the back buffer that you can draw to and then use as a texture. This allows us to use spritebatch to create our own textures in real-time.</p>
+<p>The key points to using a render target are instantiating a <code>RenderTarget2D</code> object:</p>
+<div class="highlight"><pre><span class="kt">var</span> <span class="n">pp</span> <span class="p">=</span> <span class="n">GraphicsDevice</span><span class="p">.</span><span class="n">PresentationParameters</span><span class="p">;</span>
+<span class="n">lightsTarget</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RenderTarget2D</span><span class="p">(</span>
+    <span class="n">GraphicsDevice</span><span class="p">,</span> <span class="n">pp</span><span class="p">.</span><span class="n">BackBufferWidth</span><span class="p">,</span> <span class="n">pp</span><span class="p">.</span><span class="n">BackBufferHeight</span><span class="p">);</span>
+</pre></div>
+<p>and using the render target. To use the render target you just have to call:</p>
+<div class="highlight"><pre><span class="n">GraphicsDevice</span><span class="p">.</span><span class="n">SetRenderTarget</span><span class="p">(</span><span class="n">lightsTarget</span><span class="p">);</span>
+</pre></div>
+<p>When you're done drawing to a render target you should call the above code again, this time passing null.</p>
+<div class="highlight"><pre><span class="n">GraphicsDevice</span><span class="p">.</span><span class="n">SetRenderTarget</span><span class="p">(</span><span class="k">null</span><span class="p">);</span>
+</pre></div>
+<p>That will cause all additional Draw calls to resume drawing to the back buffer.</p>
+<h3>Additive Blending</h3>
+<p>The other new feature I've introduced, specifically in the lighting render target, is the use of AdditiveBlending with our sprite batch call. This will allow us to draw our light gradient multiple times in overlapping areas adding to the effect where multiple partially white areas overlap. You can see the effect demonstrated below as I add more and more light sources:</p>
+<p><img src="http://1.bp.blogspot.com/-cpZBO6HyZsE/TlmaCF0J4FI/AAAAAAAAAF8/EFT1Tcx8XNE/AdditiveGIF.gif"></p>
+<h3>Bringing it together</h3>
+<p>With those hurdles out of the way I can begin describing exactly how this all works. If you look back at the Draw method you can see I've broken the method into three main sections. We have a render target drawing the light mask and a render target drawing our main scene. If I were to Draw each of these targets separately you'd see the following respectively:</p>
+<p><img src="http://3.bp.blogspot.com/-3yCyDOAotwY/Tlmb7F2f1MI/AAAAAAAAAGE/Z8sXxtljN4Q/shadertut15.PNG"></p>
+<p>In the last section you can see that we're not just drawing one specific target. We're drawing the main target and passing the lights target into our pixel shader. The code for that pixel shader is as follows:</p>
+<div class="highlight"><pre><span class="n">sampler</span> <span class="n">s0</span><span class="p">;</span>
+<span class="n">texture</span> <span class="n">lightMask</span><span class="p">;</span>
+<span class="n">sampler</span> <span class="n">lightSampler</span> <span class="p">=</span> <span class="n">sampler_state</span><span class="p">{</span><span class="n">Texture</span> <span class="p">=</span> <span class="n">lightMask</span><span class="p">;};</span>
+
+<span class="n">float4</span> <span class="nf">PixelShaderFunction</span><span class="p">(</span><span class="n">float2</span> <span class="n">coords</span><span class="p">:</span> <span class="n">TEXCOORD0</span><span class="p">)</span> <span class="p">:</span> <span class="n">COLOR0</span>
+<span class="p">{</span>
+    <span class="n">float4</span> <span class="n">color</span> <span class="p">=</span> <span class="n">tex2D</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="n">coords</span><span class="p">);</span>
+    <span class="n">float4</span> <span class="n">lightColor</span> <span class="p">=</span> <span class="n">tex2D</span><span class="p">(</span><span class="n">lightSampler</span><span class="p">,</span> <span class="n">coords</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">color</span> <span class="p">*</span> <span class="n">lightColor</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+<p>Most of this should look familiar to you from earlier in the lesson. When we multiply the textures together anywhere that's white (1) will leave the color alone. Anywhere that's black (0) will become black. Obviously any gray bits will slightly tint the color depending on how gray it is. And with that you can see the final result:</p>
+<p><img src="http://1.bp.blogspot.com/-dj7Uo7KbA-k/Tlmd6ercOII/AAAAAAAAAGM/Lxo-QPT7yJI/shadertut16.PNG"></p>
+<h2>Conclusion</h2>
+<p>There was a lot to take in from this lesson but in the ended you can see that it's not too difficult to implement real time blending of lights sources to make pretty cool effects with XNA using pixel shaders. You'll probably want to play with the gradient to get the desired effect your after. Also try having a light source follow your mouse to see the real-time blending in action. I hope you've all enjoyed with series and I'd be glad to answer any questions anyone might have.</p>
+
+
+      </div>
+      <div class="col-md-1">
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  
+
+</body>
+</html>

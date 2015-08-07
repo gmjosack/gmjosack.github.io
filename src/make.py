@@ -16,9 +16,8 @@ class HighlightRenderer(mistune.Renderer):
         if not lang:
             return "\n<pre><code>%s</code></pre>\n" % mistune.escape(code)
 
-        style = get_style_by_name("monokai")
         lexer = get_lexer_by_name(lang, stripall=True)
-        formatter = HtmlFormatter(style=style)
+        formatter = HtmlFormatter()
 
         return highlight(code, lexer, formatter)
 

@@ -40,6 +40,7 @@ h1 {
 .container {
     min-height: 100%;
     background: white;
+    padding-bottom: 40px;
     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
 }
 
@@ -135,4 +136,19 @@ h1 {
 .posts li.post {
     display: block;
     font-size: 1.4em;
+}
+
+.highlight pre {
+    border-radius: 0;
+    background-color: transparent;
+    font-size: 1em;
+    font-family:
+        "Source Code Pro",
+        Menlo,
+        Monaco,
+        Consolas,
+        "DejaVu Sans Mono",
+        Inconsolata,
+        monospace;
+    color: #fff;
 }

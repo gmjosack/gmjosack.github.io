@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>gmjosack</title>
+
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,700">
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap-theme.min.css">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="/static/css/gmjosack.css">
+  <link rel="stylesheet" href="/static/css/syntax.css">
+  
+
+</head>
+<body>
+  <div class="container">
+
+    <!-- NavBar -->
+    <header>
+      <div class="menu show-menu">
+        <ul class="nav">
+          <li class="page ">
+            <a title="Home" href="/">Home</a>
+          </li>
+          <li class="page ">
+            <a title="Posts" href="/posts.html">Posts</a>
+          </li>
+          <li class="page ">
+            <a title="Resume" href="/resume.html">Resume</a>
+          </li>
+          <li>
+            <div class="vertical-divider"></div>
+          </li>
+          <li class="ext-badge">
+            <a title="Github" href="https://github.com/gmjosack">
+              <i class="fa fa-fw fa-lg fa-github"></i>
+            </a>
+          </li>
+          <li class="ext-badge">
+            <a title="Hacker News" href="https://news.ycombinator.com/user?id=gmjosack">
+              <i class="fa fa-fw fa-lg fa-hacker-news"></i>
+            </a>
+          </li>
+          <li class="ext-badge">
+            <a title="Reddit" href="https://www.reddit.com/user/gmjosack">
+              <i class="fa fa-fw fa-lg fa-reddit"></i>
+            </a>
+          </li>
+          <li class="ext-badge">
+            <a title="Twitter" href="https://twitter.com/gmjosack">
+              <i class="fa fa-fw fa-lg fa-twitter"></i>
+            </a>
+          </li>
+          <li class="ext-badge">
+            <a title="LinkedIn" href="https://www.linkedin.com/in/gmjosack">
+              <i class="fa fa-fw fa-lg fa-linkedin"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </header>
+
+    <hr class="header-separator">
+
+    <!-- Main Content -->
+    <div class="content-row row">
+      <div class="content col-md-10 col-md-offset-1">
+        
+<h6>Monday, July 18, 2011</h6>
+<h1>My First 2D Pixel Shader(s) - Part 2</h1>
+<p><em>This is part 2 of a 3 part series on 2D Pixel Shaders. For part 1 <a href="/posts/my-first-2d-pixel-shaders-part-1.html">click here</a>, for part 3 <a href="/posts/my-first-2d-pixel-shaders-part-3.html">click here.</a></em></p>
+<p>When left off we had just implemented our grayscale shader. Just as a reminder, since we'll be building on this function, this is what the PixelShaderFunction looked like.</p>
+<div class="highlight"><pre><span class="n">float4</span> <span class="nf">PixelShaderFunction</span><span class="p">(</span><span class="n">float2</span> <span class="n">coords</span><span class="p">:</span> <span class="n">TEXCOORD0</span><span class="p">)</span> <span class="p">:</span> <span class="n">COLOR0</span>
+<span class="p">{</span>
+    <span class="n">float4</span> <span class="n">color</span> <span class="p">=</span> <span class="n">tex2D</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="n">coords</span><span class="p">);</span>
+    <span class="n">color</span><span class="p">.</span><span class="n">gb</span> <span class="p">=</span> <span class="n">r</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">color</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+<p>I want to take a minute and talk about the type and how we access that type. HLSL allows us to quickly define vectors by specifying a type and an integer between 1 and 4 indicating the number of elements belonging to that vector. As an example float4 is a 4 element vector containing floats. int2 would be a two element vector containing ints. Our color variable could also be specified as:</p>
+<div class="highlight"><pre><span class="n">vector</span> <span class="p">&lt;</span><span class="kt">float</span><span class="p">,</span> <span class="m">4</span><span class="p">&gt;</span> <span class="n">color</span>
+</pre></div>
+<p>You can see how this shorthand greatly simplifies our variable declarations. Since these are vectors there's a lot of neat math tricks we can do with these variables. There's also some per-component access patterns worth mentioning. You can index the individual values of a vector using one of two named sets. The are referred to as the position set (xyzw) and the color set (rgba). You can use any combination of attributes of a named set when accessing a vector however you cannot use attributes from both sets simultaneously.</p>
+<div class="highlight"><pre><span class="n">float4</span> <span class="n">example</span> <span class="p">=</span> <span class="n">float4</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">5</span><span class="p">);</span>
+
+<span class="n">example</span><span class="p">.</span><span class="n">g</span>    <span class="c1">// returns 3</span>
+<span class="n">example</span><span class="p">.</span><span class="n">y</span>    <span class="c1">// returns 3</span>
+
+<span class="n">example</span><span class="p">.</span><span class="n">rb</span>   <span class="c1">// returns float2(2,4)</span>
+<span class="n">example</span><span class="p">.</span><span class="n">yw</span>   <span class="c1">// returns float2(3,5)</span>
+<span class="n">example</span><span class="p">.</span><span class="n">wy</span>   <span class="c1">// returns float2(5,3)</span>
+
+<span class="n">example</span><span class="p">.</span><span class="n">rgzw</span> <span class="c1">// Invalid subscript. Mixes sets.</span>
+</pre></div>
+<p>As you can see you can specify any number of components and in any order as long as that belong to the same set. You can also use this access pattern during assignment.</p>
+<div class="highlight"><pre><span class="n">float4</span> <span class="n">example</span> <span class="p">=</span> <span class="n">float4</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">5</span><span class="p">);</span>
+
+<span class="n">example</span><span class="p">.</span><span class="n">yx</span> <span class="p">=</span> <span class="n">example</span><span class="p">.</span><span class="n">zw</span>   <span class="c1">// float4(5,4,4,5)</span>
+<span class="n">example</span><span class="p">.</span><span class="n">yz</span> <span class="p">=</span> <span class="n">example</span><span class="p">.</span><span class="n">w</span>    <span class="c1">// float4(5,5,5,5)</span>
+</pre></div>
+<p>Now that we understand this concept a little better lets jump into some examples.</p>
+<h2>Color Based Shaders</h2>
+<p>In this section we're going to focus on a few shader effects we can do only considering color.</p>
+<h3>Blackout</h3>
+<p>This effect is a bit different from our red block from part 1 because we only want to black out the visible sprite and not the entire texture, making a black box.</p>
+<div class="highlight"><pre><span class="n">float4</span> <span class="n">color</span> <span class="p">=</span> <span class="n">tex2D</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="n">coords</span><span class="p">);</span>
+<span class="n">color</span><span class="p">.</span><span class="n">rgb</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span>
+<span class="k">return</span> <span class="n">color</span><span class="p">;</span>
+</pre></div>
+<p><img height="115" src="http://3.bp.blogspot.com/-vAbEX7sR4_4/TiT2qG6ckEI/AAAAAAAAAEI/HdxyT3jozYU/shadertut4.PNG" width="121" /></p>
+<p>I'll be showing the examples in the rest of this section side-by-side but yours should just look like the one on the right.</p>
+<p>In this example you can see we're just assigning 0 to the rgb component of our color vector. The reason this doesn't give us a black box is because we're only modifying the color attributes per pixel and keeping our alpha value. Anything that was previously transparent will also be black but retain its alpha level.</p>
+<h3>GBR</h3>
+<p>This effect is super basic but a good example of using the expressiveness of components.</p>
+<div class="highlight"><pre><span class="n">float4</span> <span class="n">color</span> <span class="p">=</span> <span class="n">tex2D</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="n">coords</span><span class="p">);</span>
+<span class="n">color</span><span class="p">.</span><span class="n">rgb</span> <span class="p">=</span> <span class="n">color</span><span class="p">.</span><span class="n">gbr</span><span class="p">;</span>
+<span class="k">return</span> <span class="n">color</span><span class="p">;</span>
+</pre></div>
+<p><img border="0" height="117" src="http://3.bp.blogspot.com/-hhKjKY-Po2E/TiUBS4M8ZEI/AAAAAAAAAEY/3nASKMTja3k/shadertut6.PNG" width="124" /></p>
+<p>As you can see we've essentially swapped the values of r and b.</p>
+<h3>High Contrast</h3>
+<div class="highlight"><pre><span class="n">float4</span> <span class="n">color</span> <span class="p">=</span> <span class="n">tex2D</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="n">coords</span><span class="p">);</span>
+
+<span class="kt">float</span> <span class="n">high</span> <span class="p">=</span> <span class="p">.</span><span class="m">6</span><span class="p">;</span>
+<span class="kt">float</span> <span class="n">low</span>  <span class="p">=</span> <span class="p">.</span><span class="m">4</span><span class="p">;</span>
+
+<span class="k">if</span>      <span class="p">(</span><span class="n">color</span><span class="p">.</span><span class="n">r</span> <span class="p">&gt;</span> <span class="n">high</span><span class="p">)</span> <span class="n">color</span><span class="p">.</span><span class="n">r</span> <span class="p">=</span> <span class="m">1</span><span class="p">;</span>
+<span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">color</span><span class="p">.</span><span class="n">r</span> <span class="p">&lt;</span> <span class="n">low</span><span class="p">)</span> <span class="n">color</span><span class="p">.</span><span class="n">r</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span>
+
+<span class="k">if</span>      <span class="p">(</span><span class="n">color</span><span class="p">.</span><span class="n">g</span> <span class="p">&gt;</span> <span class="n">high</span><span class="p">)</span> <span class="n">color</span><span class="p">.</span><span class="n">g</span> <span class="p">=</span> <span class="m">1</span><span class="p">;</span>
+<span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">color</span><span class="p">.</span><span class="n">g</span> <span class="p">&lt;</span> <span class="n">low</span><span class="p">)</span> <span class="n">color</span><span class="p">.</span><span class="n">g</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span>
+
+<span class="k">if</span>      <span class="p">(</span><span class="n">color</span><span class="p">.</span><span class="n">b</span> <span class="p">&gt;</span> <span class="n">high</span><span class="p">)</span> <span class="n">color</span><span class="p">.</span><span class="n">b</span> <span class="p">=</span> <span class="m">1</span><span class="p">;</span>
+<span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">color</span><span class="p">.</span><span class="n">b</span> <span class="p">&lt;</span> <span class="n">low</span><span class="p">)</span> <span class="n">color</span><span class="p">.</span><span class="n">b</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span>
+
+<span class="k">return</span> <span class="n">color</span><span class="p">;</span>
+</pre></div>
+<p><img border="0" height="120" src="http://2.bp.blogspot.com/-jIqxtbOiH_k/TiT9tbQWkKI/AAAAAAAAAEQ/RRVK9em0KKc/shadertut5.PNG" width="132" /></p>
+<p>We've introduced a new idea here. The conditional. You can pretty much use these conditionals like you would in C#. I'm not going to go into detail here because I assume you're familiar with if statement.   I think now is a good time to make sure you've noticed that the values for the individual floats stored in the vector range from 0 to 1 instead of 0 - 255 as you're probably used to. The main idea behind this effect is that for each of the colors, rgb, we're going to set the value to 1 if it's above some number and to 0 if it's below some number, otherwise leave it alone. This is going to give use strong highlights and shadows.  You can easily tweak the high and low variables to get the desired effect or even apply to only one or two of the components.</p>
+<h3>Negative</h3>
+<div class="highlight"><pre><span class="n">float4</span> <span class="n">color</span> <span class="p">=</span> <span class="n">tex2D</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="n">coords</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">color</span><span class="p">.</span><span class="n">a</span><span class="p">)</span>
+<span class="n">color</span><span class="p">.</span><span class="n">rgb</span> <span class="p">=</span> <span class="m">1</span> <span class="p">-</span> <span class="n">color</span><span class="p">.</span><span class="n">rgb</span><span class="p">;</span>
+
+<span class="k">return</span> <span class="n">color</span><span class="p">;</span>
+</pre></div>
+<p><img border="0" height="118" src="http://3.bp.blogspot.com/-HuHZuxGwOSc/TiUFljvZfcI/AAAAAAAAAEg/169Det-mxdk/shadertut7.PNG" width="121" /></p>
+<p>In this function I'm checking if there's an alpha value. I do this because I don't want to apply any color to pixels that are transparent. If the pixel has alpha I subtract the rgb from 1 and assign to rgb. When we do math with multiple components against a scaler it is applied to each component. As an example:</p>
+<div class="highlight"><pre><span class="m">1</span> <span class="p">-</span> <span class="n">float3</span><span class="p">(</span><span class="m">0.2</span><span class="p">,</span> <span class="m">0.9</span><span class="p">,</span> <span class="m">0.4</span><span class="p">);</span> <span class="c1">// float3(0.8, 0.1, 0.6)</span>
+</pre></div>
+<p>You can probably see how this would give us a negative of our color.</p>
+<h2>Coordinate Based Shaders</h2>
+<p>Now that you've seen a few effects you can get from just playing with color values we're going to see what we can do when we include coordinates into the equation.</p>
+<h3>Rainbow</h3>
+<p>This first effect is going to be dividing our coordinates into seven pieces to stripe our sprite like a rainbow.</p>
+<div class="highlight"><pre><span class="n">float4</span> <span class="n">color</span> <span class="p">=</span> <span class="n">tex2D</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="n">coords</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(!</span><span class="n">any</span><span class="p">(</span><span class="n">color</span><span class="p">))</span> <span class="k">return</span> <span class="n">color</span><span class="p">;</span>
+
+<span class="kt">float</span> <span class="n">step</span> <span class="p">=</span> <span class="m">1.0</span><span class="p">/</span><span class="m">7</span><span class="p">;</span>
+
+<span class="k">if</span>      <span class="p">(</span><span class="n">coords</span><span class="p">.</span><span class="n">x</span> <span class="p">&lt;</span> <span class="p">(</span><span class="n">step</span> <span class="p">*</span> <span class="m">1</span><span class="p">))</span> <span class="n">color</span> <span class="p">=</span> <span class="n">float4</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">);</span>
+<span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">coords</span><span class="p">.</span><span class="n">x</span> <span class="p">&lt;</span> <span class="p">(</span><span class="n">step</span> <span class="p">*</span> <span class="m">2</span><span class="p">))</span> <span class="n">color</span> <span class="p">=</span> <span class="n">float4</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="p">.</span><span class="m">5</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">);</span>
+<span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">coords</span><span class="p">.</span><span class="n">x</span> <span class="p">&lt;</span> <span class="p">(</span><span class="n">step</span> <span class="p">*</span> <span class="m">3</span><span class="p">))</span> <span class="n">color</span> <span class="p">=</span> <span class="n">float4</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">);</span>
+<span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">coords</span><span class="p">.</span><span class="n">x</span> <span class="p">&lt;</span> <span class="p">(</span><span class="n">step</span> <span class="p">*</span> <span class="m">4</span><span class="p">))</span> <span class="n">color</span> <span class="p">=</span> <span class="n">float4</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">);</span>
+<span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">coords</span><span class="p">.</span><span class="n">x</span> <span class="p">&lt;</span> <span class="p">(</span><span class="n">step</span> <span class="p">*</span> <span class="m">5</span><span class="p">))</span> <span class="n">color</span> <span class="p">=</span> <span class="n">float4</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">1</span><span class="p">);</span>
+<span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">coords</span><span class="p">.</span><span class="n">x</span> <span class="p">&lt;</span> <span class="p">(</span><span class="n">step</span> <span class="p">*</span> <span class="m">6</span><span class="p">))</span> <span class="n">color</span> <span class="p">=</span> <span class="n">float4</span><span class="p">(.</span><span class="m">3</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="p">.</span><span class="m">8</span><span class="p">,</span> <span class="m">1</span><span class="p">);</span>
+<span class="k">else</span>                            <span class="n">color</span> <span class="p">=</span> <span class="n">float4</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="p">.</span><span class="m">8</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">1</span><span class="p">);</span>
+
+<span class="k">return</span> <span class="n">color</span><span class="p">;</span>
+</pre></div>
+<p><img border="0" height="114" src="http://3.bp.blogspot.com/-hDHVoQfcoN4/TiUJERLSBUI/AAAAAAAAAEo/G4f02p-qKrg/shadertut8.PNG" width="130" /></p>
+<p>Now we're utilizing the coordinates that are being passed in to determine how we want to apply an effect. We're completely discarding the color information and applying a manual color depending on where the pixel is located in the texture. COORD0/coords is also a range of 0 to 1. We're going to create a step variable which is 1.0 divided by the number of stripes we're going to use. You could also multiply the width/height if you wanted to get the actual pixel numbers.</p>
+<p><strong>Warning:</strong> <em>This shader is not especially efficient. This function will be run once per pixel so you usually want to avoid conditionals but I feel this technique is expressive as far as increasing understanding of coordinate based pixel shaders.</em></p>
+<p><strong>Warning:</strong> <em>When applying effects based on coordinates it is important to understand the these effects are applied to the entire texture. If you're only displaying a small portion of your texture via srcRect you'll only see a portion of the applied effect. In this specific example you might only see one color because that segment of your texture might fall within those coordinates. This has the potential to bite you when using sprite sheets, common with animation.</em></p>
+<h3>180 Rotate</h3>
+<div class="highlight"><pre><span class="n">float4</span> <span class="n">color</span> <span class="p">=</span> <span class="n">tex2D</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="m">1</span> <span class="p">-</span> <span class="n">coords</span><span class="p">);</span>
+<span class="k">return</span> <span class="n">color</span><span class="p">;</span>
+</pre></div>
+<p><img border="0" height="122" src="http://4.bp.blogspot.com/-IaUt28TDJ1c/TiUM-1dtDjI/AAAAAAAAAEw/FnX2u9hZycg/shadertut9.PNG" width="126" /></p>
+<p>Similar to the negative effect above we just subtract the coordinates from 1 and we get a simple 180 rotate.</p>
+<h3>Horizontal Mirror</h3>
+<div class="highlight"><pre><span class="n">float4</span> <span class="n">color</span> <span class="p">=</span> <span class="n">tex2D</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="n">float2</span><span class="p">(</span><span class="m">1</span> <span class="p">-</span> <span class="n">coords</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">coords</span><span class="p">.</span><span class="n">y</span><span class="p">));</span>
+<span class="k">return</span> <span class="n">color</span><span class="p">;</span>
+</pre></div>
+<p><img border="0" height="119" src="http://4.bp.blogspot.com/-hIhH6J6KrsY/TiUM-3mxTBI/AAAAAAAAAE4/U4y1FBXtKIk/s400/shadertut10.PNG" width="128" /></p>
+<p>For the mirror effect we just need to subtract coordinate x from 1. You can probably imagine a ton of ways to play around with this to get similar effects.</p>
+<h3>Gradient</h3>
+<div class="highlight"><pre><span class="n">float4</span> <span class="n">color</span> <span class="p">=</span> <span class="n">tex2D</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="n">coords</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">color</span><span class="p">.</span><span class="n">a</span><span class="p">)</span>
+<span class="n">color</span><span class="p">.</span><span class="n">rgb</span> <span class="p">=</span> <span class="n">coords</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+
+<span class="k">return</span> <span class="n">color</span><span class="p">;</span>
+</pre></div>
+<p><img border="0" height="120" src="http://4.bp.blogspot.com/-vbcFkOrI0K0/TiUO3UmzrUI/AAAAAAAAAFA/FtCbDuVmabk/shadertut11.PNG" width="127" /></p>
+<p>Here we're just setting RGB to the value of coords.y which is going to move from 0 to 1 as we map over the texture.</p>
+<h2>Conclusion</h2>
+<p>Today we learned a bit about the vector data type and accessing the different components of those vectors in various ways. We also learned about a variety of different color based and coordinate based shaders we can apply. There's a ton of really fun things you can do with these techniques. Feel free to just make things up and see how it turns out.</p>
+<p>In the next part we'll be talking about some more advanced shaders, including passing in parameters, additional textures, and "lighting."</p>
+<p>To jump to part 3 <a href="/posts/my-first-2d-pixel-shaders-part-3.html">click here.</a></p>
+
+
+      </div>
+      <div class="col-md-1">
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  
+
+</body>
+</html>
