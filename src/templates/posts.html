@@ -1,11 +1,5 @@
 {% extends "base.html" %}
 {% set active_page = "posts" %}
-{% set posts = [
-    ("dissecting-cratesio-minimum-mirror.html", "Dissecting Crates.io: Bare Minimum Mirror"),
-    ("my-first-2d-pixel-shaders-part-3.html", "My First 2D Pixel Shader(s) - Part 3"),
-    ("my-first-2d-pixel-shaders-part-2.html", "My First 2D Pixel Shader(s) - Part 2"),
-    ("my-first-2d-pixel-shaders-part-1.html", "My First 2D Pixel Shader(s) - Part 1"),
-] %}
 
 {% block content %}
 <h3></h3>
@@ -13,12 +7,13 @@
     <div class="col-sm-12">
         <ul class="posts">
             {% for post in posts %}
-            <li class="post">
-                <a href="/posts/{{post[0]}}">{{post[1]}}</a>
-            </li>
+                {% if post.get("published", False) %}
+                    <li class="post">
+                        <a href="/posts/{{post['name']}}.html">{{post["title"]}}</a>
+                    </li>
+                {% endif %}
             {% endfor %}
         </ul>
     </div>
 </div>
-
 {% endblock %}

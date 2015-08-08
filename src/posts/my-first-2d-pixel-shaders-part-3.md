@@ -1,6 +1,3 @@
-###### Saturday, August 27, 2011
-# My First 2D Pixel Shader(s) - Part 3
-
 *This is part 3 of a 3 part series on 2D Pixel Shaders. For part 1 <a href="/posts/my-first-2d-pixel-shaders-part-1.html">click here</a>, for part 2 <a href="/posts/my-first-2d-pixel-shaders-part-2.html">click here</a>.*
 
 At the end of our last lesson we'd learned a bit about how to modify pixel shaders based on color information and coordinate information. We went through some really cool effects but some of them weren't especially efficient considering all of the conditional statements that it would go through for every pixel every frame.

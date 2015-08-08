@@ -1,6 +1,3 @@
-###### Monday, July 18, 2011
-# My First 2D Pixel Shader(s) - Part 2
-
 *This is part 2 of a 3 part series on 2D Pixel Shaders. For part 1 <a href="/posts/my-first-2d-pixel-shaders-part-1.html">click here</a>, for part 3 <a href="/posts/my-first-2d-pixel-shaders-part-3.html">click here.</a>*
 
 

@@ -1,6 +1,3 @@
-###### Wednesday, July 13, 2011
-# My First 2D Pixel Shader(s) - Part 1
-
 *This is part 1 of a 3 part series on 2D Pixel Shaders. For part 2 <a href="/posts/my-first-2d-pixel-shaders-part-2.html">click here</a>, for part 3 <a href="/posts/my-first-2d-pixel-shaders-part-3.html">click here</a>.*
 
 In this post I plan to show you how to setup the most simple of pixel shaders using HLSL with XNA 4.0. In addition to the code here you can find some full examples on <a href="https://bitbucket.org/gmjosack/xna-2d-shader-examples/src" target="_blank" title="XNA 2D Shader Examples">BitBucket</a>. Feel free to fork and push back more examples.

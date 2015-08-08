@@ -2,6 +2,7 @@
 
 import logging
 import glob
+import os
 
 from jinja2 import Environment, FileSystemLoader
 import mistune
@@ -9,6 +10,7 @@ from pygments import highlight
 from pygments.lexers import get_lexer_by_name
 from pygments.styles import get_style_by_name
 from pygments.formatters import HtmlFormatter
+import yaml
 
 
 class HighlightRenderer(mistune.Renderer):
@@ -47,17 +49,29 @@ def main():
 
     make_env = MakeEnvironment()
 
+    with open("posts.yaml") as posts_file:
+        posts = yaml.safe_load(posts_file.read())
+
     make_env.write_template("index.html", "../index.html")
-    make_env.write_template("posts.html", "../posts.html")
+    make_env.write_template("posts.html", "../posts.html", {
+        "posts": posts,
+    })
     make_env.write_template("resume.html", "../resume.html")
 
-    for post in glob.glob("posts/*.md"):
-        post_html = make_env.generate_post(post)
-        post_name = post.rsplit("/")[-1][:-3]
+
+    for post in posts:
+        post_html = make_env.generate_post(
+            os.path.join("posts", "{}.md".format(post["name"])
+        ))
         make_env.write_template(
             "post.html",
-            "../posts/{}.html".format(post_name),
-            {"post": post_html}
+            "../posts/{}.html".format(post["name"]),
+            {
+                "title": post["title"],
+                "date": post["date"],
+                "post": post_html,
+                "published": post.get("published", False),
+            }
         )
 
 
