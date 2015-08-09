@@ -80,7 +80,9 @@
 <p><em>This is part 3 of a 3 part series on 2D Pixel Shaders. For part 1 <a href="/posts/my-first-2d-pixel-shaders-part-1.html">click here</a>, for part 2 <a href="/posts/my-first-2d-pixel-shaders-part-2.html">click here</a>.</em></p>
 <p>At the end of our last lesson we'd learned a bit about how to modify pixel shaders based on color information and coordinate information. We went through some really cool effects but some of them weren't especially efficient considering all of the conditional statements that it would go through for every pixel every frame.</p>
 <p>The primary focus of this part of the series is going to be passing in parameters and at the end I'll go into detail explaining how to do the following:</p>
-<iframe allowfullscreen="" frameborder="0" height="345" src="https://www.youtube.com/embed/J1xr9kbQXKI" width="420">&nbsp;</iframe><h2>Passing Parameters</h2>
+<div class="video-container"><div class="youtube-video">
+<iframe allowfullscreen="" frameborder="0" height="345" src="https://www.youtube.com/embed/J1xr9kbQXKI" width="420">&nbsp;</iframe>
+</div></div><h2>Passing Parameters</h2>
 <p>Since starting this series our code has been modified incrementally many times so I'm going to start by presenting a clean PixelShaderFunction and Draw method then I'll describe what's new.</p>
 <p><em>Draw()</em></p>
 <div class="highlight"><pre><span class="n">GraphicsDevice</span><span class="p">.</span><span class="n">Clear</span><span class="p">(</span><span class="n">Color</span><span class="p">.</span><span class="n">CornflowerBlue</span><span class="p">);</span>

@@ -4,7 +4,9 @@ At the end of our last lesson we'd learned a bit about how to modify pixel shade
 
 The primary focus of this part of the series is going to be passing in parameters and at the end I'll go into detail explaining how to do the following:
 
+<div class="video-container"><div class="youtube-video">
 <iframe allowfullscreen="" frameborder="0" height="345" src="https://www.youtube.com/embed/J1xr9kbQXKI" width="420">&nbsp;</iframe>
+</div></div>
 
 ## Passing Parameters
 

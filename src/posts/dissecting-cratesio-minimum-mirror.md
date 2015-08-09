@@ -4,15 +4,21 @@ Unfortunately we're not going to want to rely on crates.io being up to push code
 
 ## Index
 
+The first thing I need to do is figure out how to point cargo at my "mirror" but I don't even know what protocol cargo speaks. In the issue I mentioned above it was stated that you'd need to clone the official index<sup>[4]</sup> to create a mirror. Hmm, this is just a repo on GitHub but doesn't contain the actual packages.
+
+```shell
+
+```
+
 ## Resources
 
 1. http://doc.crates.io/crates-io.html#publishing-crates
 2. http://doc.crates.io/crates-io.html#cargo-yank
 3. https://github.com/rust-lang/crates.io/issues/67
+4. https://github.com/rust-lang/crates.io-index
 
 
 * https://github.com/rust-lang/cargo
 * https://github.com/rust-lang/crates.io
-* https://github.com/rust-lang/crates.io-index
 * https://github.com/rust-lang/cargo/blob/master/src/cargo/sources/registry.rs
 
