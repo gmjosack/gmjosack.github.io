@@ -6,7 +6,7 @@ For a quick view on the shaders i'll be implementing you can take a look at:
 
 <div class="video-container"><div class="youtube-video">
 <iframe width="420" height="315" src="https://www.youtube.com/embed/-TwBYSiMV-4" frameborder="0" allowfullscreen>&nbsp;</iframe>
-</div>
+</div></div>
 
 If you're still interested, lets start with the most basic shader possible. Start a new Windows Game (4.0) Project in Visual Studio. I'm going to be using a single texture,<img src="http://2.bp.blogspot.com/-DYZjlSmh-9E/Th5dDTLQn_I/AAAAAAAAADI/pFywPtKhAUM/s320/surge.png">, cropped from a spritemap found on opengameart.org. Links to the resources are listed at the end of this post. We don't really need a background for the purpose of the exerise but feel free to implement it yourself.
 
