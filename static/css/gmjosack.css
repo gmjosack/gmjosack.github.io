@@ -177,3 +177,7 @@ h1 {
     max-height: 345px;
     max-width: 420px;
 }
+
+p img {
+    max-width: 100%;
+}
