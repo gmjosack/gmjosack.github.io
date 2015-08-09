@@ -3,6 +3,7 @@
 import logging
 import glob
 import os
+import os.path
 
 from jinja2 import Environment, FileSystemLoader
 import mistune
@@ -30,6 +31,9 @@ class MakeEnvironment(object):
         self.markdown = mistune.Markdown(renderer=HighlightRenderer())
 
     def write_template(self, template_name, dest, ctxt=None):
+        dirname = os.path.dirname(dest)
+        if not os.path.exists(dirname):
+            os.mkdir(dirname)
         logging.info("Writing out generated file (%s)", dest)
         if ctxt is None:
             ctxt = {}
@@ -53,10 +57,10 @@ def main():
         posts = yaml.safe_load(posts_file.read())
 
     make_env.write_template("index.html", "../index.html")
-    make_env.write_template("posts.html", "../posts.html", {
+    make_env.write_template("posts.html", "../posts/index.html", {
         "posts": posts,
     })
-    make_env.write_template("resume.html", "../resume.html")
+    make_env.write_template("resume.html", "../resume/index.html")
 
 
     for post in posts:
@@ -65,7 +69,7 @@ def main():
         ))
         make_env.write_template(
             "post.html",
-            "../posts/{}.html".format(post["name"]),
+            "../posts/{}/index.html".format(post["name"]),
             {
                 "title": post["title"],
                 "date": post["date"],

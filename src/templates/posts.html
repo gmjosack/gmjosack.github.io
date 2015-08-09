@@ -9,7 +9,7 @@
             {% for post in posts %}
                 {% if post.get("published", False) %}
                     <li class="post">
-                        <a href="/posts/{{post['name']}}.html">{{post["title"]}}</a>
+                        <a href="/posts/{{post['name']}}/">{{post["title"]}}</a>
                     </li>
                 {% endif %}
             {% endfor %}

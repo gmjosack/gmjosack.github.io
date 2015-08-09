@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>gmjosack</title>
+  <title>Dissecting Crates.io: Bare Minimum Mirror - gmjosack</title>
 
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,700">
@@ -27,7 +27,7 @@
     <header>
       <div class="menu show-menu">
         <ul class="nav">
-          <li class="page active">
+          <li class="page ">
             <a title="Home" href="/">Home</a>
           </li>
           <li class="page ">
@@ -74,33 +74,24 @@
     <div class="content-row row">
       <div class="content col-md-10 col-md-offset-1">
         
-<h3>Projects</h3>
-<dl class="dl-horizontal">
+<h6>Saturday, August 8, 2015</h6>
+<h1>Dissecting Crates.io: Bare Minimum Mirror</h1>
 
-  <dt><a href="https://github.com/gmjosack/gsh">gsh</a></dt>
-  <dd>Gary's Shell. A Pluggable Distributed SSH Tool</dd>
-
-  <dt><a href="https://github.com/gmjosack/pygerduty">pygerduty</a></dt>
-  <dd>Python Client Library for PagerDuty</dd>
-
-  <dt><a href="https://github.com/gmjosack/nss_http">nss_http</a></dt>
-  <dd>NSS plugin for getting users over http</dd>
-
-  <dt><a href="https://github.com/gmjosack/tattrdb">tattrdb</a></dt>
-  <dd>Tag and Attribute Database for hosts</dd>
-
-  <dt><a href="https://github.com/gmjosack/annex">annex</a></dt>
-  <dd>Simple plugin system for Python programs</dd>
-
-  <dt><a href="https://github.com/dropbox/trapperkeeper">trapperkeeper</a></dt>
-  <dd>SNMP trap collection and aggregation system</dd>
-
-  <dt><a href="https://github.com/dropbox/nsot">nsot</a></dt>
-  <dd>Inventory for various components of your network</dd>
-
-  <dt></dt>
-  <dd><a href="https://github.com/gmjosack">More</a></dd>
-</dl>
+<p>Coming up soon at <code>$job</code> we're going to start deploying some Rust code to production. One of the really nice things about developing Rust code is the included package manager, <code>cargo</code>, and all of the crates available at <a href="https://crates.io/">crates.io</a>. One especially nice feature of crates.io, compared to other package repositories I have experience with, is the fact that they will never allow a user to overwrite or delete a version of published code<sup>[1]</sup>. They do support an action called <code>yank</code><sup>[2]</sup> which allows you do prevent new projects from depending on a version but it will still be available to projects that have a Cargo.lock. This is great because I have much less to worry about in regard to repeatable builds when using cargo with crates.io.</p>
+<p>Unfortunately we're not going to want to rely on crates.io being up to push code to production. While crates.io has been mostly stable I can't rely on that stability when I need to push an emergency bug fix. Also, I might have development and/or build servers that don't have access to the internet to begin with. With other languages I'd just throw up a caching mirror and point my package manager at that. Rust, however, is still pretty young and I wasn't able to find anything in regard to mirroring crates.io other than a single issue<sup>[3]</sup> on GitHub. With that I set out to learn more about how cargo and crates.io interact and what it would take to setup a bare minimum mirror.</p>
+<h2>Index</h2>
+<h2>Resources</h2>
+<ol>
+<li><a href="http://doc.crates.io/crates-io.html#publishing-crates">http://doc.crates.io/crates-io.html#publishing-crates</a></li>
+<li><a href="http://doc.crates.io/crates-io.html#cargo-yank">http://doc.crates.io/crates-io.html#cargo-yank</a></li>
+<li><a href="https://github.com/rust-lang/crates.io/issues/67">https://github.com/rust-lang/crates.io/issues/67</a></li>
+</ol>
+<ul>
+<li><a href="https://github.com/rust-lang/cargo">https://github.com/rust-lang/cargo</a></li>
+<li><a href="https://github.com/rust-lang/crates.io">https://github.com/rust-lang/crates.io</a></li>
+<li><a href="https://github.com/rust-lang/crates.io-index">https://github.com/rust-lang/crates.io-index</a></li>
+<li><a href="https://github.com/rust-lang/cargo/blob/master/src/cargo/sources/registry.rs">https://github.com/rust-lang/cargo/blob/master/src/cargo/sources/registry.rs</a></li>
+</ul>
 
 
       </div>
