@@ -116,7 +116,7 @@
 <span class="n">color</span><span class="p">.</span><span class="n">rgb</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span>
 <span class="k">return</span> <span class="n">color</span><span class="p">;</span>
 </pre></div>
-<p><img height="115" src="http://3.bp.blogspot.com/-vAbEX7sR4_4/TiT2qG6ckEI/AAAAAAAAAEI/HdxyT3jozYU/shadertut4.PNG" width="121" /></p>
+<p><img src="http://3.bp.blogspot.com/-vAbEX7sR4_4/TiT2qG6ckEI/AAAAAAAAAEI/HdxyT3jozYU/shadertut4.PNG"></p>
 <p>I'll be showing the examples in the rest of this section side-by-side but yours should just look like the one on the right.</p>
 <p>In this example you can see we're just assigning 0 to the rgb component of our color vector. The reason this doesn't give us a black box is because we're only modifying the color attributes per pixel and keeping our alpha value. Anything that was previously transparent will also be black but retain its alpha level.</p>
 <h3>GBR</h3>
@@ -125,7 +125,7 @@
 <span class="n">color</span><span class="p">.</span><span class="n">rgb</span> <span class="p">=</span> <span class="n">color</span><span class="p">.</span><span class="n">gbr</span><span class="p">;</span>
 <span class="k">return</span> <span class="n">color</span><span class="p">;</span>
 </pre></div>
-<p><img border="0" height="117" src="http://3.bp.blogspot.com/-hhKjKY-Po2E/TiUBS4M8ZEI/AAAAAAAAAEY/3nASKMTja3k/shadertut6.PNG" width="124" /></p>
+<p><img src="http://3.bp.blogspot.com/-hhKjKY-Po2E/TiUBS4M8ZEI/AAAAAAAAAEY/3nASKMTja3k/shadertut6.PNG"></p>
 <p>As you can see we've essentially swapped the values of r and b.</p>
 <h3>High Contrast</h3>
 <div class="highlight"><pre><span class="n">float4</span> <span class="n">color</span> <span class="p">=</span> <span class="n">tex2D</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="n">coords</span><span class="p">);</span>
@@ -144,7 +144,7 @@
 
 <span class="k">return</span> <span class="n">color</span><span class="p">;</span>
 </pre></div>
-<p><img border="0" height="120" src="http://2.bp.blogspot.com/-jIqxtbOiH_k/TiT9tbQWkKI/AAAAAAAAAEQ/RRVK9em0KKc/shadertut5.PNG" width="132" /></p>
+<p><img src="http://2.bp.blogspot.com/-jIqxtbOiH_k/TiT9tbQWkKI/AAAAAAAAAEQ/RRVK9em0KKc/shadertut5.PNG"></p>
 <p>We've introduced a new idea here. The conditional. You can pretty much use these conditionals like you would in C#. I'm not going to go into detail here because I assume you're familiar with if statement.   I think now is a good time to make sure you've noticed that the values for the individual floats stored in the vector range from 0 to 1 instead of 0 - 255 as you're probably used to. The main idea behind this effect is that for each of the colors, rgb, we're going to set the value to 1 if it's above some number and to 0 if it's below some number, otherwise leave it alone. This is going to give use strong highlights and shadows.  You can easily tweak the high and low variables to get the desired effect or even apply to only one or two of the components.</p>
 <h3>Negative</h3>
 <div class="highlight"><pre><span class="n">float4</span> <span class="n">color</span> <span class="p">=</span> <span class="n">tex2D</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="n">coords</span><span class="p">);</span>
@@ -154,7 +154,7 @@
 
 <span class="k">return</span> <span class="n">color</span><span class="p">;</span>
 </pre></div>
-<p><img border="0" height="118" src="http://3.bp.blogspot.com/-HuHZuxGwOSc/TiUFljvZfcI/AAAAAAAAAEg/169Det-mxdk/shadertut7.PNG" width="121" /></p>
+<p><img src="http://3.bp.blogspot.com/-HuHZuxGwOSc/TiUFljvZfcI/AAAAAAAAAEg/169Det-mxdk/shadertut7.PNG"></p>
 <p>In this function I'm checking if there's an alpha value. I do this because I don't want to apply any color to pixels that are transparent. If the pixel has alpha I subtract the rgb from 1 and assign to rgb. When we do math with multiple components against a scaler it is applied to each component. As an example:</p>
 <div class="highlight"><pre><span class="m">1</span> <span class="p">-</span> <span class="n">float3</span><span class="p">(</span><span class="m">0.2</span><span class="p">,</span> <span class="m">0.9</span><span class="p">,</span> <span class="m">0.4</span><span class="p">);</span> <span class="c1">// float3(0.8, 0.1, 0.6)</span>
 </pre></div>
@@ -179,7 +179,7 @@
 
 <span class="k">return</span> <span class="n">color</span><span class="p">;</span>
 </pre></div>
-<p><img border="0" height="114" src="http://3.bp.blogspot.com/-hDHVoQfcoN4/TiUJERLSBUI/AAAAAAAAAEo/G4f02p-qKrg/shadertut8.PNG" width="130" /></p>
+<p><img src="http://3.bp.blogspot.com/-hDHVoQfcoN4/TiUJERLSBUI/AAAAAAAAAEo/G4f02p-qKrg/shadertut8.PNG"></p>
 <p>Now we're utilizing the coordinates that are being passed in to determine how we want to apply an effect. We're completely discarding the color information and applying a manual color depending on where the pixel is located in the texture. COORD0/coords is also a range of 0 to 1. We're going to create a step variable which is 1.0 divided by the number of stripes we're going to use. You could also multiply the width/height if you wanted to get the actual pixel numbers.</p>
 <p><strong>Warning:</strong> <em>This shader is not especially efficient. This function will be run once per pixel so you usually want to avoid conditionals but I feel this technique is expressive as far as increasing understanding of coordinate based pixel shaders.</em></p>
 <p><strong>Warning:</strong> <em>When applying effects based on coordinates it is important to understand the these effects are applied to the entire texture. If you're only displaying a small portion of your texture via srcRect you'll only see a portion of the applied effect. In this specific example you might only see one color because that segment of your texture might fall within those coordinates. This has the potential to bite you when using sprite sheets, common with animation.</em></p>
@@ -187,13 +187,13 @@
 <div class="highlight"><pre><span class="n">float4</span> <span class="n">color</span> <span class="p">=</span> <span class="n">tex2D</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="m">1</span> <span class="p">-</span> <span class="n">coords</span><span class="p">);</span>
 <span class="k">return</span> <span class="n">color</span><span class="p">;</span>
 </pre></div>
-<p><img border="0" height="122" src="http://4.bp.blogspot.com/-IaUt28TDJ1c/TiUM-1dtDjI/AAAAAAAAAEw/FnX2u9hZycg/shadertut9.PNG" width="126" /></p>
+<p><img src="http://4.bp.blogspot.com/-IaUt28TDJ1c/TiUM-1dtDjI/AAAAAAAAAEw/FnX2u9hZycg/shadertut9.PNG"></p>
 <p>Similar to the negative effect above we just subtract the coordinates from 1 and we get a simple 180 rotate.</p>
 <h3>Horizontal Mirror</h3>
 <div class="highlight"><pre><span class="n">float4</span> <span class="n">color</span> <span class="p">=</span> <span class="n">tex2D</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="n">float2</span><span class="p">(</span><span class="m">1</span> <span class="p">-</span> <span class="n">coords</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">coords</span><span class="p">.</span><span class="n">y</span><span class="p">));</span>
 <span class="k">return</span> <span class="n">color</span><span class="p">;</span>
 </pre></div>
-<p><img border="0" height="119" src="http://4.bp.blogspot.com/-hIhH6J6KrsY/TiUM-3mxTBI/AAAAAAAAAE4/U4y1FBXtKIk/s400/shadertut10.PNG" width="128" /></p>
+<p><img src="http://4.bp.blogspot.com/-hIhH6J6KrsY/TiUM-3mxTBI/AAAAAAAAAE4/U4y1FBXtKIk/s400/shadertut10.PNG"></p>
 <p>For the mirror effect we just need to subtract coordinate x from 1. You can probably imagine a ton of ways to play around with this to get similar effects.</p>
 <h3>Gradient</h3>
 <div class="highlight"><pre><span class="n">float4</span> <span class="n">color</span> <span class="p">=</span> <span class="n">tex2D</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="n">coords</span><span class="p">);</span>
@@ -203,7 +203,7 @@
 
 <span class="k">return</span> <span class="n">color</span><span class="p">;</span>
 </pre></div>
-<p><img border="0" height="120" src="http://4.bp.blogspot.com/-vbcFkOrI0K0/TiUO3UmzrUI/AAAAAAAAAFA/FtCbDuVmabk/shadertut11.PNG" width="127" /></p>
+<p><img src="http://4.bp.blogspot.com/-vbcFkOrI0K0/TiUO3UmzrUI/AAAAAAAAAFA/FtCbDuVmabk/shadertut11.PNG"></p>
 <p>Here we're just setting RGB to the value of coords.y which is going to move from 0 to 1 as we map over the texture.</p>
 <h2>Conclusion</h2>
 <p>Today we learned a bit about the vector data type and accessing the different components of those vectors in various ways. We also learned about a variety of different color based and coordinate based shaders we can apply. There's a ton of really fun things you can do with these techniques. Feel free to just make things up and see how it turns out.</p>

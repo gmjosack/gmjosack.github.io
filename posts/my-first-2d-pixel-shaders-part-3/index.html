@@ -131,7 +131,7 @@
 <div class="highlight"><pre><span class="n">effect</span><span class="p">.</span><span class="n">Parameters</span><span class="p">[</span><span class="s">&quot;param1&quot;</span><span class="p">].</span><span class="n">SetValue</span><span class="p">(.</span><span class="m">3f</span><span class="p">);</span>
 </pre></div>
 <p>and you should see:</p>
-<p><img border="0" height="120" width="119" src="http://3.bp.blogspot.com/-aI1UoCQ0RAk/TlmAKKeTpCI/AAAAAAAAAFc/q3HzMBuIvu4/shadertut13.PNG" /></p>
+<p><img src="http://3.bp.blogspot.com/-aI1UoCQ0RAk/TlmAKKeTpCI/AAAAAAAAAFc/q3HzMBuIvu4/shadertut13.PNG"></p>
 <h2>Passing Textures</h2>
 <p>Where it gets really interesting is passing in textures. I'm going to start my showing a similar rainbow effect from part2. In our Game class we're going to need to add a new Texture2D:</p>
 <p><img src="http://1.bp.blogspot.com/-w-ghvZCNDrQ/TlmHhLwpMoI/AAAAAAAAAFk/LJbmmmFlEFM/surge-rainbow.png"></p>
@@ -151,7 +151,7 @@
     <span class="k">return</span> <span class="n">rainbow_color</span><span class="p">;</span>
 </pre></div>
 <p>You can see we're using the same coords the get the colors for each sampler then if the pixel for our main is non transparent we return the pixel from the new texture at the same coordinates. This will give you the following result:</p>
-<p><img border="0" height="120" width="133" src="http://4.bp.blogspot.com/-CW2I-SpUCQo/TlmJ9AisNdI/AAAAAAAAAFs/4oUqvZ_Not0/shadertut14.PNG" /></p>
+<p><img src="http://4.bp.blogspot.com/-CW2I-SpUCQo/TlmJ9AisNdI/AAAAAAAAAFs/4oUqvZ_Not0/shadertut14.PNG"></p>
 <h2>RenderTargets, Additive Blending, and Lights! Oh my!</h2>
 <p>So a lot of people have been reading this series just to get to this point. This series is primarily about HLSL shaders but in this segment I'm going to introduce you to a couple new features in XNA, not specific to HLSL or Shaders in general. We're going to again start out with the code. I've commented the relevant sections.</p>
 <div class="highlight"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">Game1</span> <span class="p">:</span> <span class="n">Microsoft</span><span class="p">.</span><span class="n">Xna</span><span class="p">.</span><span class="n">Framework</span><span class="p">.</span><span class="n">Game</span>

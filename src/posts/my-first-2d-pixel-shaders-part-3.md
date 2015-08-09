@@ -77,7 +77,7 @@ effect.Parameters["param1"].SetValue(.3f);
 
 and you should see:
 
-<img border="0" height="120" width="119" src="http://3.bp.blogspot.com/-aI1UoCQ0RAk/TlmAKKeTpCI/AAAAAAAAAFc/q3HzMBuIvu4/shadertut13.PNG" />
+<img src="http://3.bp.blogspot.com/-aI1UoCQ0RAk/TlmAKKeTpCI/AAAAAAAAAFc/q3HzMBuIvu4/shadertut13.PNG">
 
 ## Passing Textures
 
@@ -112,7 +112,7 @@ if (color.a)
 
 You can see we're using the same coords the get the colors for each sampler then if the pixel for our main is non transparent we return the pixel from the new texture at the same coordinates. This will give you the following result:
 
-<img border="0" height="120" width="133" src="http://4.bp.blogspot.com/-CW2I-SpUCQo/TlmJ9AisNdI/AAAAAAAAAFs/4oUqvZ_Not0/shadertut14.PNG" />
+<img src="http://4.bp.blogspot.com/-CW2I-SpUCQo/TlmJ9AisNdI/AAAAAAAAAFs/4oUqvZ_Not0/shadertut14.PNG">
 
 ## RenderTargets, Additive Blending, and Lights! Oh my!
 

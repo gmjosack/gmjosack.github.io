@@ -1,7 +1,7 @@
 *This is part 2 of a 3 part series on 2D Pixel Shaders. For part 1 <a href="/posts/my-first-2d-pixel-shaders-part-1/">click here</a>, for part 3 <a href="/posts/my-first-2d-pixel-shaders-part-3/">click here.</a>*
 
 
-When left off we had just implemented our grayscale shader. Just as a reminder, since we'll be building on this function, this is what the PixelShaderFunction looked like. 
+When left off we had just implemented our grayscale shader. Just as a reminder, since we'll be building on this function, this is what the PixelShaderFunction looked like.
 
 ```csharp
 float4 PixelShaderFunction(float2 coords: TEXCOORD0) : COLOR0
@@ -18,7 +18,7 @@ I want to take a minute and talk about the type and how we access that type. HLS
 vector <float, 4> color
 ```
 
-You can see how this shorthand greatly simplifies our variable declarations. Since these are vectors there's a lot of neat math tricks we can do with these variables. There's also some per-component access patterns worth mentioning. You can index the individual values of a vector using one of two named sets. The are referred to as the position set (xyzw) and the color set (rgba). You can use any combination of attributes of a named set when accessing a vector however you cannot use attributes from both sets simultaneously. 
+You can see how this shorthand greatly simplifies our variable declarations. Since these are vectors there's a lot of neat math tricks we can do with these variables. There's also some per-component access patterns worth mentioning. You can index the individual values of a vector using one of two named sets. The are referred to as the position set (xyzw) and the color set (rgba). You can use any combination of attributes of a named set when accessing a vector however you cannot use attributes from both sets simultaneously.
 
 ```csharp
 float4 example = float4(2,3,4,5);
@@ -58,7 +58,7 @@ color.rgb = 0;
 return color;
 ```
 
-<img height="115" src="http://3.bp.blogspot.com/-vAbEX7sR4_4/TiT2qG6ckEI/AAAAAAAAAEI/HdxyT3jozYU/shadertut4.PNG" width="121" />
+<img src="http://3.bp.blogspot.com/-vAbEX7sR4_4/TiT2qG6ckEI/AAAAAAAAAEI/HdxyT3jozYU/shadertut4.PNG">
 
 I'll be showing the examples in the rest of this section side-by-side but yours should just look like the one on the right.
 
@@ -73,7 +73,7 @@ color.rgb = color.gbr;
 return color;
 ```
 
-<img border="0" height="117" src="http://3.bp.blogspot.com/-hhKjKY-Po2E/TiUBS4M8ZEI/AAAAAAAAAEY/3nASKMTja3k/shadertut6.PNG" width="124" />
+<img src="http://3.bp.blogspot.com/-hhKjKY-Po2E/TiUBS4M8ZEI/AAAAAAAAAEY/3nASKMTja3k/shadertut6.PNG">
 
 As you can see we've essentially swapped the values of r and b.
 
@@ -96,7 +96,7 @@ else if (color.b < low) color.b = 0;
 return color;
 ```
 
-<img border="0" height="120" src="http://2.bp.blogspot.com/-jIqxtbOiH_k/TiT9tbQWkKI/AAAAAAAAAEQ/RRVK9em0KKc/shadertut5.PNG" width="132" />
+<img src="http://2.bp.blogspot.com/-jIqxtbOiH_k/TiT9tbQWkKI/AAAAAAAAAEQ/RRVK9em0KKc/shadertut5.PNG">
 
 We've introduced a new idea here. The conditional. You can pretty much use these conditionals like you would in C#. I'm not going to go into detail here because I assume you're familiar with if statement.   I think now is a good time to make sure you've noticed that the values for the individual floats stored in the vector range from 0 to 1 instead of 0 - 255 as you're probably used to. The main idea behind this effect is that for each of the colors, rgb, we're going to set the value to 1 if it's above some number and to 0 if it's below some number, otherwise leave it alone. This is going to give use strong highlights and shadows.  You can easily tweak the high and low variables to get the desired effect or even apply to only one or two of the components.
 
@@ -111,7 +111,7 @@ color.rgb = 1 - color.rgb;
 return color;
 ```
 
-<img border="0" height="118" src="http://3.bp.blogspot.com/-HuHZuxGwOSc/TiUFljvZfcI/AAAAAAAAAEg/169Det-mxdk/shadertut7.PNG" width="121" />
+<img src="http://3.bp.blogspot.com/-HuHZuxGwOSc/TiUFljvZfcI/AAAAAAAAAEg/169Det-mxdk/shadertut7.PNG">
 
 In this function I'm checking if there's an alpha value. I do this because I don't want to apply any color to pixels that are transparent. If the pixel has alpha I subtract the rgb from 1 and assign to rgb. When we do math with multiple components against a scaler it is applied to each component. As an example:
 
@@ -147,7 +147,7 @@ else                            color = float4(1, .8, 1, 1);
 return color;
 ```
 
-<img border="0" height="114" src="http://3.bp.blogspot.com/-hDHVoQfcoN4/TiUJERLSBUI/AAAAAAAAAEo/G4f02p-qKrg/shadertut8.PNG" width="130" />
+<img src="http://3.bp.blogspot.com/-hDHVoQfcoN4/TiUJERLSBUI/AAAAAAAAAEo/G4f02p-qKrg/shadertut8.PNG">
 
 Now we're utilizing the coordinates that are being passed in to determine how we want to apply an effect. We're completely discarding the color information and applying a manual color depending on where the pixel is located in the texture. COORD0/coords is also a range of 0 to 1. We're going to create a step variable which is 1.0 divided by the number of stripes we're going to use. You could also multiply the width/height if you wanted to get the actual pixel numbers.
 
@@ -162,7 +162,7 @@ float4 color = tex2D(s0, 1 - coords);
 return color;
 ```
 
-<img border="0" height="122" src="http://4.bp.blogspot.com/-IaUt28TDJ1c/TiUM-1dtDjI/AAAAAAAAAEw/FnX2u9hZycg/shadertut9.PNG" width="126" />
+<img src="http://4.bp.blogspot.com/-IaUt28TDJ1c/TiUM-1dtDjI/AAAAAAAAAEw/FnX2u9hZycg/shadertut9.PNG">
 
 Similar to the negative effect above we just subtract the coordinates from 1 and we get a simple 180 rotate.
 
@@ -174,7 +174,7 @@ float4 color = tex2D(s0, float2(1 - coords.x, coords.y));
 return color;
 ```
 
-<img border="0" height="119" src="http://4.bp.blogspot.com/-hIhH6J6KrsY/TiUM-3mxTBI/AAAAAAAAAE4/U4y1FBXtKIk/s400/shadertut10.PNG" width="128" />
+<img src="http://4.bp.blogspot.com/-hIhH6J6KrsY/TiUM-3mxTBI/AAAAAAAAAE4/U4y1FBXtKIk/s400/shadertut10.PNG">
 
 For the mirror effect we just need to subtract coordinate x from 1. You can probably imagine a ton of ways to play around with this to get similar effects.
 
@@ -189,7 +189,7 @@ color.rgb = coords.y;
 return color;
 ```
 
-<img border="0" height="120" src="http://4.bp.blogspot.com/-vbcFkOrI0K0/TiUO3UmzrUI/AAAAAAAAAFA/FtCbDuVmabk/shadertut11.PNG" width="127" />
+<img src="http://4.bp.blogspot.com/-vbcFkOrI0K0/TiUO3UmzrUI/AAAAAAAAAFA/FtCbDuVmabk/shadertut11.PNG">
 
 Here we're just setting RGB to the value of coords.y which is going to move from 0 to 1 as we map over the texture.
 
