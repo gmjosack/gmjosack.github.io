@@ -1,4 +1,4 @@
-*This is part 2 of a 3 part series on 2D Pixel Shaders. For part 1 <a href="/posts/my-first-2d-pixel-shaders-part-1.html">click here</a>, for part 3 <a href="/posts/my-first-2d-pixel-shaders-part-3.html">click here.</a>*
+*This is part 2 of a 3 part series on 2D Pixel Shaders. For part 1 <a href="/posts/my-first-2d-pixel-shaders-part-1/">click here</a>, for part 3 <a href="/posts/my-first-2d-pixel-shaders-part-3/">click here.</a>*
 
 
 When left off we had just implemented our grayscale shader. Just as a reminder, since we'll be building on this function, this is what the PixelShaderFunction looked like. 
@@ -199,5 +199,5 @@ Today we learned a bit about the vector data type and accessing the different co
 
 In the next part we'll be talking about some more advanced shaders, including passing in parameters, additional textures, and "lighting."
 
-To jump to part 3 <a href="/posts/my-first-2d-pixel-shaders-part-3.html">click here.</a>
+To jump to part 3 <a href="/posts/my-first-2d-pixel-shaders-part-3/">click here.</a>
 
