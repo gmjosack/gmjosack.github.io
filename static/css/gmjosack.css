@@ -181,3 +181,18 @@ h1 {
 p img {
     max-width: 100%;
 }
+
+:target {
+   background-color: #ffa;
+}
+
+a[rev=footnote] {
+    padding-left: 10px;
+    text-decoration: none;
+}
+
+.footnote-ref a {
+    padding-left: 2px;
+    text-decoration: none;
+
+}

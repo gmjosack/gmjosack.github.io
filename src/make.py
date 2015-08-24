@@ -4,6 +4,7 @@ import logging
 import glob
 import os
 import os.path
+import re
 
 from jinja2 import Environment, FileSystemLoader
 import mistune
@@ -14,10 +15,21 @@ from pygments.formatters import HtmlFormatter
 import yaml
 
 
-class HighlightRenderer(mistune.Renderer):
+class CustomRenderer(mistune.Renderer):
+    def inline_divs(self, styles=None):
+        print styles
+        if not styles:
+            return "</div>"
+        return "<div class='{}'>".format(" ".join(styles))
+
+
     def block_code(self, code, lang):
+        columns = None
+
         if not lang:
-            return "\n<pre><code>%s</code></pre>\n" % mistune.escape(code)
+            return "\n<pre><code>{}</code></pre>\n".format(
+                mistune.escape(code)
+            )
 
         lexer = get_lexer_by_name(lang, stripall=True)
         formatter = HtmlFormatter()
@@ -25,10 +37,33 @@ class HighlightRenderer(mistune.Renderer):
         return highlight(code, lexer, formatter)
 
 
+class CustomInlineLexer(mistune.InlineLexer):
+    def enable_divs(self):
+        self.rules.divs = re.compile(r"%div(,[a-z0-9\,\-]+)?")
+        self.default_rules.insert(0, "divs")
+
+    def output_divs(self, match):
+        styles = match.group(1)
+        if not styles:
+            return self.renderer.inline_divs()
+
+        return self.renderer.inline_divs(
+            [style for style in styles.split(",") if style]
+        )
+
+
+
 class MakeEnvironment(object):
     def __init__(self):
         self.template_env = Environment(loader=FileSystemLoader("templates"))
-        self.markdown = mistune.Markdown(renderer=HighlightRenderer())
+        renderer = CustomRenderer()
+        inline = CustomInlineLexer(renderer=renderer)
+        inline.enable_divs()
+
+        self.markdown = mistune.Markdown(
+            renderer=renderer,
+            inline=inline,
+        )
 
     def write_template(self, template_name, dest, ctxt=None):
         dirname = os.path.dirname(dest)
@@ -40,7 +75,7 @@ class MakeEnvironment(object):
         template = self.template_env.get_template(template_name)
         out = template.render(**ctxt)
         with open(dest, "w") as out_file:
-            out_file.write(out)
+            out_file.write(out.encode("utf-8"))
 
     def generate_post(self, src):
         with open(src) as post_file:
