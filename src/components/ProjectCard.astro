@@ -1,0 +1,81 @@
+---
+import type { Project } from '../data/projects';
+
+interface Props {
+  project: Project;
+  compact?: boolean;
+}
+
+const { project, compact = false } = Astro.props;
+---
+
+{compact ? (
+  <a
+    href={project.githubUrl || project.url || '#'}
+    target="_blank"
+    rel="noopener noreferrer"
+    class="bg-bg-secondary border border-bg-tertiary rounded-lg p-3 hover:border-accent-orange/30 transition-colors block"
+  >
+    <h4 class="text-sm font-semibold text-text-primary">{project.name}</h4>
+    <p class="text-text-secondary text-xs mt-1">{project.description}</p>
+  </a>
+) : (
+  <div class:list={[
+    "bg-bg-secondary border border-bg-tertiary rounded-lg overflow-hidden hover:border-accent-orange/30 transition-colors",
+    project.image ? "flex" : "",
+  ]}>
+    {project.image && (
+      <img
+        src={project.image}
+        alt={project.name}
+        class="w-48 shrink-0 object-cover"
+      />
+    )}
+    <div class="p-5 flex flex-col justify-center">
+      <h3 class="text-lg font-semibold text-text-primary mb-1">{project.name}</h3>
+      <p class="text-text-secondary text-sm mb-3">{project.description}</p>
+      <div class="flex gap-3 flex-wrap">
+        {project.itchUrl && (
+          <a
+            href={project.itchUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-xs font-medium px-3 py-1.5 rounded bg-accent-orange/10 text-accent-orange hover:bg-accent-orange/20 transition-colors"
+          >
+            itch.io
+          </a>
+        )}
+        {project.steamUrl && (
+          <a
+            href={project.steamUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-xs font-medium px-3 py-1.5 rounded bg-bg-tertiary text-text-secondary hover:text-text-primary transition-colors"
+          >
+            Steam
+          </a>
+        )}
+        {project.githubUrl && (
+          <a
+            href={project.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-xs font-medium px-3 py-1.5 rounded bg-bg-tertiary text-text-secondary hover:text-text-primary transition-colors"
+          >
+            GitHub
+          </a>
+        )}
+        {project.url && (
+          <a
+            href={project.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-xs font-medium px-3 py-1.5 rounded bg-accent-orange/10 text-accent-orange hover:bg-accent-orange/20 transition-colors"
+          >
+            Website
+          </a>
+        )}
+      </div>
+    </div>
+  </div>
+)}

@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { projects, categoryLabels, categoryOrder, softwareSubsections } from '../data/projects';
+---
+
+<BaseLayout title="Made By Gare">
+  {categoryOrder.map((category) => {
+    if (category === 'software') {
+      const topLevel = projects.filter((p) => p.category === 'software');
+      return (
+        <section class="mb-12">
+          <h2 class="text-2xl font-semibold mb-6 text-accent-orange">{categoryLabels[category]}</h2>
+          {topLevel.length > 0 && (
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              {topLevel.map((project) => (
+                <ProjectCard project={project} />
+              ))}
+            </div>
+          )}
+          {softwareSubsections.map((subsection) => (
+            <div class="mb-8">
+              <h3 class="text-xl font-semibold mb-2 text-text-primary">{subsection.label}</h3>
+              {subsection.description && (
+                <p class="text-text-secondary text-sm mb-4">{subsection.description}</p>
+              )}
+              {subsection.groups.map((group) => (
+                <div class="mb-6">
+                  {group.description && (
+                    <p class="text-text-secondary text-sm mb-3">{group.description}</p>
+                  )}
+                  <div class={`grid grid-cols-1 gap-4 ${
+                    subsection.compact
+                      ? 'md:grid-cols-3 lg:grid-cols-4'
+                      : group.columns === 3
+                        ? 'md:grid-cols-3'
+                        : 'md:grid-cols-2'
+                  }`}>
+                    {group.projects.map((project) => (
+                      <ProjectCard project={project} compact={subsection.compact} />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </section>
+      );
+    }
+
+    const categoryProjects = projects.filter((p) => p.category === category);
+    if (categoryProjects.length === 0) return null;
+    return (
+      <section class="mb-12">
+        <h2 class="text-2xl font-semibold mb-4 text-accent-orange">{categoryLabels[category]}</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {categoryProjects.map((project) => (
+            <ProjectCard project={project} />
+          ))}
+        </div>
+      </section>
+    );
+  })}
+</BaseLayout>

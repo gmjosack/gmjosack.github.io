@@ -1,0 +1,42 @@
+---
+import type { Job } from '../data/resume';
+
+interface Props {
+  job: Job;
+  side: 'left' | 'right';
+  index: number;
+}
+
+const { job, side, index } = Astro.props;
+const isLeft = side === 'left';
+---
+
+{isLeft ? (
+  <div class="text-right pr-4 pb-4" style={`grid-column: 1; grid-row: ${index + 1};`}>
+    <h3 class="text-lg font-semibold text-text-primary">{job.company}</h3>
+    <span class="text-accent-orange/80 text-xs font-medium italic">{job.dates}</span>
+    <ul class="mt-2 space-y-1">
+      {job.roles.map((role) => (
+        <li class="text-text-secondary text-sm">{role}</li>
+      ))}
+    </ul>
+  </div>
+) : (
+  <div class="pl-4 pb-4" style={`grid-column: 3; grid-row: ${index + 1};`}>
+    <h3 class="text-lg font-semibold text-text-primary">{job.company}</h3>
+    <span class="text-accent-orange/80 text-xs font-medium italic">{job.dates}</span>
+    <ul class="mt-2 space-y-1">
+      {job.roles.map((role) => (
+        <li class="text-text-secondary text-sm">{role}</li>
+      ))}
+    </ul>
+  </div>
+)}
+
+<div class="flex justify-center" style={`grid-column: 2; grid-row: ${index + 1};`}>
+  <img
+    src={job.logo}
+    alt={job.company}
+    class="w-10 h-10 rounded-full object-cover border-2 border-bg-primary z-10"
+  />
+</div>

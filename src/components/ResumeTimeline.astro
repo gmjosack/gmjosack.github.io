@@ -1,0 +1,18 @@
+---
+import { jobs } from '../data/resume';
+import ResumeEntry from './ResumeEntry.astro';
+---
+
+<div class="relative mx-auto max-w-3xl timeline-grid">
+  <div class="absolute left-1/2 top-0 bottom-0 w-0.5 bg-accent-orange/30 -translate-x-px" />
+  {jobs.map((job, i) => (
+    <ResumeEntry job={job} side={i % 2 === 0 ? 'left' : 'right'} index={i} />
+  ))}
+</div>
+
+<style>
+  .timeline-grid {
+    display: grid;
+    grid-template-columns: 1fr 40px 1fr;
+  }
+</style>
