@@ -7,6 +7,18 @@ interface Props {
 }
 
 const { project, compact = false } = Astro.props;
+const primary = project.primaryLink || (project.itchUrl ? 'itch' : project.steamUrl ? 'steam' : project.githubUrl ? 'github' : 'url');
+const primaryClass = "text-xs font-medium px-3 py-1.5 rounded bg-accent-orange/10 text-accent-orange hover:bg-accent-orange/20 transition-colors";
+const secondaryClass = "text-xs font-medium px-3 py-1.5 rounded bg-bg-tertiary text-text-secondary hover:text-text-primary transition-colors";
+
+type LinkEntry = { href: string; label: string; key: string };
+const links: LinkEntry[] = [
+  project.itchUrl ? { href: project.itchUrl, label: 'itch.io', key: 'itch' } : null,
+  project.steamUrl ? { href: project.steamUrl, label: 'Steam', key: 'steam' } : null,
+  project.githubUrl ? { href: project.githubUrl, label: 'GitHub', key: 'github' } : null,
+  project.url ? { href: project.url, label: 'Website', key: 'url' } : null,
+].filter((l): l is LinkEntry => l !== null)
+ .sort((a, b) => (a.key === primary ? -1 : b.key === primary ? 1 : 0));
 ---
 
 {compact ? (
@@ -35,46 +47,16 @@ const { project, compact = false } = Astro.props;
       <h3 class="text-lg font-semibold text-text-primary mb-1">{project.name}</h3>
       <p class="text-text-secondary text-sm mb-3">{project.description}</p>
       <div class="flex gap-3 flex-wrap">
-        {project.itchUrl && (
+        {links.map((link) => (
           <a
-            href={project.itchUrl}
+            href={link.href}
             target="_blank"
             rel="noopener noreferrer"
-            class="text-xs font-medium px-3 py-1.5 rounded bg-accent-orange/10 text-accent-orange hover:bg-accent-orange/20 transition-colors"
+            class={link.key === primary ? primaryClass : secondaryClass}
           >
-            itch.io
+            {link.label}
           </a>
-        )}
-        {project.steamUrl && (
-          <a
-            href={project.steamUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-xs font-medium px-3 py-1.5 rounded bg-bg-tertiary text-text-secondary hover:text-text-primary transition-colors"
-          >
-            Steam
-          </a>
-        )}
-        {project.githubUrl && (
-          <a
-            href={project.githubUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-xs font-medium px-3 py-1.5 rounded bg-bg-tertiary text-text-secondary hover:text-text-primary transition-colors"
-          >
-            GitHub
-          </a>
-        )}
-        {project.url && (
-          <a
-            href={project.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-xs font-medium px-3 py-1.5 rounded bg-accent-orange/10 text-accent-orange hover:bg-accent-orange/20 transition-colors"
-          >
-            Website
-          </a>
-        )}
+        ))}
       </div>
     </div>
   </div>

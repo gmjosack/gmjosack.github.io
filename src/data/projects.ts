@@ -9,6 +9,7 @@ export interface Project {
   steamUrl?: string;
   githubUrl?: string;
   url?: string;
+  primaryLink?: 'itch' | 'steam' | 'github' | 'url';
 }
 
 export interface ProjectGroup {
@@ -39,6 +40,7 @@ export const projects: Project[] = [
     image: "/images/games/corvian-curse.png",
     itchUrl: "https://madebygare.itch.io/corvian-curse",
     steamUrl: "https://store.steampowered.com/app/2626080/Corvian_Curse/",
+    primaryLink: 'steam',
   },
   {
     name: "Jetpack Scream",
