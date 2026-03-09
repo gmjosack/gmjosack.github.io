@@ -385,6 +385,43 @@ const pageData = JSON.stringify({ sessionsByDay, locationsByDay, DAY_ORDER, DAY_
     @media (max-width: 640px) {
       .header-top h1 { font-size: 0.95rem; }
     }
+
+    /* ── Toolbar extra buttons ── */
+    .tool-btn {
+      display: flex; align-items: center; gap: 5px;
+      padding: 5px 11px;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      color: var(--muted2);
+      font-size: 0.78rem; font-weight: 500;
+      cursor: pointer; white-space: nowrap;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+      flex-shrink: 0;
+    }
+    .tool-btn:hover { color: var(--text); border-color: var(--accent); }
+    .tool-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+    #jumpToNow { display: none; }
+
+    /* ── Interest states ── */
+    .scard.interest-yes { box-shadow: 0 0 0 1.5px #fbbf24; }
+    .scard.interest-no:not(.off) { opacity: 0.12; }
+    .mcard.interest-yes { outline: 1.5px solid #fbbf24; outline-offset: -1px; }
+    .mcard.interest-no { opacity: 0.15; }
+    .interest-star { position: absolute; top: 3px; right: 4px; font-size: 0.65rem; line-height: 1; pointer-events: none; }
+    .mcard .interest-star { position: static; display: inline; margin-left: 6px; font-size: 0.75rem; vertical-align: middle; }
+
+    /* ── Interest buttons in modal ── */
+    .interest-actions { display: flex; gap: 8px; margin-bottom: 16px; }
+    .interest-btn {
+      flex: 1; padding: 7px 12px; border-radius: 8px;
+      border: 1px solid var(--border2); background: var(--surface2);
+      color: var(--muted2); font-size: 0.78rem; font-weight: 500;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .interest-btn:hover { color: var(--text); border-color: var(--muted2); }
+    .interest-btn.active-yes { background: #fbbf2420; border-color: #fbbf24; color: #fbbf24; }
+    .interest-btn.active-no { background: #ef444420; border-color: #ef4444; color: #ef4444; }
   </style>
 </head>
 <body>
@@ -409,6 +446,15 @@ const pageData = JSON.stringify({ sessionsByDay, locationsByDay, DAY_ORDER, DAY_
         </svg>
       </button>
     </div>
+    <button id="jumpToNow" class="tool-btn" title="Jump to current time">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="8" cy="8" r="6"/><polyline points="8,5 8,8 10,10"/>
+      </svg>
+      Now
+    </button>
+    <button id="interestedOnlyBtn" class="tool-btn" title="Show interested only">
+      ⭐ Only
+    </button>
     <button id="filterToggle">
       <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
         <line x1="2" y1="4" x2="14" y2="4"/><line x1="4" y1="8" x2="12" y2="8"/><line x1="6" y1="12" x2="10" y2="12"/>
@@ -445,7 +491,89 @@ const PX = 4; // pixels per minute
 const MINS = DAY_END - DAY_START;
 
 let activeDay = DAY_ORDER[0];
-const on = { tracks: new Set(allTracks), formats: new Set(allFormats), passes: new Set(allPasses) };
+
+// ── Filter state (localStorage) ──
+const FILTER_KEY = 'gdc2026-filters';
+function loadFilters() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(FILTER_KEY) || 'null');
+    if (!saved) return { tracks: new Set(allTracks), formats: new Set(allFormats), passes: new Set(allPasses), interestedOnly: false };
+    // Intersect saved values with currently available ones (in case data changes)
+    return {
+      tracks: new Set(allTracks.filter(v => saved.tracks?.includes(v))),
+      formats: new Set(allFormats.filter(v => saved.formats?.includes(v))),
+      passes: new Set(allPasses.filter(v => saved.passes?.includes(v))),
+      interestedOnly: saved.interestedOnly ?? false,
+    };
+  } catch { return { tracks: new Set(allTracks), formats: new Set(allFormats), passes: new Set(allPasses), interestedOnly: false }; }
+}
+function saveFilters() {
+  localStorage.setItem(FILTER_KEY, JSON.stringify({
+    tracks: [...on.tracks], formats: [...on.formats], passes: [...on.passes], interestedOnly,
+  }));
+}
+
+const { tracks: _t, formats: _f, passes: _p, interestedOnly: _io } = loadFilters();
+const on = { tracks: _t, formats: _f, passes: _p };
+let interestedOnly = _io;
+
+// ── Interest state (localStorage) ──
+const INTEREST_KEY = 'gdc2026-interests';
+function loadInterests() {
+  try { return JSON.parse(localStorage.getItem(INTEREST_KEY) || '{}'); } catch { return {}; }
+}
+function saveInterests() { localStorage.setItem(INTEREST_KEY, JSON.stringify(interests)); }
+let interests = loadInterests();
+
+function getInterest(s) { return interests[s.title] || 'neutral'; }
+function setInterest(s, state) {
+  if (state === 'neutral') delete interests[s.title];
+  else interests[s.title] = state;
+  saveInterests();
+  applyAllInterestStyles();
+  if (currentModalSession?.title === s.title) renderModalInterestButtons(getInterest(s));
+}
+function applyInterestToEl(el) {
+  if (!el._s) return;
+  const st = getInterest(el._s);
+  el.classList.toggle('interest-yes', st === 'interested');
+  el.classList.toggle('interest-no', st === 'not-interested');
+  const star = el.querySelector('.interest-star');
+  if (star) star.style.display = st === 'interested' ? '' : 'none';
+}
+function applyAllInterestStyles() {
+  document.querySelectorAll('.scard, .mcard').forEach(applyInterestToEl);
+}
+
+// ── Interested-only toggle ──
+document.getElementById('interestedOnlyBtn').addEventListener('click', () => {
+  interestedOnly = !interestedOnly;
+  document.getElementById('interestedOnlyBtn').classList.toggle('active', interestedOnly);
+  applyVisibility();
+  saveFilters();
+});
+
+// ── Jump to Now ──
+function updateJumpToNowVisibility() {
+  const { ptDay } = getPTNow();
+  document.getElementById('jumpToNow').style.display = ptDay === activeDay ? 'flex' : 'none';
+}
+
+function jumpToNow() {
+  const { ptNow, ptDay } = getPTNow();
+  if (ptDay !== activeDay) return;
+  const nowMin = ptNow.getHours()*60 + ptNow.getMinutes();
+  if (document.body.classList.contains('list-mode')) {
+    const bar = document.getElementById('list-now-marker');
+    if (bar) bar.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } else {
+    if (nowMin < DAY_START || nowMin > DAY_END) return;
+    const wrapper = document.getElementById('gridWrapper');
+    const top = (nowMin - DAY_START) * PX;
+    wrapper.scrollTo({ top: top - wrapper.clientHeight / 3, behavior: 'smooth' });
+  }
+}
+document.getElementById('jumpToNow').addEventListener('click', jumpToNow);
 
 // ── Helpers ──
 function fmt(isoStr) {
@@ -490,14 +618,13 @@ document.getElementById('dayTabs').addEventListener('click', e => {
   activeDay = btn.dataset.day;
   document.querySelectorAll('.day-tab').forEach(b => b.classList.toggle('active', b.dataset.day === activeDay));
   buildView();
+  updateJumpToNowVisibility();
 });
 
 // ── Filter panel toggle ──
 document.getElementById('filterToggle').addEventListener('click', () => {
-  const toggle = document.getElementById('filterToggle');
-  const panel = document.getElementById('filterPanel');
-  toggle.classList.toggle('open');
-  panel.classList.toggle('open');
+  document.getElementById('filterToggle').classList.toggle('open');
+  document.getElementById('filterPanel').classList.toggle('open');
 });
 
 function updateFilterCount() {
@@ -505,36 +632,29 @@ function updateFilterCount() {
   const cnt = document.getElementById('filterCount');
   cnt.textContent = hidden;
   cnt.classList.toggle('visible', hidden > 0);
+  saveFilters();
 }
 
 // ── Filter badges ──
 function makeGroup(el, label, items, ft, badgeFn) {
   const grp = document.createElement('div'); grp.className = 'filter-group';
-
   const hdr = document.createElement('div'); hdr.className = 'filter-group-header';
   const title = document.createElement('span'); title.className = 'filter-group-title'; title.textContent = label;
   const actions = document.createElement('div'); actions.className = 'filter-group-actions';
-
   const allBtn = document.createElement('button'); allBtn.className = 'filter-group-btn'; allBtn.textContent = 'All';
   allBtn.addEventListener('click', () => { items.forEach(v => on[ft].add(v)); syncBadges(); applyVisibility(); updateFilterCount(); });
   const noneBtn = document.createElement('button'); noneBtn.className = 'filter-group-btn'; noneBtn.textContent = 'None';
   noneBtn.addEventListener('click', () => { items.forEach(v => on[ft].delete(v)); syncBadges(); applyVisibility(); updateFilterCount(); });
-
   actions.appendChild(allBtn); actions.appendChild(noneBtn);
   hdr.appendChild(title); hdr.appendChild(actions); grp.appendChild(hdr);
-
   const badges = document.createElement('div'); badges.className = 'filter-badges';
-  for (const v of items) {
-    const b = badgeFn(v, ft);
-    badges.appendChild(b);
-  }
+  for (const v of items) badges.appendChild(badgeFn(v, ft));
   grp.appendChild(badges); el.appendChild(grp);
 }
 
 function buildFilters() {
   const el = document.getElementById('filterArea');
   el.innerHTML = '';
-
   makeGroup(el, 'Track', allTracks, 'tracks', (t) => {
     const c = TRACK_COLORS[t] ?? '#666';
     const b = document.createElement('button');
@@ -544,7 +664,6 @@ function buildFilters() {
     b.appendChild(dot); b.appendChild(document.createTextNode(t));
     return b;
   });
-
   makeGroup(el, 'Format', allFormats, 'formats', (f) => {
     const b = document.createElement('button');
     b.className = 'badge'; b.dataset.ft = 'formats'; b.dataset.fv = f;
@@ -552,7 +671,6 @@ function buildFilters() {
     b.textContent = f || 'Unknown';
     return b;
   });
-
   makeGroup(el, 'Pass', allPasses, 'passes', (p) => {
     const b = document.createElement('button');
     b.className = 'badge'; b.dataset.ft = 'passes'; b.dataset.fv = p;
@@ -560,14 +678,12 @@ function buildFilters() {
     b.textContent = p;
     return b;
   });
-
   syncBadges();
 }
 
 function syncBadges() {
   document.querySelectorAll('.badge').forEach(b => {
-    const active = on[b.dataset.ft]?.has(b.dataset.fv);
-    b.classList.toggle('off', !active);
+    b.classList.toggle('off', !on[b.dataset.ft]?.has(b.dataset.fv));
   });
 }
 
@@ -576,17 +692,17 @@ document.getElementById('filterArea').addEventListener('click', e => {
   if (!b) return;
   const set = on[b.dataset.ft];
   if (set.has(b.dataset.fv)) set.delete(b.dataset.fv); else set.add(b.dataset.fv);
-  syncBadges();
-  applyVisibility();
-  updateFilterCount();
+  syncBadges(); applyVisibility(); updateFilterCount();
 });
 
 function applyVisibility() {
   document.querySelectorAll('.scard').forEach(el => {
-    el.classList.toggle('off', !visible(el._s));
+    const hide = !visible(el._s) || (interestedOnly && getInterest(el._s) !== 'interested');
+    el.classList.toggle('off', hide);
   });
   document.querySelectorAll('.mcard').forEach(el => {
-    el.classList.toggle('off', !visible(el._s));
+    const hide = !visible(el._s) || (interestedOnly && getInterest(el._s) !== 'interested');
+    el.classList.toggle('off', hide);
   });
   updateColVisibility();
 }
@@ -602,6 +718,7 @@ function updateColVisibility() {
 // ── Desktop grid ──
 const COL_W = 165; // px per location column
 let gridCols = []; // { col, hdr } pairs, rebuilt on each buildGrid
+let gridNowLineCols = []; // column elements for now-line updates
 
 function buildGrid() {
   const sessions = sessionsByDay[activeDay] ?? [];
@@ -610,6 +727,7 @@ function buildGrid() {
   const gc = document.getElementById('gridContainer');
   gc.innerHTML = '';
   gridCols = [];
+  gridNowLineCols = [];
 
   // ── Sticky header row (flex) ──
   const hdrRow = document.createElement('div');
@@ -670,13 +788,13 @@ function buildGrid() {
 
     const card = document.createElement('div');
     card.className = 'scard' + (visible(s) ? '' : ' off');
-    card.style.cssText = `position:absolute;left:2px;right:2px;top:${top}px;height:${ht}px;border-radius:5px;padding:4px 7px;font-size:0.68rem;line-height:1.35;cursor:pointer;overflow:hidden;border-left:3px solid ${c};background:${c}20;transition:opacity 0.15s,filter 0.15s;`;
+    card.style.cssText = `top:${top}px;height:${ht}px;border-left-color:${c};background:${c}20;`;
     card._s = s;
 
-    const title = document.createElement('div');
-    title.style.cssText = `font-weight:600;margin-bottom:2px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;`;
-    title.textContent = s.title;
-    card.appendChild(title);
+    const titleEl = document.createElement('div');
+    titleEl.style.cssText = `font-weight:600;margin-bottom:2px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;`;
+    titleEl.textContent = s.title;
+    card.appendChild(titleEl);
 
     if (ht > 44) {
       const time = document.createElement('div');
@@ -685,28 +803,58 @@ function buildGrid() {
       card.appendChild(time);
     }
 
+    const star = document.createElement('span');
+    star.className = 'interest-star';
+    star.textContent = '⭐';
+    star.style.display = 'none';
+    card.appendChild(star);
+
     card.addEventListener('click', () => openModal(s));
+    applyInterestToEl(card);
     cols[idx].appendChild(card);
   }
 
-  // Current time indicator — always in Pacific Time (GDC is in San Francisco)
-  const now = new Date();
-  const ptNow = new Date(now.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
+  gridNowLineCols = cols;
+  updateNowLine();
+}
+
+// ── Now line (real-time) ──
+function getPTNow() {
+  const ptNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
   const ptDay = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][ptNow.getDay()];
-  if (ptDay === activeDay) {
-    const nowMin = ptNow.getHours()*60 + ptNow.getMinutes();
-    if (nowMin >= DAY_START && nowMin <= DAY_END) {
-      const top = (nowMin - DAY_START) * PX;
-      cols.forEach(col => {
-        const line = document.createElement('div');
-        line.style.cssText = `position:absolute;left:0;right:0;top:${top}px;border-top:2px solid #ef4444;z-index:15;pointer-events:none;`;
-        const dot = document.createElement('div');
-        dot.style.cssText = `position:absolute;left:-4px;top:-4px;width:8px;height:8px;background:#ef4444;border-radius:50%;`;
-        line.appendChild(dot); col.appendChild(line);
-      });
+  return { ptNow, ptDay };
+}
+
+function updateNowLine() {
+  const { ptNow, ptDay } = getPTNow();
+  const nowMin = ptNow.getHours()*60 + ptNow.getMinutes();
+
+  // Grid: remove stale indicators and re-place at current time
+  document.querySelectorAll('.now-line-indicator').forEach(el => el.remove());
+  if (ptDay === activeDay && nowMin >= DAY_START && nowMin <= DAY_END) {
+    const top = (nowMin - DAY_START) * PX;
+    gridNowLineCols.forEach(col => {
+      const line = document.createElement('div');
+      line.className = 'now-line-indicator';
+      line.style.cssText = `position:absolute;left:0;right:0;top:${top}px;border-top:2px solid #ef4444;z-index:15;pointer-events:none;`;
+      const dot = document.createElement('div');
+      dot.style.cssText = `position:absolute;left:-4px;top:-4px;width:8px;height:8px;background:#ef4444;border-radius:50%;`;
+      line.appendChild(dot);
+      col.appendChild(line);
+    });
+  }
+
+  // List: update now-bar time text
+  const nowBar = document.getElementById('list-now-marker');
+  if (nowBar) {
+    const span = nowBar.querySelector('.now-time');
+    if (span && ptDay === activeDay) {
+      span.textContent = `Now · ${ptNow.getHours()%12||12}:${String(ptNow.getMinutes()).padStart(2,'0')} ${ptNow.getHours()>=12?'PM':'AM'} PT`;
     }
   }
 }
+
+setInterval(updateNowLine, 60000);
 
 // ── Mobile list ──
 function buildMobileList() {
@@ -717,9 +865,7 @@ function buildMobileList() {
   const groups = {};
   for (const s of sessions) { if (!groups[s.startTime]) groups[s.startTime] = []; groups[s.startTime].push(s); }
 
-  // Compute current PT minute-of-day for "now" marker
-  const ptNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
-  const ptDay = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][ptNow.getDay()];
+  const { ptNow, ptDay } = getPTNow();
   const nowMin = ptDay === activeDay ? ptNow.getHours()*60 + ptNow.getMinutes() : -1;
   let nowInserted = false;
 
@@ -727,9 +873,11 @@ function buildMobileList() {
     const keyMin = key.includes(' ') ? (() => { const [h,m] = key.split(' ')[1].split(':').map(Number); return h*60+m; })() : -1;
 
     if (!nowInserted && nowMin >= 0 && keyMin > nowMin) {
+      const timeStr = `${ptNow.getHours()%12||12}:${String(ptNow.getMinutes()).padStart(2,'0')} ${ptNow.getHours()>=12?'PM':'AM'} PT`;
       const nowBar = document.createElement('div');
+      nowBar.id = 'list-now-marker';
       nowBar.style.cssText = `display:flex;align-items:center;gap:8px;margin:4px 0 16px;`;
-      nowBar.innerHTML = `<div style="flex:1;height:2px;background:#ef4444;border-radius:1px;"></div><span style="font-size:0.7rem;font-weight:700;color:#ef4444;white-space:nowrap;">Now · ${ptNow.getHours()%12||12}:${String(ptNow.getMinutes()).padStart(2,'0')} ${ptNow.getHours()>=12?'PM':'AM'} PT</span><div style="flex:1;height:2px;background:#ef4444;border-radius:1px;"></div>`;
+      nowBar.innerHTML = `<div style="flex:1;height:2px;background:#ef4444;border-radius:1px;"></div><span class="now-time" style="font-size:0.7rem;font-weight:700;color:#ef4444;white-space:nowrap;">Now · ${timeStr}</span><div style="flex:1;height:2px;background:#ef4444;border-radius:1px;"></div>`;
       ml.appendChild(nowBar);
       nowInserted = true;
     }
@@ -743,8 +891,24 @@ function buildMobileList() {
       const card = document.createElement('div');
       card.className = 'mcard' + (visible(s) ? '' : ' off');
       card.style.borderLeftColor = c; card._s = s;
-      card.innerHTML = `<div class="mcard-title">${s.title}</div><div class="mcard-meta">${s.location}${s.format ? ' · '+s.format : ''} · ${fmt(s.startTime)}–${fmt(s.endTime)}</div>`;
+
+      const titleEl = document.createElement('div');
+      titleEl.className = 'mcard-title';
+      titleEl.textContent = s.title;
+      const star = document.createElement('span');
+      star.className = 'interest-star';
+      star.textContent = '⭐';
+      star.style.display = 'none';
+      titleEl.appendChild(star);
+      card.appendChild(titleEl);
+
+      const meta = document.createElement('div');
+      meta.className = 'mcard-meta';
+      meta.textContent = `${s.location}${s.format ? ' · '+s.format : ''} · ${fmt(s.startTime)}–${fmt(s.endTime)}`;
+      card.appendChild(meta);
+
       card.addEventListener('click', () => openModal(s));
+      applyInterestToEl(card);
       grp.appendChild(card);
     }
     ml.appendChild(grp);
@@ -752,10 +916,33 @@ function buildMobileList() {
 }
 
 // ── Modal ──
+let currentModalSession = null;
+
+function renderModalInterestButtons(state) {
+  const container = document.getElementById('modal-interest-actions');
+  if (!container) return;
+  container.innerHTML = '';
+  for (const [st, label, activeClass] of [
+    ['interested', '⭐ Interested', 'active-yes'],
+    ['not-interested', '✕ Not Interested', 'active-no'],
+  ]) {
+    const btn = document.createElement('button');
+    btn.className = 'interest-btn' + (state === st ? ' ' + activeClass : '');
+    btn.textContent = label;
+    btn.addEventListener('click', () => {
+      const cur = getInterest(currentModalSession);
+      setInterest(currentModalSession, cur === st ? 'neutral' : st);
+    });
+    container.appendChild(btn);
+  }
+}
+
 function openModal(s) {
+  currentModalSession = s;
   const c = color(s);
   document.getElementById('modalContent').innerHTML = `
     <div class="modal-title">${s.title}</div>
+    <div id="modal-interest-actions" class="interest-actions"></div>
     <div class="modal-badges">
       ${s.tracks.length ? `<span class="badge" style="background:${c}30;border-color:${c}55;color:${c}">${s.tracks.join(', ')}</span>` : ''}
       ${s.format ? `<span class="badge" style="background:#fff1;border-color:#fff3;color:var(--text)">${s.format}</span>` : ''}
@@ -766,10 +953,19 @@ function openModal(s) {
     ${s.description ? `<div class="modal-section"><h3>Description</h3><p>${s.description}</p></div>` : ''}
     ${s.recorded ? `<div class="modal-section"><h3>Recording</h3><p>${s.recorded}</p></div>` : ''}
   `;
+  renderModalInterestButtons(getInterest(s));
   document.getElementById('modalOverlay').classList.add('open');
 }
-document.getElementById('modalClose').addEventListener('click', () => document.getElementById('modalOverlay').classList.remove('open'));
-document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) document.getElementById('modalOverlay').classList.remove('open'); });
+document.getElementById('modalClose').addEventListener('click', () => {
+  document.getElementById('modalOverlay').classList.remove('open');
+  currentModalSession = null;
+});
+document.getElementById('modalOverlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) {
+    document.getElementById('modalOverlay').classList.remove('open');
+    currentModalSession = null;
+  }
+});
 
 // ── View toggle ──
 function setView(view) {
@@ -786,11 +982,13 @@ document.getElementById('viewToggle')?.addEventListener('click', e => {
 });
 
 // ── Init ──
-function buildView() { buildGrid(); updateColVisibility(); buildMobileList(); }
+function buildView() { buildGrid(); buildMobileList(); applyVisibility(); }
 buildDayTabs();
 buildFilters();
 updateFilterCount();
+document.getElementById('interestedOnlyBtn').classList.toggle('active', interestedOnly);
 buildView();
+updateJumpToNowVisibility();
 </script>
 </body>
 </html>
