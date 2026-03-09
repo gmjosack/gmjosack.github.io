@@ -383,7 +383,10 @@ const pageData = JSON.stringify({ sessionsByDay, locationsByDay, DAY_ORDER, DAY_
     body.list-mode #mobileList { flex: 1; overflow-y: auto; min-height: 0; }
 
     @media (max-width: 640px) {
-      .header-top h1 { font-size: 0.95rem; }
+      .header-top { padding: 8px 10px 0; gap: 6px; }
+      .header-top h1 { font-size: 0.85rem; }
+      .btn-label { display: none; }
+      #filterToggle { padding: 5px 8px; gap: 4px; }
     }
 
     /* ── Toolbar extra buttons ── */
@@ -450,16 +453,16 @@ const pageData = JSON.stringify({ sessionsByDay, locationsByDay, DAY_ORDER, DAY_
       <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="8" cy="8" r="6"/><polyline points="8,5 8,8 10,10"/>
       </svg>
-      Now
+      <span class="btn-label">Now</span>
     </button>
     <button id="interestedOnlyBtn" class="tool-btn" title="Show interested only">
-      ⭐ Only
+      ⭐<span class="btn-label"> Only</span>
     </button>
     <button id="filterToggle">
       <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
         <line x1="2" y1="4" x2="14" y2="4"/><line x1="4" y1="8" x2="12" y2="8"/><line x1="6" y1="12" x2="10" y2="12"/>
       </svg>
-      Filters
+      <span class="btn-label">Filters</span>
       <span class="filter-count" id="filterCount"></span>
       <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="2,3 5,7 8,3"/>
