@@ -458,6 +458,9 @@ const pageData = JSON.stringify({ sessionsByDay, locationsByDay, DAY_ORDER, DAY_
     <button id="interestedOnlyBtn" class="tool-btn" title="Show interested only">
       ⭐<span class="btn-label"> Only</span>
     </button>
+    <button id="hideSponsoredBtn" class="tool-btn" title="Hide sponsored / presented-by talks">
+      No Ads
+    </button>
     <button id="filterToggle">
       <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
         <line x1="2" y1="4" x2="14" y2="4"/><line x1="4" y1="8" x2="12" y2="8"/><line x1="6" y1="12" x2="10" y2="12"/>
@@ -493,32 +496,38 @@ const { sessionsByDay, locationsByDay, DAY_ORDER, DAY_START, DAY_END, TRACK_COLO
 const PX = 4; // pixels per minute
 const MINS = DAY_END - DAY_START;
 
-let activeDay = DAY_ORDER[0];
+const DAY_NUMS  = { Monday:'2026-03-09', Tuesday:'2026-03-10', Wednesday:'2026-03-11', Thursday:'2026-03-12', Friday:'2026-03-13' };
+const todayISO = new Date().toISOString().slice(0, 10);
+let activeDay = DAY_ORDER.find(d => DAY_NUMS[d] === todayISO) || DAY_ORDER[0];
 
 // ── Filter state (localStorage) ──
 const FILTER_KEY = 'gdc2026-filters';
 function loadFilters() {
   try {
     const saved = JSON.parse(localStorage.getItem(FILTER_KEY) || 'null');
-    if (!saved) return { tracks: new Set(allTracks), formats: new Set(allFormats), passes: new Set(allPasses), interestedOnly: false };
+    if (!saved) return { tracks: new Set(allTracks), formats: new Set(allFormats), passes: new Set(allPasses), interestedOnly: false, hideSponsored: false };
     // Intersect saved values with currently available ones (in case data changes)
     return {
       tracks: new Set(allTracks.filter(v => saved.tracks?.includes(v))),
       formats: new Set(allFormats.filter(v => saved.formats?.includes(v))),
       passes: new Set(allPasses.filter(v => saved.passes?.includes(v))),
       interestedOnly: saved.interestedOnly ?? false,
+      hideSponsored: saved.hideSponsored ?? false,
     };
-  } catch { return { tracks: new Set(allTracks), formats: new Set(allFormats), passes: new Set(allPasses), interestedOnly: false }; }
+  } catch { return { tracks: new Set(allTracks), formats: new Set(allFormats), passes: new Set(allPasses), interestedOnly: false, hideSponsored: false }; }
 }
 function saveFilters() {
   localStorage.setItem(FILTER_KEY, JSON.stringify({
-    tracks: [...on.tracks], formats: [...on.formats], passes: [...on.passes], interestedOnly,
+    tracks: [...on.tracks], formats: [...on.formats], passes: [...on.passes], interestedOnly, hideSponsored,
   }));
 }
 
-const { tracks: _t, formats: _f, passes: _p, interestedOnly: _io } = loadFilters();
+const { tracks: _t, formats: _f, passes: _p, interestedOnly: _io, hideSponsored: _hs } = loadFilters();
 const on = { tracks: _t, formats: _f, passes: _p };
 let interestedOnly = _io;
+let hideSponsored = _hs;
+
+function isSponsored(s) { return /\(Presented by /i.test(s.title); }
 
 // ── Interest state (localStorage) ──
 const INTEREST_KEY = 'gdc2026-interests';
@@ -556,6 +565,14 @@ document.getElementById('interestedOnlyBtn').addEventListener('click', () => {
   saveFilters();
 });
 
+// ── Hide sponsored toggle ──
+document.getElementById('hideSponsoredBtn').addEventListener('click', () => {
+  hideSponsored = !hideSponsored;
+  document.getElementById('hideSponsoredBtn').classList.toggle('active', hideSponsored);
+  applyVisibility();
+  saveFilters();
+});
+
 // ── Jump to Now ──
 function updateJumpToNowVisibility() {
   const { ptDay } = getPTNow();
@@ -586,6 +603,7 @@ function fmt(isoStr) {
 }
 function color(s) { return TRACK_COLORS[s.tracks[0]] ?? '#64748b'; }
 function visible(s) {
+  if (hideSponsored && isSponsored(s)) return false;
   const tOk = s.tracks.length === 0 || s.tracks.some(t => on.tracks.has(t));
   const fOk = !s.format || on.formats.has(s.format);
   const pOk = s.passes.length === 0 || s.passes.some(p => on.passes.has(p));
@@ -599,15 +617,13 @@ function locLabel(loc) {
 
 // GDC 2026 dates
 const DAY_DATES = { Monday:'Mar 9', Tuesday:'Mar 10', Wednesday:'Mar 11', Thursday:'Mar 12', Friday:'Mar 13' };
-const DAY_NUMS  = { Monday:'2026-03-09', Tuesday:'2026-03-10', Wednesday:'2026-03-11', Thursday:'2026-03-12', Friday:'2026-03-13' };
 
 // ── Day tabs ──
 function buildDayTabs() {
   const el = document.getElementById('dayTabs');
   el.innerHTML = '';
-  const todayStr = new Date().toISOString().slice(0,10);
   for (const day of DAY_ORDER) {
-    const isToday = DAY_NUMS[day] === todayStr;
+    const isToday = DAY_NUMS[day] === todayISO;
     const btn = document.createElement('button');
     btn.className = 'day-tab' + (day === activeDay ? ' active' : '') + (isToday ? ' today' : '');
     btn.dataset.day = day;
@@ -990,6 +1006,7 @@ buildDayTabs();
 buildFilters();
 updateFilterCount();
 document.getElementById('interestedOnlyBtn').classList.toggle('active', interestedOnly);
+document.getElementById('hideSponsoredBtn').classList.toggle('active', hideSponsored);
 buildView();
 updateJumpToNowVisibility();
 </script>
