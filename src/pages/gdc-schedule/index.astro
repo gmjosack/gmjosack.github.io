@@ -497,7 +497,7 @@ const PX = 4; // pixels per minute
 const MINS = DAY_END - DAY_START;
 
 const DAY_NUMS  = { Monday:'2026-03-09', Tuesday:'2026-03-10', Wednesday:'2026-03-11', Thursday:'2026-03-12', Friday:'2026-03-13' };
-const todayISO = new Date().toISOString().slice(0, 10);
+const todayISO = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' });
 let activeDay = DAY_ORDER.find(d => DAY_NUMS[d] === todayISO) || DAY_ORDER[0];
 
 // ── Filter state (localStorage) ──
