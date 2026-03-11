@@ -543,6 +543,7 @@ function setInterest(s, state) {
   else interests[s.title] = state;
   saveInterests();
   applyAllInterestStyles();
+  applyVisibility();
   if (currentModalSession?.title === s.title) renderModalInterestButtons(getInterest(s));
 }
 function applyInterestToEl(el) {
@@ -863,12 +864,21 @@ function updateNowLine() {
     });
   }
 
-  // List: update now-bar time text
-  const nowBar = document.getElementById('list-now-marker');
-  if (nowBar) {
-    const span = nowBar.querySelector('.now-time');
-    if (span && ptDay === activeDay) {
-      span.textContent = `Now · ${ptNow.getHours()%12||12}:${String(ptNow.getMinutes()).padStart(2,'0')} ${ptNow.getHours()>=12?'PM':'AM'} PT`;
+  // List: reposition now-bar to reflect current time
+  const ml = document.getElementById('mobileList');
+  if (ml) {
+    const oldBar = document.getElementById('list-now-marker');
+    if (oldBar) oldBar.remove();
+    if (ptDay === activeDay && nowMin >= 0) {
+      const timeStr = `${ptNow.getHours()%12||12}:${String(ptNow.getMinutes()).padStart(2,'0')} ${ptNow.getHours()>=12?'PM':'AM'} PT`;
+      const nowBar = document.createElement('div');
+      nowBar.id = 'list-now-marker';
+      nowBar.style.cssText = `display:flex;align-items:center;gap:8px;margin:4px 0 16px;`;
+      nowBar.innerHTML = `<div style="flex:1;height:2px;background:#ef4444;border-radius:1px;"></div><span class="now-time" style="font-size:0.7rem;font-weight:700;color:#ef4444;white-space:nowrap;">Now · ${timeStr}</span><div style="flex:1;height:2px;background:#ef4444;border-radius:1px;"></div>`;
+      const groups = [...ml.querySelectorAll('[data-min]')];
+      const insertBefore = groups.find(g => parseInt(g.dataset.min) > nowMin);
+      if (insertBefore) ml.insertBefore(nowBar, insertBefore);
+      else ml.appendChild(nowBar);
     }
   }
 }
@@ -901,7 +911,7 @@ function buildMobileList() {
       nowInserted = true;
     }
 
-    const grp = document.createElement('div'); grp.style.marginBottom = '18px';
+    const grp = document.createElement('div'); grp.style.marginBottom = '18px'; grp.dataset.min = keyMin;
     const lbl = document.createElement('div'); lbl.className = 'mtime-label'; lbl.textContent = fmt(key);
     grp.appendChild(lbl);
 
