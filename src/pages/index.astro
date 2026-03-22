@@ -10,7 +10,7 @@ import { projects, categoryLabels, categoryOrder, softwareSubsections } from '..
       const topLevel = projects.filter((p) => p.category === 'software');
       return (
         <section class="mb-12">
-          <h2 class="text-2xl font-semibold mb-6 text-accent-orange">{categoryLabels[category]}</h2>
+          <h2 class="text-2xl font-semibold text-accent-orange mb-4 pixel-divider">{categoryLabels[category]}</h2>
           {topLevel.length > 0 && (
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
               {topLevel.map((project) => (
@@ -52,7 +52,7 @@ import { projects, categoryLabels, categoryOrder, softwareSubsections } from '..
     if (categoryProjects.length === 0) return null;
     return (
       <section class="mb-12">
-        <h2 class="text-2xl font-semibold mb-4 text-accent-orange">{categoryLabels[category]}</h2>
+        <h2 class="text-2xl font-semibold text-accent-orange mb-4 pixel-divider">{categoryLabels[category]}</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           {categoryProjects.map((project) => (
             project.spacer
