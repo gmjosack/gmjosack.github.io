@@ -3,16 +3,28 @@ interface Props {
   title: string;
   date: string;
   slug: string;
+  excerpt?: string;
 }
 
-const { title, date, slug } = Astro.props;
+const { title, date, slug, excerpt } = Astro.props;
 ---
 
 <a href={`/posts/${slug}/`} class="block group">
-  <article class="bg-bg-secondary border border-bg-tertiary rounded-lg p-5 hover:border-accent-orange/30 transition-colors">
-    <h3 class="text-lg font-semibold text-text-primary group-hover:text-accent-orange transition-colors mb-1">
-      {title}
-    </h3>
-    <time class="text-text-secondary text-sm">{date}</time>
+  <article class="bg-bg-secondary border border-bg-tertiary rounded-lg overflow-hidden hover:border-accent-orange/30 transition-colors flex">
+    <div class="w-1 bg-accent-orange/40 group-hover:bg-accent-orange transition-colors shrink-0" />
+    <div class="p-5 flex-1 min-w-0">
+      <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+        <h3 class="text-lg font-semibold text-text-primary group-hover:text-accent-orange transition-colors">
+          {title}
+        </h3>
+        <time class="text-text-secondary text-xs shrink-0 sm:mt-1">{date}</time>
+      </div>
+      {excerpt && (
+        <div class="relative mt-3 max-h-24 overflow-hidden">
+          <p class="text-text-secondary text-sm leading-relaxed">{excerpt}</p>
+          <div class="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-bg-secondary to-transparent" />
+        </div>
+      )}
+    </div>
   </article>
 </a>

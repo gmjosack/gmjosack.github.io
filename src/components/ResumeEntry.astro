@@ -9,10 +9,11 @@ interface Props {
 
 const { job, side, index } = Astro.props;
 const isLeft = side === 'left';
+const isCurrent = job.dates.includes('Present');
 ---
 
 {isLeft ? (
-  <div class="text-right pr-4 pb-4" style={`grid-column: 1; grid-row: ${index + 1};`}>
+  <div class:list={["text-right pb-4", isCurrent ? "pr-4 mr-2 border-r-2 border-accent-orange rounded-r-sm" : "pr-6"]} style={`grid-column: 1; grid-row: ${index + 1};`}>
     <h3 class="text-lg font-semibold text-text-primary">{job.company}</h3>
     <span class="text-accent-orange/80 text-xs font-medium italic">{job.dates}</span>
     <ul class="mt-2 space-y-1">
@@ -37,6 +38,6 @@ const isLeft = side === 'left';
   <img
     src={job.logo}
     alt={job.company}
-    class="w-10 h-10 rounded-full object-cover border-2 border-bg-primary z-10"
+    class:list={["w-10 h-10 rounded-full object-cover border-2 z-10", isCurrent ? "border-accent-orange" : "border-bg-primary"]}
   />
 </div>

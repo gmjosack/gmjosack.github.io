@@ -44,7 +44,7 @@ export const projects: Project[] = [
     itchUrl: "https://madebygare.itch.io/the-curator",
     featured: true,
     context:
-      "[bumperoyster](https://bumperoyster.itch.io/), [bronxtaco](https://bronxtaco.itch.io/) and I teamed up a again, this time for the [GMTK Game Jam 2025](https://itch.io/jam/gmtk-2025/rate/3746438). This game was inspired by Night Manor from UFO 50. I learned how stressful making a content heavy game in a short jam is with this one but I've very happy with what we pulled off!  ",
+      "[bumperoyster](https://bumperoyster.itch.io/), [bronxtaco](https://bronxtaco.itch.io/) and I teamed up again, this time for the [GMTK Game Jam 2025](https://itch.io/jam/gmtk-2025/rate/3746438). This game was inspired by Night Manor from UFO 50. I learned how stressful making a content heavy game in a short jam is with this one but I'm very happy with what we pulled off!  ",
   },
   {
     name: "Broom",
@@ -95,7 +95,7 @@ export const projects: Project[] = [
     image: "/images/games/bit-chunky.png",
     itchUrl: "https://madebygare.itch.io/bit-chunky",
     context:
-      "Back to solo jamming for the [Kenney Jam 2023](https://itch.io/jam/kenney-jam-2023/rate/2183722). Only 48 hours, I used the excuse of all assets to focus on making a Spelunky-like platforming, specifically focusing on the random generation with tilemaps in Godot. The was the precursor to [Corvian Curse](https://store.steampowered.com/app/2626080/Corvian_Curse/)",
+      "Back to solo jamming for the [Kenney Jam 2023](https://itch.io/jam/kenney-jam-2023/rate/2183722). Only 48 hours, I used the excuse of provided assets to focus on making a Spelunky-like platforming, specifically focusing on the random generation with tilemaps in Godot. This was the precursor to [Corvian Curse](https://store.steampowered.com/app/2626080/Corvian_Curse/).",
   },
   {
     name: "Grind the Rich",
@@ -104,7 +104,7 @@ export const projects: Project[] = [
     image: "/images/games/grind-the-rich.png",
     itchUrl: "https://madebygare.itch.io/grind-the-rich",
     context:
-      "Made for the [🤭 Fuck Capitalism Jam 2023 🤭](https://itch.io/jam/fuck-capitalism-jam-2023/rate/2133498) with [bumperoyster](https://bumperoyster.itch.io/). this was really fun and the start of bumper and I collabing on more games.",
+      "Made for the [🤭 Fuck Capitalism Jam 2023 🤭](https://itch.io/jam/fuck-capitalism-jam-2023/rate/2133498) with [bumperoyster](https://bumperoyster.itch.io/). This was really fun and the start of bumper and I collabing on more games.",
   },
   {
     name: "Fish Hell",
@@ -131,7 +131,7 @@ export const projects: Project[] = [
     image: "/images/games/jetpack-scream.png",
     itchUrl: "https://madebygare.itch.io/jetpack-scream",
     context:
-      "This was my first game in Godot and where I fell in love with the engine. I made this for [Godot Wild Jam #49](https://itch.io/jam/godot-wild-jam-49/rate/1700967). I really liked the premise of having to skid to stop yourself from going too far forward while something behind you preventing you from going too far back.",
+      "This was my first game in Godot and where I fell in love with the engine. I made this for [Godot Wild Jam #49](https://itch.io/jam/godot-wild-jam-49/rate/1700967). I really liked the premise of having to skid to stop yourself from going too far forward while something behind you prevents you from going too far back.",
   },
 
   // Sites

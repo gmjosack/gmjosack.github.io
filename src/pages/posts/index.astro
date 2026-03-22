@@ -6,16 +6,57 @@ import { getCollection } from 'astro:content';
 const posts = (await getCollection('posts'))
   .filter((post) => post.data.published)
   .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+
+function getExcerpt(body: string | undefined, maxLen = 400): string {
+  if (!body) return '';
+  // Strip frontmatter, markdown links, images, HTML tags, and headings
+  const plain = body
+    .replace(/^---[\s\S]*?---\s*/m, '')
+    .replace(/!\[.*?\]\(.*?\)/g, '')
+    .replace(/\[([^\]]+)\]\(.*?\)/g, '$1')
+    .replace(/<[^>]+>/g, '')
+    .replace(/^#+\s+.*$/gm, '')
+    .replace(/\*+([^*]+)\*+/g, '$1')
+    .replace(/\n+/g, ' ')
+    .trim();
+  return plain.length > maxLen ? plain.slice(0, maxLen).replace(/\s+\S*$/, '...') : plain;
+}
+
+// Group posts by year
+const postsByYear: { year: number; posts: typeof posts }[] = [];
+for (const post of posts) {
+  const year = new Date(post.data.date).getFullYear();
+  const existing = postsByYear.find((g) => g.year === year);
+  if (existing) {
+    existing.posts.push(post);
+  } else {
+    postsByYear.push({ year, posts: [post] });
+  }
+}
 ---
 
 <BaseLayout title="Blog - Made By Gare">
-  <div class="space-y-4 max-w-3xl">
-    {posts.map((post) => (
-      <PostCard
-        title={post.data.title}
-        date={post.data.date}
-        slug={post.id}
-      />
+  <div class="relative pl-8">
+    <div class="absolute left-3 top-0 bottom-0 w-0.5 bg-accent-orange/30" />
+    {postsByYear.map((group) => (
+      <div class="mb-6">
+        <div class="flex items-center mb-4 -ml-8">
+          <div class="w-6 h-6 rounded-full bg-bg-primary border-2 border-accent-orange flex items-center justify-center z-10">
+            <div class="w-2 h-2 rounded-full bg-accent-orange" />
+          </div>
+          <span class="ml-3 text-sm font-semibold text-accent-orange">{group.year}</span>
+        </div>
+        <div class="space-y-4">
+          {group.posts.map((post) => (
+            <PostCard
+              title={post.data.title}
+              date={post.data.date}
+              slug={post.id}
+              excerpt={getExcerpt(post.body)}
+            />
+          ))}
+        </div>
+      </div>
     ))}
   </div>
 </BaseLayout>
