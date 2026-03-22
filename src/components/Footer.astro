@@ -1,12 +1,53 @@
 ---
+import { localSites } from '../data/webring';
+
 const year = new Date().getFullYear();
 ---
 
 <footer class="border-t border-bg-tertiary mt-auto">
-  <div class="mx-auto max-w-6xl px-4 py-8 text-center text-text-secondary text-sm">
-    <p>&copy; {year} madebygare. All rights reserved.</p>
-    <p class="mt-1">
-      Logo by <a href="https://bumperoyster.my.canva.site/" target="_blank" rel="noopener noreferrer" class="text-accent-orange hover:underline">bumperoyster</a>
-    </p>
+  <div class="mx-auto max-w-6xl px-4 py-8">
+    <div class="mb-6 text-center" id="webring-section" style="display:none;">
+      <p class="text-text-secondary text-xs mb-3">Check out another cool site</p>
+      <div class="flex justify-center gap-3" id="webring-slots"></div>
+      <hr class="border-bg-tertiary mt-6" />
+    </div>
+
+    <div class="text-center text-text-secondary text-sm">
+      <p>&copy; {year} madebygare. All rights reserved.</p>
+      <p class="mt-1">
+        Logo by <a href="https://bumperoyster.my.canva.site/" target="_blank" rel="noopener noreferrer" class="text-accent-orange hover:underline">bumperoyster</a>
+      </p>
+    </div>
   </div>
 </footer>
+
+<script define:vars={{ localSites }}>
+  async function loadWebring() {
+    const container = document.getElementById('webring-slots');
+    const section = document.getElementById('webring-section');
+    if (!container || !section) return;
+
+    let sites = [...localSites];
+    try {
+      const res = await fetch('https://raw.githubusercontent.com/Willdotwhite/webring/refs/heads/main/data.json');
+      const remote = await res.json();
+      sites = [...remote.filter(s => s.url !== 'https://madebygare.com/'), ...sites];
+    } catch {
+      // Use local sites only
+    }
+
+    if (sites.length === 0) return;
+
+    const shuffled = sites.sort(() => Math.random() - 0.5);
+    const picks = shuffled.slice(0, 2);
+    container.innerHTML = picks.map(site =>
+      `<a href="${site.url}" target="_blank" rel="noopener noreferrer"
+        class="inline-block text-sm font-medium px-4 py-2 rounded bg-bg-secondary border border-bg-tertiary text-text-secondary hover:text-accent-orange hover:border-accent-orange/30 transition-colors">
+        <span class="text-text-primary">${site.title}</span>
+        <span class="block text-xs mt-0.5">${site.description}</span>
+      </a>`
+    ).join('');
+    section.style.display = '';
+  }
+  loadWebring();
+</script>
