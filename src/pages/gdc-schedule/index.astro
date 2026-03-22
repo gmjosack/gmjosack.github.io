@@ -2,10 +2,16 @@
 import fs from 'fs';
 import path from 'path';
 
-// Find the latest year from available CSV files
 const csvFiles = fs.readdirSync(path.resolve('./src/data')).filter(f => f.match(/^gdc-\d{4}\.csv$/));
 const years = csvFiles.map(f => f.match(/^gdc-(\d{4})\.csv$/)![1]).sort();
 const latestYear = years[years.length - 1];
-
-return Astro.redirect(`/gdc-schedule/${latestYear}/`);
 ---
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="refresh" content={`0;url=/gdc-schedule/${latestYear}/`} />
+  <script is:inline define:vars={{ latestYear }}>
+    location.replace(`/gdc-schedule/${latestYear}/`);
+  </script>
+</head>
+</html>
