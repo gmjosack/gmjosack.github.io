@@ -5,7 +5,7 @@ interface Props {
   image?: string;
 }
 
-const { title, description = "making stuff and things", image = "/images/logos/black-bg.png" } = Astro.props;
+const { title, description = "making stuff and things", image = "/images/logos/black-bg-icon.png" } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const imageURL = new URL(image, Astro.site);
 ---
@@ -27,7 +27,7 @@ const imageURL = new URL(image, Astro.site);
 <meta property="og:site_name" content="Made By Gare" />
 
 <!-- Twitter -->
-<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:card" content="summary" />
 <meta name="twitter:url" content={canonicalURL} />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
