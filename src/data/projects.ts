@@ -163,13 +163,13 @@ export const projects: Project[] = [
     githubUrl: "https://github.com/made-by-gare/what-pressed",
   },
   {
-    name: "GDC Schedule 2026",
-    description: "A filterable schedule viewer for GDC 2026.",
+    name: "GDC Schedule",
+    description: "A filterable schedule viewer for GDC.",
     category: "software",
     url: "/gdc-schedule/",
     primaryLink: "url",
     context:
-      "Tired of the schedule that GDC provides on their website, I decided to make my own that is much easier to use.",
+      "While at GDC in 2026 I got tired of the schedule they provide on their website. I decided to make my own that is much easier to use.",
   },
 ];
 
