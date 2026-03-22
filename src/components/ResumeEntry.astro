@@ -17,7 +17,7 @@ const isLeft = side === 'left';
     <span class="text-accent-orange/80 text-xs font-medium italic">{job.dates}</span>
     <ul class="mt-2 space-y-1">
       {job.roles.map((role) => (
-        <li class="text-text-secondary text-sm">{role}</li>
+        <li class="text-text-secondary text-sm flex items-center gap-2 justify-end"><span class="w-1.5 h-1.5 rounded-full bg-accent-orange/50 shrink-0 order-1" /><span>{role}</span></li>
       ))}
     </ul>
   </div>
@@ -27,7 +27,7 @@ const isLeft = side === 'left';
     <span class="text-accent-orange/80 text-xs font-medium italic">{job.dates}</span>
     <ul class="mt-2 space-y-1">
       {job.roles.map((role) => (
-        <li class="text-text-secondary text-sm">{role}</li>
+        <li class="text-text-secondary text-sm flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-accent-orange/50 shrink-0" />{role}</li>
       ))}
     </ul>
   </div>

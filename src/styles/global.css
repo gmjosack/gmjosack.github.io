@@ -13,6 +13,8 @@
 .prose {
   color: var(--color-text-secondary);
   line-height: 1.75;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .prose h2 {

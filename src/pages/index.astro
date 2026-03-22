@@ -55,7 +55,11 @@ import { projects, categoryLabels, categoryOrder, softwareSubsections } from '..
         <h2 class="text-2xl font-semibold mb-4 text-accent-orange">{categoryLabels[category]}</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           {categoryProjects.map((project) => (
-            <ProjectCard project={project} />
+            project.spacer
+              ? <div class="hidden md:block" />
+              : <div class={project.featured ? "md:col-span-2" : ""}>
+                  <ProjectCard project={project} featured={project.featured} />
+                </div>
           ))}
         </div>
       </section>

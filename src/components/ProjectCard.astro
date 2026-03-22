@@ -4,10 +4,20 @@ import type { Project } from '../data/projects';
 interface Props {
   project: Project;
   compact?: boolean;
+  featured?: boolean;
 }
 
-const { project, compact = false } = Astro.props;
+const { project, compact = false, featured = false } = Astro.props;
 const primary = project.primaryLink || (project.itchUrl ? 'itch' : project.steamUrl ? 'steam' : project.githubUrl ? 'github' : 'url');
+
+function inlineMarkdown(text: string): string {
+  return text
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-accent-orange hover:underline">$1</a>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>');
+}
+
+const contextHtml = project.context ? inlineMarkdown(project.context) : '';
 const primaryClass = "text-xs font-medium px-3 py-1.5 rounded bg-accent-orange/10 text-accent-orange hover:bg-accent-orange/20 transition-colors";
 const secondaryClass = "text-xs font-medium px-3 py-1.5 rounded bg-bg-tertiary text-text-secondary hover:text-text-primary transition-colors";
 
@@ -33,31 +43,46 @@ const links: LinkEntry[] = [
   </a>
 ) : (
   <div class:list={[
-    "bg-bg-secondary border border-bg-tertiary rounded-lg overflow-hidden hover:border-accent-orange/30 transition-colors",
-    project.image ? "flex" : "",
+    "bg-bg-secondary border border-bg-tertiary rounded-lg overflow-hidden hover:border-accent-orange/30 transition-colors h-full",
+    project.image ? "flex flex-col sm:flex-row" : "flex flex-col",
   ]}>
     {project.image && (
-      <img
-        src={project.image}
-        alt={project.name}
-        class="w-48 shrink-0 object-cover"
-      />
-    )}
-    <div class="p-5 flex flex-col justify-center">
-      <h3 class="text-lg font-semibold text-text-primary mb-1">{project.name}</h3>
-      <p class="text-text-secondary text-sm mb-3">{project.description}</p>
-      <div class="flex gap-3 flex-wrap">
-        {links.map((link) => (
-          <a
-            href={link.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            class={link.key === primary ? primaryClass : secondaryClass}
-          >
-            {link.label}
-          </a>
-        ))}
+      <div class:list={[
+        "shrink-0 bg-bg-primary flex items-center",
+        featured ? "w-full sm:w-72" : "w-full sm:w-48",
+      ]}>
+        <img
+          src={project.image}
+          alt={project.name}
+          class="w-full object-cover"
+        />
       </div>
+    )}
+    <div class="flex flex-col flex-1">
+      <div class:list={["flex flex-col justify-center flex-1", featured ? "p-6" : "p-5"]}>
+        <h3 class:list={["font-semibold text-text-primary mb-1", featured ? "text-2xl" : "text-lg"]}>{project.name}</h3>
+        <p class:list={["text-text-secondary", featured ? "text-base" : "text-sm"]}>{project.description}</p>
+        {contextHtml && <p class="text-text-secondary/70 text-xs mt-2 italic"><Fragment set:html={contextHtml} /></p>}
+      </div>
+      {links.length > 0 && (
+        <div class="flex border-t border-bg-tertiary">
+          {links.map((link) => (
+            <a
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class:list={[
+                "flex-1 text-center text-xs font-medium py-2 transition-colors border-r border-bg-tertiary last:border-r-0",
+                link.key === primary
+                  ? "text-accent-orange hover:bg-accent-orange/10"
+                  : "text-text-secondary hover:text-text-primary hover:bg-bg-tertiary",
+              ]}
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+      )}
     </div>
   </div>
 )}
