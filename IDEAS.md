@@ -8,6 +8,8 @@
 - Custom encryptions / Build pipeline
 - Adding a new enemy
 - Launch settings
+- Player controller input system
+- Seeded runs / dailies
 
 ## What Pressed
 
