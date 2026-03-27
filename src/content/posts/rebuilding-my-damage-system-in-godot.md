@@ -6,6 +6,7 @@ tags: ["godot", "corvian-curse"]
 coverImage: "/images/posts/rebuilding-my-damage-system-in-godot/cover.png"
 coverImageAlt: "Getting hit by a corvus"
 coverImagePosition: "0px -100px"
+description: "How I rebuilt the damage system in Corvian Curse."
 ---
 
 ## Background
