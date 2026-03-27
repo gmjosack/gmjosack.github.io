@@ -24,7 +24,7 @@ To use this, the repo's **Settings > Pages > Source** must be set to **GitHub Ac
 
 ## Adding Content
 
-**New blog post:** Create a `.md` file in `src/content/posts/` with frontmatter:
+**New post:** Create a `.md` file in `src/content/posts/` with frontmatter:
 
 ```yaml
 ---

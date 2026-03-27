@@ -1,30 +1,46 @@
 ---
+import TagBadge from './TagBadge.astro';
+
 interface Props {
   title: string;
   date: string;
   slug: string;
   excerpt?: string;
+  coverImage?: string;
+  coverImageAlt?: string;
+  coverImagePosition?: string;
+  tags?: string[];
 }
 
-const { title, date, slug, excerpt } = Astro.props;
+const { title, date, slug, excerpt, coverImage, coverImageAlt, coverImagePosition = "center", tags } = Astro.props;
 ---
 
 <a href={`/posts/${slug}/`} class="block group">
   <article class="bg-bg-secondary border border-bg-tertiary rounded-lg overflow-hidden hover:border-accent-orange/30 transition-colors flex">
     <div class="w-1 bg-accent-orange/40 group-hover:bg-accent-orange transition-colors shrink-0" />
-    <div class="p-5 flex-1 min-w-0">
-      <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-        <h3 class="text-lg font-semibold text-text-primary group-hover:text-accent-orange transition-colors">
-          {title}
-        </h3>
-        <time class="text-text-secondary text-xs shrink-0 sm:mt-1">{date}</time>
-      </div>
-      {excerpt && (
-        <div class="relative mt-3 max-h-24 overflow-hidden">
-          <p class="text-text-secondary text-sm leading-relaxed">{excerpt}</p>
-          <div class="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-bg-secondary to-transparent" />
-        </div>
+    <div class="flex-1 min-w-0 flex flex-col">
+      {coverImage && (
+        <img src={coverImage} alt={coverImageAlt || title} class="w-full max-h-40 object-cover" style={`object-position: ${coverImagePosition};`} />
       )}
+      <div class="p-5">
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+          <h3 class="text-lg font-semibold text-text-primary group-hover:text-accent-orange transition-colors">
+            {title}
+          </h3>
+          <time class="text-text-secondary text-xs shrink-0 sm:mt-1">{date}</time>
+        </div>
+        {excerpt && (
+          <div class="relative mt-3 max-h-24 overflow-hidden">
+            <p class="text-text-secondary text-sm leading-relaxed">{excerpt}</p>
+            <div class="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-bg-secondary to-transparent" />
+          </div>
+        )}
+        {tags && tags.length > 0 && (
+          <div class="flex flex-wrap gap-1.5 mt-3">
+            {tags.map(tag => <TagBadge tag={tag} />)}
+          </div>
+        )}
+      </div>
     </div>
   </article>
 </a>

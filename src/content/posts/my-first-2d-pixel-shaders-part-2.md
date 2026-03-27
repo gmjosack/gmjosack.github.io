@@ -2,10 +2,10 @@
 title: "My First 2D Pixel Shader(s) - Part 2"
 date: "Monday, July 18, 2011"
 published: true
+tags: ["xna", "hlsl"]
 ---
 
-*This is part 2 of a 3 part series on 2D Pixel Shaders. For part 1 [click here](/posts/my-first-2d-pixel-shaders-part-1/), for part 3 [click here.](/posts/my-first-2d-pixel-shaders-part-3/)*
-
+_This is part 2 of a 3 part series on 2D Pixel Shaders. For part 1 [click here](/posts/my-first-2d-pixel-shaders-part-1/), for part 3 [click here.](/posts/my-first-2d-pixel-shaders-part-3/)_
 
 When left off we had just implemented our grayscale shader. Just as a reminder, since we'll be building on this function, this is what the PixelShaderFunction looked like.
 
@@ -56,6 +56,7 @@ Now that we understand this concept a little better lets jump into some examples
 In this section we're going to focus on a few shader effects we can do only considering color.
 
 ### Blackout
+
 This effect is a bit different from our red block from part 1 because we only want to black out the visible sprite and not the entire texture, making a black box.
 
 ```csharp
@@ -64,13 +65,14 @@ color.rgb = 0;
 return color;
 ```
 
-<img src="http://3.bp.blogspot.com/-vAbEX7sR4_4/TiT2qG6ckEI/AAAAAAAAAEI/HdxyT3jozYU/shadertut4.PNG">
+<img src="/images/posts/shaders/shadertut4.png">
 
 I'll be showing the examples in the rest of this section side-by-side but yours should just look like the one on the right.
 
 In this example you can see we're just assigning 0 to the rgb component of our color vector. The reason this doesn't give us a black box is because we're only modifying the color attributes per pixel and keeping our alpha value. Anything that was previously transparent will also be black but retain its alpha level.
 
 ### GBR
+
 This effect is super basic but a good example of using the expressiveness of components.
 
 ```csharp
@@ -79,11 +81,12 @@ color.rgb = color.gbr;
 return color;
 ```
 
-<img src="http://3.bp.blogspot.com/-hhKjKY-Po2E/TiUBS4M8ZEI/AAAAAAAAAEY/3nASKMTja3k/shadertut6.PNG">
+<img src="/images/posts/shaders/shadertut6.png">
 
 As you can see we've essentially swapped the values of r and b.
 
 ### High Contrast
+
 ```csharp
 float4 color = tex2D(s0, coords);
 
@@ -102,9 +105,9 @@ else if (color.b < low) color.b = 0;
 return color;
 ```
 
-<img src="http://2.bp.blogspot.com/-jIqxtbOiH_k/TiT9tbQWkKI/AAAAAAAAAEQ/RRVK9em0KKc/shadertut5.PNG">
+<img src="/images/posts/shaders/shadertut5.png">
 
-We've introduced a new idea here. The conditional. You can pretty much use these conditionals like you would in C#. I'm not going to go into detail here because I assume you're familiar with if statement.   I think now is a good time to make sure you've noticed that the values for the individual floats stored in the vector range from 0 to 1 instead of 0 - 255 as you're probably used to. The main idea behind this effect is that for each of the colors, rgb, we're going to set the value to 1 if it's above some number and to 0 if it's below some number, otherwise leave it alone. This is going to give use strong highlights and shadows.  You can easily tweak the high and low variables to get the desired effect or even apply to only one or two of the components.
+We've introduced a new idea here. The conditional. You can pretty much use these conditionals like you would in C#. I'm not going to go into detail here because I assume you're familiar with if statement. I think now is a good time to make sure you've noticed that the values for the individual floats stored in the vector range from 0 to 1 instead of 0 - 255 as you're probably used to. The main idea behind this effect is that for each of the colors, rgb, we're going to set the value to 1 if it's above some number and to 0 if it's below some number, otherwise leave it alone. This is going to give use strong highlights and shadows. You can easily tweak the high and low variables to get the desired effect or even apply to only one or two of the components.
 
 ### Negative
 
@@ -117,7 +120,7 @@ color.rgb = 1 - color.rgb;
 return color;
 ```
 
-<img src="http://3.bp.blogspot.com/-HuHZuxGwOSc/TiUFljvZfcI/AAAAAAAAAEg/169Det-mxdk/shadertut7.PNG">
+<img src="/images/posts/shaders/shadertut7.png">
 
 In this function I'm checking if there's an alpha value. I do this because I don't want to apply any color to pixels that are transparent. If the pixel has alpha I subtract the rgb from 1 and assign to rgb. When we do math with multiple components against a scaler it is applied to each component. As an example:
 
@@ -153,13 +156,13 @@ else                            color = float4(1, .8, 1, 1);
 return color;
 ```
 
-<img src="http://3.bp.blogspot.com/-hDHVoQfcoN4/TiUJERLSBUI/AAAAAAAAAEo/G4f02p-qKrg/shadertut8.PNG">
+<img src="/images/posts/shaders/shadertut8.png">
 
 Now we're utilizing the coordinates that are being passed in to determine how we want to apply an effect. We're completely discarding the color information and applying a manual color depending on where the pixel is located in the texture. COORD0/coords is also a range of 0 to 1. We're going to create a step variable which is 1.0 divided by the number of stripes we're going to use. You could also multiply the width/height if you wanted to get the actual pixel numbers.
 
-**Warning:** *This shader is not especially efficient. This function will be run once per pixel so you usually want to avoid conditionals but I feel this technique is expressive as far as increasing understanding of coordinate based pixel shaders.*
+**Warning:** _This shader is not especially efficient. This function will be run once per pixel so you usually want to avoid conditionals but I feel this technique is expressive as far as increasing understanding of coordinate based pixel shaders._
 
-**Warning:** *When applying effects based on coordinates it is important to understand the these effects are applied to the entire texture. If you're only displaying a small portion of your texture via srcRect you'll only see a portion of the applied effect. In this specific example you might only see one color because that segment of your texture might fall within those coordinates. This has the potential to bite you when using sprite sheets, common with animation.*
+**Warning:** _When applying effects based on coordinates it is important to understand the these effects are applied to the entire texture. If you're only displaying a small portion of your texture via srcRect you'll only see a portion of the applied effect. In this specific example you might only see one color because that segment of your texture might fall within those coordinates. This has the potential to bite you when using sprite sheets, common with animation._
 
 ### 180 Rotate
 
@@ -168,10 +171,9 @@ float4 color = tex2D(s0, 1 - coords);
 return color;
 ```
 
-<img src="http://4.bp.blogspot.com/-IaUt28TDJ1c/TiUM-1dtDjI/AAAAAAAAAEw/FnX2u9hZycg/shadertut9.PNG">
+<img src="/images/posts/shaders/shadertut9.png">
 
 Similar to the negative effect above we just subtract the coordinates from 1 and we get a simple 180 rotate.
-
 
 ### Horizontal Mirror
 
@@ -180,7 +182,7 @@ float4 color = tex2D(s0, float2(1 - coords.x, coords.y));
 return color;
 ```
 
-<img src="http://4.bp.blogspot.com/-hIhH6J6KrsY/TiUM-3mxTBI/AAAAAAAAAE4/U4y1FBXtKIk/s400/shadertut10.PNG">
+<img src="/images/posts/shaders/shadertut10.png">
 
 For the mirror effect we just need to subtract coordinate x from 1. You can probably imagine a ton of ways to play around with this to get similar effects.
 
@@ -195,7 +197,7 @@ color.rgb = coords.y;
 return color;
 ```
 
-<img src="http://4.bp.blogspot.com/-vbcFkOrI0K0/TiUO3UmzrUI/AAAAAAAAAFA/FtCbDuVmabk/shadertut11.PNG">
+<img src="/images/posts/shaders/shadertut11.png">
 
 Here we're just setting RGB to the value of coords.y which is going to move from 0 to 1 as we map over the texture.
 

@@ -2,9 +2,10 @@
 title: "My First 2D Pixel Shader(s) - Part 3"
 date: "Saturday, August 27, 2011"
 published: true
+tags: ["xna", "hlsl"]
 ---
 
-*This is part 3 of a 3 part series on 2D Pixel Shaders. For part 1 [click here](/posts/my-first-2d-pixel-shaders-part-1/), for part 2 [click here](/posts/my-first-2d-pixel-shaders-part-2/).*
+_This is part 3 of a 3 part series on 2D Pixel Shaders. For part 1 [click here](/posts/my-first-2d-pixel-shaders-part-1/), for part 2 [click here](/posts/my-first-2d-pixel-shaders-part-2/)._
 
 At the end of our last lesson we'd learned a bit about how to modify pixel shaders based on color information and coordinate information. We went through some really cool effects but some of them weren't especially efficient considering all of the conditional statements that it would go through for every pixel every frame.
 
@@ -18,7 +19,8 @@ The primary focus of this part of the series is going to be passing in parameter
 
 Since starting this series our code has been modified incrementally many times so I'm going to start by presenting a clean PixelShaderFunction and Draw method then I'll describe what's new.
 
-*Draw()*
+_Draw()_
+
 ```csharp
 GraphicsDevice.Clear(Color.CornflowerBlue);
 
@@ -33,7 +35,8 @@ base.Draw(gameTime);
 
 ```
 
-*Effect1.fx*
+_Effect1.fx_
+
 ```csharp
 sampler s0;
 float param1;
@@ -59,7 +62,7 @@ technique Technique1
 
 ```
 
-<img src="http://2.bp.blogspot.com/-TWa0WF_nzIE/Tll-FtDkzhI/AAAAAAAAAFU/iVGudZ96M6s/shadertut12.PNG">
+<img src="/images/posts/shaders/shadertut12.png">
 
 This shader is not much different than what we've done so far. The shader itself is just checking if the y coordinate is greater than some value. If so, zero out the pixel. The only thing different here is the variable we're comparing against, `param1`.
 
@@ -83,13 +86,13 @@ effect.Parameters["param1"].SetValue(.3f);
 
 and you should see:
 
-<img src="http://3.bp.blogspot.com/-aI1UoCQ0RAk/TlmAKKeTpCI/AAAAAAAAAFc/q3HzMBuIvu4/shadertut13.PNG">
+<img src="/images/posts/shaders/shadertut13.png">
 
 ## Passing Textures
 
 Where it gets really interesting is passing in textures. I'm going to start my showing a similar rainbow effect from part2. In our Game class we're going to need to add a new Texture2D:
 
-<img src="http://1.bp.blogspot.com/-w-ghvZCNDrQ/TlmHhLwpMoI/AAAAAAAAAFk/LJbmmmFlEFM/surge-rainbow.png">
+<img src="/images/posts/shaders/surge-rainbow.png">
 
 In your `Draw()` method replace the parameter we were passing before with the following:
 
@@ -118,7 +121,7 @@ if (color.a)
 
 You can see we're using the same coords the get the colors for each sampler then if the pixel for our main is non transparent we return the pixel from the new texture at the same coordinates. This will give you the following result:
 
-<img src="http://4.bp.blogspot.com/-CW2I-SpUCQo/TlmJ9AisNdI/AAAAAAAAAFs/4oUqvZ_Not0/shadertut14.PNG">
+<img src="/images/posts/shaders/shadertut14.png">
 
 ## RenderTargets, Additive Blending, and Lights! Oh my!
 
@@ -199,11 +202,12 @@ public class Game1 : Microsoft.Xna.Framework.Game
 
 Alright, this might seem like a pretty big step where we're coming from but lets break it down into the main talking points. First we have a new texture we haven't used before:
 
-<img src="http://2.bp.blogspot.com/-z44zGdsaFOk/TlmUaERuDII/AAAAAAAAAF0/9auy6SFhMeo/lightmask.png">
+<img src="/images/posts/shaders/lightmask.png">
 
 This doesn't have to have a black background, it can be a white to transparent gradient, but that wouldn't show up well on the blog and black will work fine. We'll get to how we make use of this texture in a moment.
 
 ### RenderTarget2D
+
 You've probably noticed I've used two render targets here. A super high level overview of render targets is something other than the back buffer that you can draw to and then use as a texture. This allows us to use spritebatch to create our own textures in real-time.
 
 The key points to using a render target are instantiating a `RenderTarget2D` object:
@@ -229,15 +233,16 @@ GraphicsDevice.SetRenderTarget(null);
 That will cause all additional Draw calls to resume drawing to the back buffer.
 
 ### Additive Blending
+
 The other new feature I've introduced, specifically in the lighting render target, is the use of AdditiveBlending with our sprite batch call. This will allow us to draw our light gradient multiple times in overlapping areas adding to the effect where multiple partially white areas overlap. You can see the effect demonstrated below as I add more and more light sources:
 
-<img src="http://1.bp.blogspot.com/-cpZBO6HyZsE/TlmaCF0J4FI/AAAAAAAAAF8/EFT1Tcx8XNE/AdditiveGIF.gif">
+<img src="/images/posts/shaders/AdditiveGIF.gif">
 
 ### Bringing it together
 
 With those hurdles out of the way I can begin describing exactly how this all works. If you look back at the Draw method you can see I've broken the method into three main sections. We have a render target drawing the light mask and a render target drawing our main scene. If I were to Draw each of these targets separately you'd see the following respectively:
 
-<img src="http://3.bp.blogspot.com/-3yCyDOAotwY/Tlmb7F2f1MI/AAAAAAAAAGE/Z8sXxtljN4Q/shadertut15.PNG">
+<img src="/images/posts/shaders/shadertut15.png">
 
 In the last section you can see that we're not just drawing one specific target. We're drawing the main target and passing the lights target into our pixel shader. The code for that pixel shader is as follows:
 
@@ -256,7 +261,8 @@ float4 PixelShaderFunction(float2 coords: TEXCOORD0) : COLOR0
 
 Most of this should look familiar to you from earlier in the lesson. When we multiply the textures together anywhere that's white (1) will leave the color alone. Anywhere that's black (0) will become black. Obviously any gray bits will slightly tint the color depending on how gray it is. And with that you can see the final result:
 
-<img src="http://1.bp.blogspot.com/-dj7Uo7KbA-k/Tlmd6ercOII/AAAAAAAAAGM/Lxo-QPT7yJI/shadertut16.PNG">
+<img src="/images/posts/shaders/shadertut16.png">
 
 ## Conclusion
+
 There was a lot to take in from this lesson but in the ended you can see that it's not too difficult to implement real time blending of lights sources to make pretty cool effects with XNA using pixel shaders. You'll probably want to play with the gradient to get the desired effect your after. Also try having a light source follow your mouse to see the real-time blending in action. I hope you've all enjoyed with series and I'd be glad to answer any questions anyone might have.

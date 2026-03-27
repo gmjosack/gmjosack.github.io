@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
 import { getCollection } from 'astro:content';
+import { buildTagColors } from '../../utils/tag-colors';
 
 const posts = (await getCollection('posts'))
   .filter((post) => post.data.published)
@@ -22,6 +23,10 @@ function getExcerpt(body: string | undefined, maxLen = 400): string {
   return plain.length > maxLen ? plain.slice(0, maxLen).replace(/\s+\S*$/, '...') : plain;
 }
 
+// Collect all unique tags
+const allTags = [...new Set(posts.flatMap(p => p.data.tags))].sort();
+const tagColors = buildTagColors(allTags);
+
 // Group posts by year
 const postsByYear: { year: number; posts: typeof posts }[] = [];
 for (const post of posts) {
@@ -35,11 +40,20 @@ for (const post of posts) {
 }
 ---
 
-<BaseLayout title="Blog - Made By Gare">
+<BaseLayout title="Posts - Made By Gare">
+  {allTags.length > 0 && (
+    <div class="mb-6 flex flex-wrap gap-2 items-center">
+      <span class="text-text-secondary text-sm mr-1">Filter:</span>
+      <button data-tag="all" class="tag-filter active" style="--tag-hs: 0 0%;">All</button>
+      {allTags.map(tag => (
+        <button data-tag={tag} class="tag-filter" style={`--tag-hs: ${tagColors.get(tag)};`}>{tag}</button>
+      ))}
+    </div>
+  )}
   <div class="relative pl-8">
     <div class="absolute left-3 top-0 bottom-0 w-0.5 bg-accent-orange/30" />
     {postsByYear.map((group) => (
-      <div class="mb-6">
+      <div class="mb-6" data-year-group>
         <div class="flex items-center mb-4 -ml-8">
           <div class="w-6 h-6 rounded-full bg-bg-primary border-2 border-accent-orange flex items-center justify-center z-10">
             <div class="w-2 h-2 rounded-full bg-accent-orange" />
@@ -48,15 +62,60 @@ for (const post of posts) {
         </div>
         <div class="space-y-4">
           {group.posts.map((post) => (
-            <PostCard
-              title={post.data.title}
-              date={post.data.date}
-              slug={post.id}
-              excerpt={getExcerpt(post.body)}
-            />
+            <div data-tags={post.data.tags.join(",")}>
+              <PostCard
+                title={post.data.title}
+                date={post.data.date}
+                slug={post.id}
+                excerpt={getExcerpt(post.body)}
+                coverImage={post.data.coverImage}
+                coverImageAlt={post.data.coverImageAlt}
+                coverImagePosition={post.data.coverImagePosition}
+                tags={post.data.tags}
+              />
+            </div>
           ))}
         </div>
       </div>
     ))}
   </div>
 </BaseLayout>
+
+<script>
+  function initTagFilter() {
+    const params = new URLSearchParams(window.location.search);
+    const activeTag = params.get('tag') || 'all';
+
+    function filterPosts(tag: string) {
+      document.querySelectorAll('.tag-filter').forEach(b => {
+        b.classList.toggle('active', (b as HTMLElement).dataset.tag === tag);
+      });
+      document.querySelectorAll<HTMLElement>('[data-tags]').forEach(card => {
+        const tags = card.dataset.tags!.split(',');
+        card.style.display = (tag === 'all' || tags.includes(tag)) ? '' : 'none';
+      });
+      document.querySelectorAll<HTMLElement>('[data-year-group]').forEach(group => {
+        const visible = group.querySelectorAll('[data-tags]:not([style*="display: none"])');
+        group.style.display = visible.length > 0 ? '' : 'none';
+      });
+    }
+
+    document.querySelectorAll('.tag-filter').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tag = (btn as HTMLElement).dataset.tag!;
+        const url = tag === 'all' ? '/posts/' : `/posts/?tag=${tag}`;
+        window.history.pushState({}, '', url);
+        filterPosts(tag);
+      });
+    });
+
+    window.addEventListener('popstate', () => {
+      const tag = new URLSearchParams(window.location.search).get('tag') || 'all';
+      filterPosts(tag);
+    });
+
+    if (activeTag !== 'all') filterPosts(activeTag);
+  }
+
+  initTagFilter();
+</script>

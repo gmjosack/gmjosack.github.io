@@ -1,0 +1,36 @@
+---
+import { getCollection } from 'astro:content';
+import { buildTagColors } from '../utils/tag-colors';
+
+interface Props {
+  tag: string;
+  linked?: boolean;
+}
+
+const { tag, linked = false } = Astro.props;
+
+const posts = await getCollection('posts');
+const allTags = [...new Set(posts.flatMap(p => p.data.tags))];
+const colorMap = buildTagColors(allTags);
+const hs = colorMap.get(tag) ?? '0 0%';
+
+const classes = "inline-block rounded-full px-2.5 py-0.5 text-xs font-medium border transition-colors";
+---
+
+{linked ? (
+  <a href={`/posts/?tag=${tag}`} class={classes} style={`--tag-hs: ${hs};`}>{tag}</a>
+) : (
+  <span class={classes} style={`--tag-hs: ${hs};`}>{tag}</span>
+)}
+
+<style>
+  a, span {
+    background: hsl(var(--tag-hs) 50% / 0.12);
+    color: hsl(var(--tag-hs) 75%);
+    border-color: hsl(var(--tag-hs) 50% / 0.25);
+  }
+  a:hover, span:hover {
+    background: hsl(var(--tag-hs) 50% / 0.22);
+    border-color: hsl(var(--tag-hs) 50% / 0.45);
+  }
+</style>

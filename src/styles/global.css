@@ -17,7 +17,7 @@
 }
 
 .pixel-divider::after {
-  content: '';
+  content: "";
   flex: 1;
   height: 3px;
   align-self: flex-end;
@@ -34,7 +34,7 @@
 
 /* Subtle noise background texture */
 body::before {
-  content: '';
+  content: "";
   position: fixed;
   inset: 0;
   z-index: -1;
@@ -44,9 +44,31 @@ body::before {
   pointer-events: none;
 }
 
+/* Tag filter buttons */
+.tag-filter {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid var(--color-bg-tertiary);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 150ms;
+}
 
+.tag-filter:hover {
+  border-color: hsl(var(--tag-hs) 50% / 0.45);
+  color: hsl(var(--tag-hs) 75%);
+}
 
-/* Prose styling for blog posts */
+.tag-filter.active {
+  background: hsl(var(--tag-hs) 50% / 0.15);
+  border-color: hsl(var(--tag-hs) 50% / 0.45);
+  color: hsl(var(--tag-hs) 75%);
+}
+
+/* Prose styling for posts */
 .prose {
   color: var(--color-text-secondary);
   line-height: 1.75;
@@ -83,8 +105,13 @@ body::before {
   text-decoration: underline;
 }
 
+.prose a code {
+  color: inherit;
+}
+
 .prose code {
   background: var(--color-bg-tertiary);
+  color: #e879a0;
   padding: 0.15em 0.35em;
   border-radius: 0.25rem;
   font-size: 0.875em;
@@ -101,6 +128,7 @@ body::before {
 
 .prose pre code {
   background: none;
+  color: inherit;
   padding: 0;
   border-radius: 0;
   font-size: 0.875em;

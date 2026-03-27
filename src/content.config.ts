@@ -8,6 +8,13 @@ const posts = defineCollection({
     date: z.string(),
     published: z.boolean().default(true),
     description: z.string().optional(),
+    // Recommended: 1536x640px (2x retina, 2.4:1 aspect ratio)
+    // Store in /public/images/posts/, reference as "/images/posts/filename.png"
+    coverImage: z.string().optional(),
+    coverImageAlt: z.string().optional(),
+    // Vertical position for post list thumbnail crop (CSS object-position, default: "center")
+    coverImagePosition: z.string().default("center"),
+    tags: z.array(z.string()).default([]),
   }),
 });
 

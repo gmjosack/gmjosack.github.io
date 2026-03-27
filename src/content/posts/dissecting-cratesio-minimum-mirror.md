@@ -2,6 +2,7 @@
 title: "Dissecting Crates.io: Bare Minimum Mirror"
 date: "Sunday, August 23, 2015"
 published: true
+tags: ["rust"]
 ---
 
 Recently at `$job` I spent a Hackweek making Rust ready for production deployments. Part of that was figuring out what builds were going to look like. One of the really nice things about developing Rust code is the included package manager, `cargo`, and all of the crates available at [crates.io](https://crates.io/). One especially nice feature of crates.io, compared to other package repositories I have experience with, is the fact that they will never allow a user to overwrite or delete a version of published code[^1]. They do support an action called `yank`[^2] which allows you do prevent new projects from depending on a version but it will still be available to projects that have a `Cargo.lock`. This is great because I have much less to worry about in regard to repeatable builds when using cargo with crates.io.
@@ -16,24 +17,25 @@ An example of a file for the `sysconf` crate, found under `sy/sc/sysconf`, looks
 
 ```json
 {
-    "name": "sysconf",
-    "vers": "0.1.0",
-    "deps": [
-        {
-            "name": "libc",
-            "req": "*",
-            "features": [""],
-            "optional": false,
-            "default_features": true,
-            "target": null,
-            "kind": "normal"
-        }
-    ],
-    "cksum": "be72e7128262fbd8dcb2e3eecee6135ed1611e0a9d63feca600b4a19f297eb49",
-    "features": {},
-    "yanked": false
+  "name": "sysconf",
+  "vers": "0.1.0",
+  "deps": [
+    {
+      "name": "libc",
+      "req": "*",
+      "features": [""],
+      "optional": false,
+      "default_features": true,
+      "target": null,
+      "kind": "normal"
+    }
+  ],
+  "cksum": "be72e7128262fbd8dcb2e3eecee6135ed1611e0a9d63feca600b4a19f297eb49",
+  "features": {},
+  "yanked": false
 }
 ```
+
 This translates pretty directly to the options available to you in a `Cargo.toml` file. These files don't appear to be themselves valid json documents but a newline delimited list of json documents, one line/document per version. Since it's obvious no package data itself is going to be located here I decided to take a look at the `config.json` file next.
 
 ## Downloading Packages
@@ -49,7 +51,6 @@ Jumping into the file you can see it's pretty basic.
 
 I could dig through more code real quick but my hunch is that I only need to provide `dl` for a basic mirror. I cloned the mirror, pointed my `.cargo/config` at it, and checked in the following as my new `config.json`.
 
-
 ```json
 {
   "dl": "http://localhost:8080/api/v1/crates",
@@ -58,7 +59,6 @@ I could dig through more code real quick but my hunch is that I only need to pro
 ```
 
 I threw up a mitmproxy just to watch the traffic flow through and ran a few `cargo` commands.
-
 
 ```console
  $ mitmproxy -b localhost -p 8080 -R http2https://crates.io/ --setheader="/~q/Host/crates.io"
@@ -149,10 +149,14 @@ localhost - - [23/Aug/2015 23:16:24] "GET /api/v1/crates/libc/0.1.10/download HT
 
 As you can see it's actually not much work at all to setup a simple mirror. One pain point that I had to tackle was keeping the index up to date while I have a local commit. For now I'm using fancy git merge strategies to deal with potential future changes to `config.json` but I'd love to see better support worked out here over time that didn't require such hacks.
 
-
 [^1]: http://doc.crates.io/crates-io.html#publishing-crates
+
 [^2]: http://doc.crates.io/crates-io.html#cargo-yank
+
 [^3]: https://github.com/rust-lang/crates.io/issues/67
+
 [^4]: https://github.com/rust-lang/crates.io-index
+
 [^5]: https://github.com/rust-lang/cargo/blob/d87ac45/src/cargo/sources/registry.rs#L181
+
 [^6]: https://github.com/rust-lang/cargo/blob/d87ac45/src/cargo/sources/registry.rs#L52-L100
