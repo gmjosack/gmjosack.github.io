@@ -7,6 +7,7 @@
 - Scene Manager
 - Custom encryptions / Build pipeline
 - Adding a new enemy
+- Launch settings
 
 ## What Pressed
 
