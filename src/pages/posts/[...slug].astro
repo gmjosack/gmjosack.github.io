@@ -11,7 +11,7 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
 
 function getExcerpt(body: string | undefined, maxLen = 160): string {
   if (!body) return '';
@@ -30,6 +30,6 @@ function getExcerpt(body: string | undefined, maxLen = 160): string {
 const description = post.data.description || getExcerpt(post.body);
 ---
 
-<PostLayout frontmatter={{ ...post.data, description }}>
+<PostLayout frontmatter={{ ...post.data, description }} headings={headings}>
   <Content />
 </PostLayout>

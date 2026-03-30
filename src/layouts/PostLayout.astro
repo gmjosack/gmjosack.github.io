@@ -1,6 +1,13 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import TagBadge from '../components/TagBadge.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
 
 interface Props {
   frontmatter: {
@@ -11,33 +18,39 @@ interface Props {
     coverImageAlt?: string;
     tags?: string[];
   };
+  headings?: Heading[];
 }
 
-const { frontmatter } = Astro.props;
+const { frontmatter, headings = [] } = Astro.props;
 ---
 
 <BaseLayout title={`${frontmatter.title} - Made By Gare`} description={frontmatter.description} image={frontmatter.coverImage}>
-  <article class="max-w-3xl mx-auto">
-    <header class="mb-8">
-      <h1 class="text-3xl font-bold mb-2">{frontmatter.title}</h1>
-      <time class="text-text-secondary text-sm">{frontmatter.date}</time>
-      {frontmatter.tags && frontmatter.tags.length > 0 && (
-        <div class="flex flex-wrap gap-1.5 mt-3">
-          {frontmatter.tags.map(tag => <TagBadge tag={tag} linked />)}
+  <div class="relative flex justify-center gap-8">
+    <aside class="w-48 shrink-0 hidden xl:block self-stretch">
+      <TableOfContents headings={headings} />
+    </aside>
+    <article class="max-w-3xl w-full min-w-0">
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold mb-2">{frontmatter.title}</h1>
+        <time class="text-text-secondary text-sm">{frontmatter.date}</time>
+        {frontmatter.tags && frontmatter.tags.length > 0 && (
+          <div class="flex flex-wrap gap-1.5 mt-3">
+            {frontmatter.tags.map(tag => <TagBadge tag={tag} linked />)}
+          </div>
+        )}
+      </header>
+      {frontmatter.coverImage && (
+        <div class="mb-8 rounded-lg overflow-hidden">
+          <img
+            src={frontmatter.coverImage}
+            alt={frontmatter.coverImageAlt || frontmatter.title}
+            class="w-full max-h-80 object-cover"
+          />
         </div>
       )}
-    </header>
-    {frontmatter.coverImage && (
-      <div class="mb-8 rounded-lg overflow-hidden">
-        <img
-          src={frontmatter.coverImage}
-          alt={frontmatter.coverImageAlt || frontmatter.title}
-          class="w-full max-h-80 object-cover"
-        />
+      <div class="prose">
+        <slot />
       </div>
-    )}
-    <div class="prose">
-      <slot />
-    </div>
-  </article>
+    </article>
+  </div>
 </BaseLayout>
