@@ -3,14 +3,18 @@
 ## Corvian Curse
 
 - Procgen and custom room browser plugin
-- Replays
 - Scene Manager
 - Custom encryptions / Build pipeline
 - Adding a new enemy
 - Launch settings
 - Player controller input system
 - Seeded runs / dailies
+- Property Map plugin
 
 ## What Pressed
 
 - Developments / Announcement
+
+## Spelunky Tools
+
+- Web HD

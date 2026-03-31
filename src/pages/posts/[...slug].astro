@@ -28,8 +28,66 @@ function getExcerpt(body: string | undefined, maxLen = 160): string {
 }
 
 const description = post.data.description || getExcerpt(post.body);
+
+// Reading time (~200 words per minute)
+const wordCount = (post.body || '').split(/\s+/).length;
+const readingTime = Math.max(1, Math.round(wordCount / 200));
+
+// Get all published posts sorted by date for nav and related
+const allPosts = (await getCollection('posts'))
+  .filter(p => p.data.published)
+  .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+
+// Previous/Next (chronological)
+const currentIndex = allPosts.findIndex(p => p.id === post.id);
+const nextPost = currentIndex > 0
+  ? { title: allPosts[currentIndex - 1].data.title, slug: allPosts[currentIndex - 1].id, seriesSubtitle: allPosts[currentIndex - 1].data.seriesSubtitle }
+  : undefined;
+const prevPost = currentIndex < allPosts.length - 1
+  ? { title: allPosts[currentIndex + 1].data.title, slug: allPosts[currentIndex + 1].id, seriesSubtitle: allPosts[currentIndex + 1].data.seriesSubtitle }
+  : undefined;
+
+// Related posts (by shared tags, excluding current and series siblings)
+const currentTags = new Set(post.data.tags);
+const relatedPosts = allPosts
+  .filter(p => p.id !== post.id && !(post.data.series && p.data.series === post.data.series))
+  .map(p => ({
+    post: p,
+    score: p.data.tags.filter(t => currentTags.has(t)).length,
+  }))
+  .filter(r => r.score > 0)
+  .sort((a, b) => b.score - a.score)
+  .slice(0, 2)
+  .map(r => ({
+    title: r.post.data.title,
+    slug: r.post.id,
+    date: r.post.data.date,
+    tags: r.post.data.tags,
+    seriesSubtitle: r.post.data.seriesSubtitle,
+  }));
+
+// Gather series posts if this post belongs to a series
+let seriesPosts: { title: string; subtitle?: string; slug: string; order: number }[] | undefined;
+if (post.data.series) {
+  seriesPosts = allPosts
+    .filter(p => p.data.series === post.data.series)
+    .map(p => ({
+      title: p.data.title,
+      subtitle: p.data.seriesSubtitle,
+      slug: p.id,
+      order: p.data.seriesOrder ?? 0,
+    }));
+}
 ---
 
-<PostLayout frontmatter={{ ...post.data, description }} headings={headings}>
+<PostLayout
+  frontmatter={{ ...post.data, description }}
+  headings={headings}
+  seriesPosts={seriesPosts}
+  readingTime={readingTime}
+  prevPost={prevPost}
+  nextPost={nextPost}
+  relatedPosts={relatedPosts}
+>
   <Content />
 </PostLayout>

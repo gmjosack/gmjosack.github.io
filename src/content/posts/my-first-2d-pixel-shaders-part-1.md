@@ -1,11 +1,12 @@
 ---
-title: "My First 2D Pixel Shader(s) - Part 1"
+title: "My First 2D Pixel Shader(s)"
 date: "Wednesday, July 13, 2011"
 published: true
 tags: ["xna", "hlsl"]
+series: "My First 2D Pixel Shader(s)"
+seriesOrder: 1
+seriesSubtitle: "Part 1 - Setup & Grayscale"
 ---
-
-_This is part 1 of a 3 part series on 2D Pixel Shaders. For part 2 [click here](/posts/my-first-2d-pixel-shaders-part-2/), for part 3 [click here](/posts/my-first-2d-pixel-shaders-part-3/)._
 
 In this post I plan to show you how to setup the most simple of pixel shaders using HLSL with XNA 4.0. In addition to the code here you can find some full examples on [BitBucket](https://bitbucket.org/gmjosack/xna-2d-shader-examples/src). Feel free to fork and push back more examples.
 
@@ -204,9 +205,5 @@ Obviously there's going to be more complicated algorithms for grayscale but who 
 ## Conclusion
 
 We got a brief introduction to Pixel Shaders today and I hope it was easy for you to get your first effect running. In the next part I'm going to introduce you to some more complicated effects that we can jump right in to now that you have a foundation. If you want to see some simple pixel shaders I've already thrown together take a look at the BitBucket repository I linked at the top and feel free to contribute!
-
-To jump to part 2 [click here.](/posts/my-first-2d-pixel-shaders-part-2/)
-
-To jump to part 3 [click here.](/posts/my-first-2d-pixel-shaders-part-3/)
 
 **Resources**: [Background](http://opengameart.org/content/space-background) and [Character](http://opengameart.org/content/surge-opensurge-ultimate-smash-friends)

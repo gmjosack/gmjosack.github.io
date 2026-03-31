@@ -1,0 +1,86 @@
+---
+interface SearchPost {
+  title: string;
+  slug: string;
+  tags: string[];
+  seriesSubtitle?: string;
+}
+
+interface Props {
+  posts: SearchPost[];
+}
+
+const { posts } = Astro.props;
+---
+
+<div class="relative mb-6">
+  <input
+    type="text"
+    id="post-search"
+    placeholder="Search posts..."
+    autocomplete="off"
+    class="w-full px-4 py-2 rounded-lg bg-bg-secondary border border-bg-tertiary text-text-primary text-sm placeholder:text-text-secondary/50 focus:outline-none focus:border-accent-orange/50 transition-colors"
+  />
+  <div id="search-results" class="hidden absolute z-20 top-full left-0 right-0 mt-1 bg-bg-secondary border border-bg-tertiary rounded-lg shadow-lg overflow-hidden max-h-64 overflow-y-auto">
+  </div>
+</div>
+
+<script define:vars={{ posts }}>
+  function initSearch() {
+    const input = document.getElementById('post-search');
+    const results = document.getElementById('search-results');
+    if (!input || !results) return;
+
+    function search(query) {
+      if (!query.trim()) return [];
+      const q = query.toLowerCase();
+      return posts.filter(p =>
+        p.title.toLowerCase().includes(q) ||
+        (p.seriesSubtitle && p.seriesSubtitle.toLowerCase().includes(q)) ||
+        p.tags.some(t => t.toLowerCase().includes(q))
+      ).slice(0, 8);
+    }
+
+    function render(matches) {
+      if (matches.length === 0) {
+        results.classList.add('hidden');
+        return;
+      }
+      results.innerHTML = matches.map(p =>
+        `<a href="/posts/${p.slug}/" class="block px-4 py-2.5 hover:bg-bg-tertiary transition-colors border-b border-bg-tertiary last:border-b-0">
+          <span class="text-sm text-text-primary">${p.title}</span>
+          ${p.seriesSubtitle ? `<span class="text-xs text-text-secondary ml-1">${p.seriesSubtitle}</span>` : ''}
+          ${p.tags.length > 0 ? `<span class="text-xs text-text-secondary block mt-0.5">${p.tags.join(', ')}</span>` : ''}
+        </a>`
+      ).join('');
+      results.classList.remove('hidden');
+    }
+
+    input.addEventListener('input', (e) => {
+      render(search(e.target.value));
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        input.value = '';
+        results.classList.add('hidden');
+        input.blur();
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!input.contains(e.target) && !results.contains(e.target)) {
+        results.classList.add('hidden');
+      }
+    });
+
+    input.addEventListener('focus', () => {
+      if (input.value.trim()) {
+        render(search(input.value));
+      }
+    });
+  }
+
+  initSearch();
+  document.addEventListener('astro:after-swap', initSearch);
+</script>

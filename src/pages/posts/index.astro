@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
+import PostSearch from '../../components/PostSearch.astro';
 import { getCollection } from 'astro:content';
 import { buildTagColors } from '../../utils/tag-colors';
 
@@ -41,6 +42,7 @@ for (const post of posts) {
 ---
 
 <BaseLayout title="Posts - Made By Gare">
+  <PostSearch posts={posts.map(p => ({ title: p.data.title, slug: p.id, tags: p.data.tags, seriesSubtitle: p.data.seriesSubtitle }))} />
   {allTags.length > 0 && (
     <div class="mb-6 flex flex-wrap gap-2 items-center">
       <span class="text-text-secondary text-sm mr-1">Filter:</span>
@@ -72,6 +74,8 @@ for (const post of posts) {
                 coverImageAlt={post.data.coverImageAlt}
                 coverImagePosition={post.data.coverImagePosition}
                 tags={post.data.tags}
+                seriesSubtitle={post.data.seriesSubtitle}
+                readingTime={Math.max(1, Math.round((post.body || '').split(/\s+/).length / 200))}
               />
             </div>
           ))}

@@ -2,11 +2,35 @@
 import BaseLayout from './BaseLayout.astro';
 import TagBadge from '../components/TagBadge.astro';
 import TableOfContents from '../components/TableOfContents.astro';
+import SeriesNav from '../components/SeriesNav.astro';
+import CopyCodeButton from '../components/CopyCodeButton.astro';
+import PostNavigation from '../components/PostNavigation.astro';
+import RelatedPosts from '../components/RelatedPosts.astro';
 
 interface Heading {
   depth: number;
   slug: string;
   text: string;
+}
+
+interface SeriesPost {
+  title: string;
+  slug: string;
+  order: number;
+}
+
+interface NavPost {
+  title: string;
+  slug: string;
+  seriesSubtitle?: string;
+}
+
+interface RelatedPost {
+  title: string;
+  slug: string;
+  date: string;
+  tags: string[];
+  seriesSubtitle?: string;
 }
 
 interface Props {
@@ -17,22 +41,45 @@ interface Props {
     coverImage?: string;
     coverImageAlt?: string;
     tags?: string[];
+    series?: string;
+    seriesSubtitle?: string;
   };
   headings?: Heading[];
+  seriesPosts?: SeriesPost[];
+  readingTime?: number;
+  prevPost?: NavPost;
+  nextPost?: NavPost;
+  relatedPosts?: RelatedPost[];
 }
 
-const { frontmatter, headings = [] } = Astro.props;
+const { frontmatter, headings = [], seriesPosts, readingTime, prevPost, nextPost, relatedPosts = [] } = Astro.props;
 ---
 
 <BaseLayout title={`${frontmatter.title} - Made By Gare`} description={frontmatter.description} image={frontmatter.coverImage}>
   <div class="relative flex justify-center gap-8">
     <aside class="w-48 shrink-0 hidden xl:block self-stretch">
-      <TableOfContents headings={headings} />
+      <div class="sticky top-8 space-y-8">
+        <TableOfContents headings={headings} />
+        {frontmatter.series && seriesPosts && seriesPosts.length > 1 && (
+          <SeriesNav seriesName={frontmatter.series} posts={seriesPosts} currentSlug={Astro.params.slug as string} />
+        )}
+      </div>
     </aside>
     <article class="max-w-3xl w-full min-w-0">
       <header class="mb-8">
         <h1 class="text-3xl font-bold mb-2">{frontmatter.title}</h1>
-        <time class="text-text-secondary text-sm">{frontmatter.date}</time>
+        {frontmatter.seriesSubtitle && (
+          <p class="text-lg text-text-secondary mb-1">{frontmatter.seriesSubtitle}</p>
+        )}
+        <div class="flex items-center gap-2 text-text-secondary text-sm">
+          <time>{frontmatter.date}</time>
+          {readingTime && (
+            <>
+              <span>&middot;</span>
+              <span>{readingTime} min read</span>
+            </>
+          )}
+        </div>
         {frontmatter.tags && frontmatter.tags.length > 0 && (
           <div class="flex flex-wrap gap-1.5 mt-3">
             {frontmatter.tags.map(tag => <TagBadge tag={tag} linked />)}
@@ -48,9 +95,22 @@ const { frontmatter, headings = [] } = Astro.props;
           />
         </div>
       )}
+      {frontmatter.series && seriesPosts && seriesPosts.length > 1 && (
+        <div class="xl:hidden mb-8 p-4 rounded-lg bg-bg-secondary">
+          <SeriesNav seriesName={frontmatter.series} posts={seriesPosts} currentSlug={Astro.params.slug as string} />
+        </div>
+      )}
       <div class="prose">
         <slot />
       </div>
+      {frontmatter.series && seriesPosts && seriesPosts.length > 1 && (
+        <div class="mt-12 p-4 rounded-lg bg-bg-secondary">
+          <SeriesNav seriesName={frontmatter.series} posts={seriesPosts} currentSlug={Astro.params.slug as string} />
+        </div>
+      )}
+      <RelatedPosts posts={relatedPosts} />
+      <PostNavigation prev={prevPost} next={nextPost} />
     </article>
   </div>
+  <CopyCodeButton />
 </BaseLayout>

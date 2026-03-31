@@ -1,0 +1,37 @@
+---
+interface NavPost {
+  title: string;
+  slug: string;
+  seriesSubtitle?: string;
+}
+
+interface Props {
+  prev?: NavPost;
+  next?: NavPost;
+}
+
+const { prev, next } = Astro.props;
+---
+
+{(prev || next) && (
+  <nav class="mt-12 pt-12 border-t border-bg-tertiary flex flex-col sm:flex-row gap-4" aria-label="Post navigation">
+    {prev ? (
+      <a href={`/posts/${prev.slug}/`} class="group flex-1 p-4 rounded-lg bg-bg-secondary border border-bg-tertiary hover:border-accent-orange/30 transition-colors">
+        <span class="text-xs text-text-secondary uppercase tracking-wider">Previous</span>
+        <p class="text-sm font-medium text-text-primary group-hover:text-accent-orange transition-colors mt-1">
+          {prev.title}
+          {prev.seriesSubtitle && <span class="text-text-secondary font-normal ml-1">{prev.seriesSubtitle}</span>}
+        </p>
+      </a>
+    ) : <div class="flex-1" />}
+    {next ? (
+      <a href={`/posts/${next.slug}/`} class="group flex-1 p-4 rounded-lg bg-bg-secondary border border-bg-tertiary hover:border-accent-orange/30 transition-colors sm:text-right">
+        <span class="text-xs text-text-secondary uppercase tracking-wider">Next</span>
+        <p class="text-sm font-medium text-text-primary group-hover:text-accent-orange transition-colors mt-1">
+          {next.title}
+          {next.seriesSubtitle && <span class="text-text-secondary font-normal ml-1">{next.seriesSubtitle}</span>}
+        </p>
+      </a>
+    ) : <div class="flex-1" />}
+  </nav>
+)}

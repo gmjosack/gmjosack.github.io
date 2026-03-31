@@ -1,0 +1,44 @@
+---
+interface SeriesPost {
+  title: string;
+  subtitle?: string;
+  slug: string;
+  order: number;
+}
+
+interface Props {
+  seriesName: string;
+  posts: SeriesPost[];
+  currentSlug: string;
+}
+
+const { seriesName, posts, currentSlug } = Astro.props;
+const sorted = [...posts].sort((a, b) => a.order - b.order);
+---
+
+<nav class="series-nav" aria-label="Series navigation">
+  <p class="text-xs font-semibold uppercase tracking-wider text-text-secondary mb-3">Series</p>
+  <p class="text-sm font-medium text-text-primary mb-2">{seriesName}</p>
+  <ol class="space-y-1 text-sm border-l border-bg-tertiary">
+    {sorted.map((post, i) => {
+      const isCurrent = post.slug === currentSlug;
+      const label = post.subtitle || post.title;
+      return (
+        <li>
+          {isCurrent ? (
+            <span class="block pl-3 text-accent-orange border-l-2 border-accent-orange -ml-px font-medium">
+              {label}
+            </span>
+          ) : (
+            <a
+              href={`/posts/${post.slug}/`}
+              class="block pl-3 text-text-secondary hover:text-accent-orange transition-colors duration-150"
+            >
+              {label}
+            </a>
+          )}
+        </li>
+      );
+    })}
+  </ol>
+</nav>

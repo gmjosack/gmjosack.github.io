@@ -1,11 +1,12 @@
 ---
-title: "My First 2D Pixel Shader(s) - Part 2"
+title: "My First 2D Pixel Shader(s)"
 date: "Monday, July 18, 2011"
 published: true
 tags: ["xna", "hlsl"]
+series: "My First 2D Pixel Shader(s)"
+seriesOrder: 2
+seriesSubtitle: "Part 2 - Color & Coordinate Effects"
 ---
-
-_This is part 2 of a 3 part series on 2D Pixel Shaders. For part 1 [click here](/posts/my-first-2d-pixel-shaders-part-1/), for part 3 [click here.](/posts/my-first-2d-pixel-shaders-part-3/)_
 
 When left off we had just implemented our grayscale shader. Just as a reminder, since we'll be building on this function, this is what the PixelShaderFunction looked like.
 
@@ -206,5 +207,3 @@ Here we're just setting RGB to the value of coords.y which is going to move from
 Today we learned a bit about the vector data type and accessing the different components of those vectors in various ways. We also learned about a variety of different color based and coordinate based shaders we can apply. There's a ton of really fun things you can do with these techniques. Feel free to just make things up and see how it turns out.
 
 In the next part we'll be talking about some more advanced shaders, including passing in parameters, additional textures, and "lighting."
-
-To jump to part 3 [click here.](/posts/my-first-2d-pixel-shaders-part-3/)

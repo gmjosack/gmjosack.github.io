@@ -15,6 +15,9 @@ const posts = defineCollection({
     // Vertical position for post list thumbnail crop (CSS object-position, default: "center")
     coverImagePosition: z.string().default("center"),
     tags: z.array(z.string()).default([]),
+    series: z.string().optional(),
+    seriesOrder: z.number().optional(),
+    seriesSubtitle: z.string().optional(),
   }),
 });
 

@@ -10,9 +10,11 @@ interface Props {
   coverImageAlt?: string;
   coverImagePosition?: string;
   tags?: string[];
+  seriesSubtitle?: string;
+  readingTime?: number;
 }
 
-const { title, date, slug, excerpt, coverImage, coverImageAlt, coverImagePosition = "center", tags } = Astro.props;
+const { title, date, slug, excerpt, coverImage, coverImageAlt, coverImagePosition = "center", tags, seriesSubtitle, readingTime } = Astro.props;
 ---
 
 <a href={`/posts/${slug}/`} class="block group">
@@ -24,10 +26,19 @@ const { title, date, slug, excerpt, coverImage, coverImageAlt, coverImagePositio
       )}
       <div class="p-5">
         <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-          <h3 class="text-lg font-semibold text-text-primary group-hover:text-accent-orange transition-colors">
-            {title}
+          <h3 class="text-lg text-text-primary group-hover:text-accent-orange transition-colors">
+            <span class="font-semibold">{title}</span>
+            {seriesSubtitle && <span class="text-sm text-text-secondary font-normal ml-2">{seriesSubtitle}</span>}
           </h3>
-          <time class="text-text-secondary text-xs shrink-0 sm:mt-1">{date}</time>
+          <div class="flex items-center gap-1.5 text-text-secondary text-xs shrink-0 sm:mt-1">
+            <time>{date}</time>
+            {readingTime && (
+              <>
+                <span>&middot;</span>
+                <span>{readingTime} min</span>
+              </>
+            )}
+          </div>
         </div>
         {excerpt && (
           <div class="relative mt-3 max-h-24 overflow-hidden">
