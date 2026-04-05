@@ -195,6 +195,33 @@ div:hover > .copy-code-btn {
   margin: 1rem 0;
 }
 
+.prose table {
+  width: 100%;
+  margin-bottom: 1.25rem;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.prose thead {
+  border-bottom: 2px solid var(--color-bg-tertiary);
+}
+
+.prose th {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  text-align: left;
+  padding: 0.625rem 1rem;
+}
+
+.prose td {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--color-bg-tertiary);
+}
+
+.prose tbody tr:hover {
+  background: var(--color-bg-secondary);
+}
+
 .prose strong {
   color: var(--color-text-primary);
   font-weight: 600;

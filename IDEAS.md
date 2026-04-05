@@ -10,6 +10,7 @@
 - Player controller input system
 - Seeded runs / dailies
 - Property Map plugin
+- Making ladders / ledge hangs feel good
 
 ## What Pressed
 
