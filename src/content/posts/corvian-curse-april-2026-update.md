@@ -1,7 +1,7 @@
 ---
 title: "Corvian Curse - April 2026 Update"
 date: "Tuesday, April 28, 2026"
-published: false
+published: true
 tags: ["godot", "corvian-curse", "release-notes"]
 coverImage: "/images/posts/corvian-curse-april-2026-update/cover.png"
 coverImageAlt: "TODO"
