@@ -11,6 +11,7 @@ description: "Recap of the latest demo update for Corvian Curse - new threats, n
 
 <iframe src="https://store.steampowered.com/widget/2626080/" frameborder="0" width="100%" height="190"></iframe>
 <hr />
+
 Wow. Over a year since our last update and 2 since we've done any significant work on [Corvian Curse](https://store.steampowered.com/app/2626080/Corvian_Curse/). It took me a while to get back into a good groove after I started working again. Personal projects were just hard to find the time for, but for the last few months I've found a second wind and we've all been really going hard again.
 
 <img src="/images/posts/corvian-curse-april-2026-update/commit_histogram.png" alt="Commit graph of Corvian Curse showing a two year gap with low commits">
