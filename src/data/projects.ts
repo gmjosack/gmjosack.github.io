@@ -36,13 +36,21 @@ export interface CategoryConfig {
 export const projects: Project[] = [
   // Games
   {
+    name: "Corvian Cards",
+    description: "A daily trick taking game set in the world of Corvian Curse.",
+    category: "game",
+    image: "/images/games/corvian-cards.png",
+    itchUrl: "https://madebygare.itch.io/corvian-cards",
+    context:
+      "[bumperoyster](https://bumperoyster.itch.io/) again on art and [bronxtaco](https://bronxtaco.itch.io/) as a one man QA team. Made for the [29th Secret Jam of Games](https://itch.io/jam/secret-jam-of-games-29). I've been playing a lot of trick taking games lately and wanted to look into making one into a daily web game. It was a fun challenge but I missed working in Godot heh.",
+  },
+  {
     name: "The Curator",
     description:
       "You've woken up in an old cell. No idea how you got there but you know one thing. You need to escape.",
     category: "game",
     image: "/images/games/the-curator.png",
     itchUrl: "https://madebygare.itch.io/the-curator",
-    featured: true,
     context:
       "[bumperoyster](https://bumperoyster.itch.io/), [bronxtaco](https://bronxtaco.itch.io/) and I teamed up again, this time for the [GMTK Game Jam 2025](https://itch.io/jam/gmtk-2025/rate/3746438). This game was inspired by Night Manor from UFO 50. I learned how stressful making a content heavy game in a short jam is with this one but I'm very happy with what we pulled off!  ",
   },
