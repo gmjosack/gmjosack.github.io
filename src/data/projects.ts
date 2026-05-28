@@ -42,7 +42,7 @@ export const projects: Project[] = [
     image: "/images/games/corvian-cards.png",
     itchUrl: "https://madebygare.itch.io/corvian-cards",
     context:
-      "[bumperoyster](https://bumperoyster.itch.io/) again on art and [bronxtaco](https://bronxtaco.itch.io/) as a one man QA team. Made for the [29th Secret Jam of Games](https://itch.io/jam/secret-jam-of-games-29). I've been playing a lot of trick taking games lately and wanted to look into making one into a daily web game. It was a fun challenge but I missed working in Godot heh.",
+      "[bumperoyster](https://bumperoyster.itch.io/) again on art and [bronxtaco](https://bronxtaco.itch.io/) on audio and our one man QA team. Made for the [29th Secret Jam of Games](https://itch.io/jam/secret-jam-of-games-29). I've been playing a lot of trick taking games lately and wanted to look into making one into a daily web game. It was a fun challenge but I missed working in Godot heh.",
   },
   {
     name: "The Curator",
