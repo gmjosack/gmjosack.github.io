@@ -9,6 +9,7 @@ export interface Project {
   steamUrl?: string;
   githubUrl?: string;
   url?: string;
+  urlLabel?: string;
   primaryLink?: "itch" | "steam" | "github" | "url";
   featured?: boolean;
   context?: string;
@@ -40,6 +41,9 @@ export const projects: Project[] = [
     description: "A daily trick taking game set in the world of Corvian Curse.",
     category: "game",
     image: "/images/games/corvian-cards.png",
+    url: "/games/corvian-cards/",
+    urlLabel: "Play",
+    primaryLink: "url",
     itchUrl: "https://madebygare.itch.io/corvian-cards",
     context:
       "[bumperoyster](https://bumperoyster.itch.io/) again on art and [bronxtaco](https://bronxtaco.itch.io/) on audio and our one man QA team. Made for the [29th Secret Jam of Games](https://itch.io/jam/secret-jam-of-games-29). I've been playing a lot of trick taking games lately and wanted to look into making one into a daily web game. It was a fun challenge but I missed working in Godot heh.",

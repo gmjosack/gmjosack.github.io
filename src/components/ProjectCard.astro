@@ -26,7 +26,7 @@ const links: LinkEntry[] = [
   project.itchUrl ? { href: project.itchUrl, label: 'itch.io', key: 'itch' } : null,
   project.steamUrl ? { href: project.steamUrl, label: 'Steam', key: 'steam' } : null,
   project.githubUrl ? { href: project.githubUrl, label: 'GitHub', key: 'github' } : null,
-  project.url ? { href: project.url, label: 'Website', key: 'url' } : null,
+  project.url ? { href: project.url, label: project.urlLabel || 'Website', key: 'url' } : null,
 ].filter((l): l is LinkEntry => l !== null)
  .sort((a, b) => (a.key === primary ? -1 : b.key === primary ? 1 : 0));
 ---
