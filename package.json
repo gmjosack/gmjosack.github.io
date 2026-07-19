@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "fetch-games": "node scripts/fetch-games.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.13",
@@ -18,6 +19,7 @@
   },
   "devDependencies": {
     "@types/papaparse": "^5.5.2",
-    "papaparse": "^5.5.3"
+    "papaparse": "^5.5.3",
+    "yaml": "^2.9.0"
   }
 }

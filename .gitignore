@@ -1,6 +1,9 @@
 # build output
 dist/
 
+# game builds fetched from releases (npm run fetch-games)
+public/games/
+
 # generated types
 .astro/
 

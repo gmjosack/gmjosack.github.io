@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # Sent by game repos when they publish a release (see games.yml)
+  repository_dispatch:
+    types: [game-release]
 
 permissions:
   contents: read
@@ -24,6 +27,9 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: node scripts/fetch-games.mjs
+        env:
+          GH_TOKEN: ${{ secrets.GAMES_READ_TOKEN }}
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -1,0 +1,15 @@
+# Games served from this site but built and released elsewhere.
+#
+# Each entry downloads the latest GitHub release zip from `repo` and extracts
+# it into public/games/<name>/, both in CI (deploy.yml) and locally via
+# `npm run fetch-games`.
+#
+# Fields:
+#   name:    target directory under public/games/ (also the URL path)
+#   repo:    GitHub repo to pull the latest release from
+#   pattern: optional glob for the release asset (default: "*.zip")
+games:
+  - name: corvian-cards
+    repo: made-by-gare/corvian-cards
+  - name: celestial-particles
+    repo: made-by-gare/celestial-particles
