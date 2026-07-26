@@ -14,7 +14,7 @@ images:
   - src: /images/for-sale/city-of-mist-the-vigilante-set/photo-03.jpg
     caption: "Back view. Torn paper from cardboard at bottom and other cosmetic damage."
   - src: /images/for-sale/city-of-mist-the-vigilante-set/photo-04.jpg
-    caption: "Side view. torn back/bottom can be seen wrapping around.
+    caption: "Side view. Torn back/bottom can be seen wrapping around."
   - src: /images/for-sale/city-of-mist-the-vigilante-set/photo-05.jpg
     caption: "Top view."
   - src: /images/for-sale/city-of-mist-the-vigilante-set/photo-06.jpg
