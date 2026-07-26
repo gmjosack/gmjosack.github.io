@@ -1,0 +1,48 @@
+---
+import { formatPrice } from '../utils/price';
+
+interface Props {
+  slug: string;
+  title: string;
+  summary?: string;
+  condition?: string;
+  price?: number;
+  priceNote?: string;
+  image?: string;
+}
+
+const { slug, title, summary, condition, price, priceNote, image } = Astro.props;
+---
+
+<a href={`/for-sale/${slug}/`} class="block group h-full">
+  <article class="h-full bg-bg-secondary border border-bg-tertiary rounded-lg overflow-hidden flex flex-col hover:border-accent-orange/40 transition-colors">
+    <div class="aspect-4/3 bg-bg-tertiary overflow-hidden">
+      {image ? (
+        <img
+          src={image}
+          alt={title}
+          loading="lazy"
+          class="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+        />
+      ) : (
+        <div class="w-full h-full flex items-center justify-center text-text-secondary text-sm">No photos yet</div>
+      )}
+    </div>
+
+    <div class="p-4 flex flex-col flex-1">
+      <h3 class="font-semibold text-text-primary group-hover:text-accent-orange transition-colors">{title}</h3>
+      {condition && <p class="text-xs text-text-secondary mt-1">{condition}</p>}
+      {summary && <p class="text-sm text-text-secondary mt-2 leading-relaxed line-clamp-3">{summary}</p>}
+      <p class="mt-auto pt-3 flex items-baseline flex-wrap gap-x-2">
+        {price != null ? (
+          <>
+            <span class="text-lg font-semibold text-accent-orange">{formatPrice(price)}</span>
+            {priceNote && <span class="text-xs text-text-secondary">{priceNote}</span>}
+          </>
+        ) : (
+          <span class="text-base font-medium text-accent-orange">{priceNote || 'Make an offer'}</span>
+        )}
+      </p>
+    </div>
+  </article>
+</a>

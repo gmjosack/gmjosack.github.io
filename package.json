@@ -7,7 +7,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "fetch-games": "node scripts/fetch-games.mjs"
+    "fetch-games": "node scripts/fetch-games.mjs",
+    "prep-listing": "node scripts/prep-listing.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.13",

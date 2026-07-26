@@ -1,0 +1,64 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ForSaleCard from "../../components/ForSaleCard.astro";
+import { getCollection } from "astro:content";
+
+const listings = (await getCollection("forSale"))
+  .filter((l) => l.data.published)
+  // Unset `order` sorts last, then alphabetical.
+  .sort((a, b) => {
+    const ao = a.data.order ?? Number.MAX_SAFE_INTEGER;
+    const bo = b.data.order ?? Number.MAX_SAFE_INTEGER;
+    return ao !== bo ? ao - bo : a.data.title.localeCompare(b.data.title);
+  });
+
+function getSummary(entry: (typeof listings)[number]): string | undefined {
+  if (entry.data.summary) return entry.data.summary;
+  const plain = (entry.body || "")
+    .replace(/!\[.*?\]\(.*?\)/g, "")
+    .replace(/\[([^\]]+)\]\(.*?\)/g, "$1")
+    .replace(/^#+\s+.*$/gm, "")
+    .replace(/[*_`>]/g, "")
+    .replace(/\n+/g, " ")
+    .trim();
+  if (!plain) return undefined;
+  return plain.length > 180
+    ? plain.slice(0, 180).replace(/\s+\S*$/, "...")
+    : plain;
+}
+---
+
+<BaseLayout
+  title="For Sale - Made By Gare"
+  description="Things I'm selling."
+  noindex
+>
+  <header class="mb-8">
+    <h1 class="text-2xl font-semibold text-accent-orange mb-3 pixel-divider">
+      For Sale
+    </h1>
+    <p class="text-text-secondary text-sm leading-relaxed max-w-2xl">
+      Random things I'm looking to find a new home for.
+    </p>
+  </header>
+
+  {
+    listings.length === 0 ? (
+      <p class="text-text-secondary text-sm">Nothing listed right now.</p>
+    ) : (
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {listings.map((entry) => (
+          <ForSaleCard
+            slug={entry.id}
+            title={entry.data.title}
+            summary={getSummary(entry)}
+            condition={entry.data.condition}
+            price={entry.data.price}
+            priceNote={entry.data.priceNote}
+            image={entry.data.coverImage || entry.data.images[0]?.src}
+          />
+        ))}
+      </div>
+    )
+  }
+</BaseLayout>

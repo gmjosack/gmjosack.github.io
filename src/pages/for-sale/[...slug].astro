@@ -1,0 +1,109 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Gallery from '../../components/Gallery.astro';
+import ForSaleCard from '../../components/ForSaleCard.astro';
+import { getCollection, render } from 'astro:content';
+import { formatPrice } from '../../utils/price';
+
+export async function getStaticPaths() {
+  const listings = (await getCollection('forSale')).filter((l) => l.data.published);
+  return listings.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const item = entry.data;
+const { Content } = await render(entry);
+
+const retailText = item.retailPrice != null
+  ? `Retails new for ${formatPrice(item.retailPrice)}`
+  : `See it new${item.retailLabel ? ` on ${item.retailLabel}` : ''}`;
+
+// Resolve seeAlso slugs to real listings, skipping anything unpublished or misspelled.
+const all = (await getCollection('forSale')).filter((l) => l.data.published);
+const related = item.seeAlso
+  .map((slug) => all.find((l) => l.id === slug))
+  .filter((l): l is (typeof all)[number] => Boolean(l) && l!.id !== entry.id);
+---
+
+<BaseLayout title={`${item.title} - For Sale`} description={item.summary} noindex>
+  <article class="max-w-4xl">
+    <a href="/for-sale/" class="inline-flex items-center gap-1.5 text-sm text-text-secondary hover:text-accent-orange transition-colors mb-6">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      All items
+    </a>
+
+    <h1 class="text-2xl font-semibold text-text-primary">{item.title}</h1>
+    {item.summary && <p class="text-text-secondary leading-relaxed mt-2">{item.summary}</p>}
+
+    <div class="mt-5 mb-8 py-3 border-t border-b border-bg-tertiary flex flex-wrap items-baseline gap-x-5 gap-y-2">
+      {item.price != null ? (
+        <span class="text-2xl font-semibold text-accent-orange">
+          {formatPrice(item.price)}
+          {item.priceNote && <span class="text-sm font-normal text-text-secondary ml-2">{item.priceNote}</span>}
+        </span>
+      ) : (
+        <span class="text-xl font-semibold text-accent-orange">{item.priceNote || 'Make an offer'}</span>
+      )}
+      {item.condition && <span class="text-sm text-text-secondary">{item.condition}</span>}
+      {(item.retailUrl || item.retailPrice != null) && (
+        item.retailUrl ? (
+          <a
+            href={item.retailUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-sm text-text-secondary hover:text-accent-orange transition-colors inline-flex items-center gap-1.5 sm:ml-auto"
+          >
+            {retailText}
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M14 5h5v5M19 5l-9 9M12 5H6a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1v-6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </a>
+        ) : (
+          <span class="text-sm text-text-secondary sm:ml-auto">{retailText}</span>
+        )
+      )}
+    </div>
+
+    <Gallery images={item.images} title={item.title} />
+
+    {entry.body?.trim() && (
+      <div class="prose mt-8 max-w-none">
+        <Content />
+      </div>
+    )}
+
+    {item.includes.length > 0 && (
+      <section class="mt-8">
+        <h2 class="text-lg font-semibold text-text-primary mb-3">What's included</h2>
+        <ul class="list-disc pl-5 space-y-1 text-sm text-text-secondary marker:text-accent-orange/60">
+          {item.includes.map((line) => <li>{line}</li>)}
+        </ul>
+      </section>
+    )}
+
+    {related.length > 0 && (
+      <section class="mt-12 border-t border-bg-tertiary pt-8">
+        <h2 class="text-lg font-semibold text-text-primary mb-2">Also listed</h2>
+        {item.seeAlsoNote && <p class="text-text-secondary text-sm mb-4">{item.seeAlsoNote}</p>}
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {related.map((r) => (
+            <ForSaleCard
+              slug={r.id}
+              title={r.data.title}
+              summary={r.data.summary}
+              condition={r.data.condition}
+              price={r.data.price}
+              priceNote={r.data.priceNote}
+              image={r.data.coverImage || r.data.images[0]?.src}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+  </article>
+</BaseLayout>
