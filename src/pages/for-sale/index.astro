@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ForSaleCard from "../../components/ForSaleCard.astro";
 import { getCollection } from "astro:content";
+import { listingSummary } from "../../utils/listing";
 
 const listings = (await getCollection("forSale"))
   .filter((l) => l.data.published)
@@ -12,20 +13,6 @@ const listings = (await getCollection("forSale"))
     return ao !== bo ? ao - bo : a.data.title.localeCompare(b.data.title);
   });
 
-function getSummary(entry: (typeof listings)[number]): string | undefined {
-  if (entry.data.summary) return entry.data.summary;
-  const plain = (entry.body || "")
-    .replace(/!\[.*?\]\(.*?\)/g, "")
-    .replace(/\[([^\]]+)\]\(.*?\)/g, "$1")
-    .replace(/^#+\s+.*$/gm, "")
-    .replace(/[*_`>]/g, "")
-    .replace(/\n+/g, " ")
-    .trim();
-  if (!plain) return undefined;
-  return plain.length > 180
-    ? plain.slice(0, 180).replace(/\s+\S*$/, "...")
-    : plain;
-}
 ---
 
 <BaseLayout
@@ -51,7 +38,7 @@ function getSummary(entry: (typeof listings)[number]): string | undefined {
           <ForSaleCard
             slug={entry.id}
             title={entry.data.title}
-            summary={getSummary(entry)}
+            summary={listingSummary(entry)}
             condition={entry.data.condition}
             price={entry.data.price}
             priceNote={entry.data.priceNote}

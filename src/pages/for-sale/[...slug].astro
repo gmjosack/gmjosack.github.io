@@ -4,6 +4,7 @@ import Gallery from '../../components/Gallery.astro';
 import ForSaleCard from '../../components/ForSaleCard.astro';
 import { getCollection, render } from 'astro:content';
 import { formatPrice } from '../../utils/price';
+import { listingSummary, priceText, truncate } from '../../utils/listing';
 
 export async function getStaticPaths() {
   const listings = (await getCollection('forSale')).filter((l) => l.data.published);
@@ -26,9 +27,67 @@ const all = (await getCollection('forSale')).filter((l) => l.data.published);
 const related = item.seeAlso
   .map((slug) => all.find((l) => l.id === slug))
   .filter((l): l is (typeof all)[number] => Boolean(l) && l!.id !== entry.id);
+
+// Link previews: lead with the price and condition, since that's what someone
+// sent the link wants to know, then the summary. The first photo becomes the
+// card image, which also earns the wide Twitter card instead of the small one.
+const summary = listingSummary(entry);
+const cardImage = item.coverImage || item.images[0]?.src;
+const cardImageAlt = item.images.find((i) => i.src === cardImage)?.alt || item.title;
+const metaDescription = truncate(
+  [priceText(item), item.condition, summary].filter(Boolean).join(' · '),
+  200,
+);
+
+const canonical = new URL(`/for-sale/${entry.id}/`, Astro.site).href;
+const absolute = (src: string) => new URL(src, Astro.site).href;
+
+// schema.org Product, for anything that reads structured data rather than tags.
+const productSchema: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: item.title,
+  url: canonical,
+  ...(summary ? { description: summary } : {}),
+  ...(item.images.length > 0 ? { image: item.images.map((i) => absolute(i.src)) } : {}),
+  offers: {
+    '@type': 'Offer',
+    url: canonical,
+    availability: 'https://schema.org/InStock',
+    ...(item.price != null ? { price: item.price, priceCurrency: 'USD' } : {}),
+    ...(item.condition
+      ? {
+          itemCondition: /\bnew\b|sealed/i.test(item.condition)
+            ? 'https://schema.org/NewCondition'
+            : 'https://schema.org/UsedCondition',
+        }
+      : {}),
+  },
+};
 ---
 
-<BaseLayout title={`${item.title} - For Sale`} description={item.summary} noindex>
+<BaseLayout
+  title={`${item.title} - For Sale`}
+  description={metaDescription}
+  image={cardImage}
+  imageAlt={cardImage ? cardImageAlt : undefined}
+  twitterCard={cardImage ? 'summary_large_image' : 'summary'}
+  ogType="product"
+  noindex
+>
+  <Fragment slot="head">
+    {item.price != null && (
+      <>
+        <meta property="product:price:amount" content={item.price.toFixed(2)} />
+        <meta property="product:price:currency" content="USD" />
+        <meta property="og:price:amount" content={item.price.toFixed(2)} />
+        <meta property="og:price:currency" content="USD" />
+      </>
+    )}
+    {item.condition && <meta property="product:condition" content={/\bnew\b|sealed/i.test(item.condition) ? 'new' : 'used'} />}
+    <script type="application/ld+json" set:html={JSON.stringify(productSchema)} is:inline />
+  </Fragment>
+
   <article class="max-w-4xl">
     <a href="/for-sale/" class="inline-flex items-center gap-1.5 text-sm text-text-secondary hover:text-accent-orange transition-colors mb-6">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">

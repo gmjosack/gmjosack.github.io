@@ -85,6 +85,8 @@ Two versions of the same item get one listing each, cross-linked with `seeAlso: 
 
 There's no "sold" state: delete the `.md` file when the item goes, or set `published: false` to keep the text around without listing it.
 
+**Link previews:** a pasted listing URL unfurls into a card built from the frontmatter, so it's worth filling in. The first photo (or `coverImage`) becomes the card image and upgrades the Twitter card to the wide `summary_large_image`; its `alt` becomes the image alt text. The description is `price · condition · summary`, trimmed to 200 characters, with the summary falling back to the opening of the body. The page also emits `product:price:*` Open Graph tags and a schema.org `Product`/`Offer` block, where `itemCondition` is read off the `condition` text (`new` or `sealed` anywhere in it means new, anything else means used).
+
 **Preparing listing photos:** drop the photos into `public/images/for-sale/<listing-name>/` straight off the phone, then run:
 
 ```bash

@@ -8,16 +8,28 @@ interface Props {
   title: string;
   description?: string;
   image?: string;
+  imageAlt?: string;
+  twitterCard?: "summary" | "summary_large_image";
+  ogType?: string;
   noindex?: boolean;
 }
 
-const { title, description, image, noindex } = Astro.props;
+const { title, description, image, imageAlt, twitterCard, ogType, noindex } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en" class="bg-bg-primary text-text-primary">
   <head>
-    <BaseHead title={title} description={description} image={image} noindex={noindex} />
+    <BaseHead
+      title={title}
+      description={description}
+      image={image}
+      imageAlt={imageAlt}
+      twitterCard={twitterCard}
+      ogType={ogType}
+      noindex={noindex}
+    />
+    <slot name="head" />
   </head>
   <body class="min-h-screen flex flex-col">
     <Header />

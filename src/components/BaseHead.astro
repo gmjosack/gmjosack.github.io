@@ -3,10 +3,23 @@ interface Props {
   title: string;
   description?: string;
   image?: string;
+  imageAlt?: string;
+  // "summary" is the small square card; "summary_large_image" is the wide one.
+  // Only worth the wide card when `image` is a real photo of the thing.
+  twitterCard?: "summary" | "summary_large_image";
+  ogType?: string;
   noindex?: boolean;
 }
 
-const { title, description = "making stuff and things", image = "/images/logos/black-bg-icon.png", noindex = false } = Astro.props;
+const {
+  title,
+  description = "making stuff and things",
+  image = "/images/logos/black-bg-icon.png",
+  imageAlt,
+  twitterCard = "summary",
+  ogType = "website",
+  noindex = false,
+} = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const imageURL = new URL(image, Astro.site);
 ---
@@ -26,19 +39,21 @@ if (location.hostname === 'gmjosack.github.io') {
 {noindex && <meta name="robots" content="noindex, nofollow" />}
 
 <!-- Open Graph / Facebook -->
-<meta property="og:type" content="website" />
+<meta property="og:type" content={ogType} />
 <meta property="og:url" content={canonicalURL} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:image" content={imageURL} />
+{imageAlt && <meta property="og:image:alt" content={imageAlt} />}
 <meta property="og:site_name" content="Made By Gare" />
 
 <!-- Twitter -->
-<meta name="twitter:card" content="summary" />
+<meta name="twitter:card" content={twitterCard} />
 <meta name="twitter:url" content={canonicalURL} />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={imageURL} />
+{imageAlt && <meta name="twitter:image:alt" content={imageAlt} />}
 
 <!-- RSS -->
 <link rel="alternate" type="application/rss+xml" title="Made By Gare" href="/rss.xml" />
