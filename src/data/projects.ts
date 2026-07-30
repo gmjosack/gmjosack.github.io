@@ -183,6 +183,12 @@ export const projects: Project[] = [
     context:
       "While at GDC in 2026 I got tired of the schedule they provide on their website. I decided to make my own that is much easier to use.",
   },
+  {
+    name: "Watermark Scanner",
+    description: "Recursively scan directories containing PDFs for watermarks.",
+    category: "software",
+    githubUrl: "https://github.com/made-by-gare/watermark-scanner",
+  },
 ];
 
 export const softwareSubsections: Subsection[] = [
