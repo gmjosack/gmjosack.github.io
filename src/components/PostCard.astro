@@ -18,19 +18,19 @@ const { title, date, slug, excerpt, coverImage, coverImageAlt, coverImagePositio
 ---
 
 <a href={`/posts/${slug}/`} class="block group">
-  <article class="bg-bg-secondary border border-bg-tertiary rounded-lg overflow-hidden hover:border-accent-orange/30 transition-colors flex">
-    <div class="w-1 bg-accent-orange/40 group-hover:bg-accent-orange transition-colors shrink-0" />
+  <article class="chip bg-bg-secondary overflow-hidden flex">
+    <div class="w-2 bg-accent/40 group-hover:bg-accent transition-colors shrink-0" />
     <div class="flex-1 min-w-0 flex flex-col">
       {coverImage && (
         <img src={coverImage} alt={coverImageAlt || title} class="w-full max-h-40 object-cover" style={`object-position: ${coverImagePosition};`} />
       )}
       <div class="p-5">
         <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-          <h3 class="text-lg text-text-primary group-hover:text-accent-orange transition-colors">
-            <span class="font-semibold">{title}</span>
+          <h3 class="text-lg text-text-primary group-hover:text-accent transition-colors">
+            <span class="display">{title}</span>
             {seriesSubtitle && <span class="text-sm text-text-secondary font-normal ml-2">{seriesSubtitle}</span>}
           </h3>
-          <div class="flex items-center gap-1.5 text-text-secondary text-xs shrink-0 sm:mt-1">
+          <div class="meta flex items-center gap-1.5 text-text-secondary text-xs shrink-0 sm:mt-1">
             <time>{date}</time>
             {readingTime && (
               <>

@@ -15,7 +15,7 @@ const year = new Date().getFullYear();
     <div class="text-center text-text-secondary text-sm">
       <p>&copy; {year} madebygare. All rights reserved.</p>
       <p class="mt-1">
-        Logo by <a href="https://bumperoyster.my.canva.site/" target="_blank" rel="noopener noreferrer" class="text-accent-orange hover:underline">bumperoyster</a>
+        Logo by <a href="https://bumperoyster.my.canva.site/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">bumperoyster</a>
       </p>
     </div>
   </div>
@@ -42,7 +42,7 @@ const year = new Date().getFullYear();
     const picks = shuffled.slice(0, 2);
     container.innerHTML = picks.map(site =>
       `<a href="${site.url}" target="_blank" rel="noopener noreferrer"
-        class="inline-block text-sm font-medium px-4 py-2 rounded bg-bg-secondary border border-bg-tertiary text-text-secondary hover:text-accent-orange hover:border-accent-orange/30 transition-colors">
+        class="chip chip--sm inline-block text-sm font-medium px-4 py-2 bg-bg-secondary text-text-secondary hover:text-accent">
         <span class="text-text-primary">${site.title}</span>
         <span class="block text-xs mt-0.5">${site.description}</span>
       </a>`

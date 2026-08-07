@@ -17,7 +17,7 @@ const sorted = [...posts].sort((a, b) => a.order - b.order);
 ---
 
 <nav class="series-nav" aria-label="Series navigation">
-  <p class="text-xs font-semibold uppercase tracking-wider text-text-secondary mb-3">Series</p>
+  <p class="label text-xs text-text-secondary mb-3">Series</p>
   <p class="text-sm font-medium text-text-primary mb-2">{seriesName}</p>
   <ol class="space-y-1 text-sm border-l border-bg-tertiary">
     {sorted.map((post, i) => {
@@ -26,13 +26,13 @@ const sorted = [...posts].sort((a, b) => a.order - b.order);
       return (
         <li>
           {isCurrent ? (
-            <span class="block pl-3 text-accent-orange border-l-2 border-accent-orange -ml-px font-medium">
+            <span class="block pl-3 text-accent border-l-2 border-accent -ml-px font-medium">
               {label}
             </span>
           ) : (
             <a
               href={`/posts/${post.slug}/`}
-              class="block pl-3 text-text-secondary hover:text-accent-orange transition-colors duration-150"
+              class="block pl-3 text-text-secondary hover:text-accent transition-colors duration-150"
             >
               {label}
             </a>

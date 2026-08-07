@@ -46,21 +46,21 @@ for (const post of posts) {
   {allTags.length > 0 && (
     <div class="mb-6 flex flex-wrap gap-2 items-center">
       <span class="text-text-secondary text-sm mr-1">Filter:</span>
-      <button data-tag="all" class="tag-filter active" style="--tag-hs: 0 0%;">All</button>
+      <button data-tag="all" class="chip chip--xs tag-filter active" style="--tag-hs: 0 0%;">All</button>
       {allTags.map(tag => (
-        <button data-tag={tag} class="tag-filter" style={`--tag-hs: ${tagColors.get(tag)};`}>{tag}</button>
+        <button data-tag={tag} class="chip chip--xs tag-filter" style={`--tag-hs: ${tagColors.get(tag)};`}>{tag}</button>
       ))}
     </div>
   )}
   <div class="relative pl-8">
-    <div class="absolute left-3 top-0 bottom-0 w-0.5 bg-accent-orange/30" />
+    <div class="absolute left-3 top-0 bottom-0 w-0.5 bg-accent/30" />
     {postsByYear.map((group) => (
       <div class="mb-6" data-year-group>
         <div class="flex items-center mb-4 -ml-8">
-          <div class="w-6 h-6 rounded-full bg-bg-primary border-2 border-accent-orange flex items-center justify-center z-10">
-            <div class="w-2 h-2 rounded-full bg-accent-orange" />
+          <div class="w-6 h-6 rounded-full bg-bg-primary border-2 border-accent flex items-center justify-center z-10">
+            <div class="w-2 h-2 rounded-full bg-accent" />
           </div>
-          <span class="ml-3 text-sm font-semibold text-accent-orange">{group.year}</span>
+          <span class="meta ml-3 text-sm font-medium text-accent">{group.year}</span>
         </div>
         <div class="space-y-4">
           {group.posts.map((post) => (

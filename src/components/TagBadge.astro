@@ -14,7 +14,7 @@ const allTags = [...new Set(posts.flatMap(p => p.data.tags))];
 const colorMap = buildTagColors(allTags);
 const hs = colorMap.get(tag) ?? '0 0%';
 
-const classes = "inline-block rounded-full px-2.5 py-0.5 text-xs font-medium border transition-colors";
+const classes = "chip chip--xs meta inline-block px-2.5 py-0.5 text-xs";
 ---
 
 {linked ? (
@@ -24,13 +24,16 @@ const classes = "inline-block rounded-full px-2.5 py-0.5 text-xs font-medium bor
 )}
 
 <style>
+  /* Tags keep their own generated hue instead of the accent, so the chip's
+     stroke variables are overridden rather than inherited. */
   a, span {
+    --chip-stroke: hsl(var(--tag-hs) 50% / 0.3);
+    --chip-stroke-hover: hsl(var(--tag-hs) 50% / 0.55);
     background: hsl(var(--tag-hs) 50% / 0.12);
     color: hsl(var(--tag-hs) 75%);
-    border-color: hsl(var(--tag-hs) 50% / 0.25);
+    transition: background 150ms, box-shadow 150ms;
   }
-  a:hover, span:hover {
+  a:hover {
     background: hsl(var(--tag-hs) 50% / 0.22);
-    border-color: hsl(var(--tag-hs) 50% / 0.45);
   }
 </style>

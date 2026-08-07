@@ -19,9 +19,9 @@ const { posts } = Astro.props;
     id="post-search"
     placeholder="Search posts..."
     autocomplete="off"
-    class="w-full px-4 py-2 rounded-lg bg-bg-secondary border border-bg-tertiary text-text-primary text-sm placeholder:text-text-secondary/50 focus:outline-none focus:border-accent-orange/50 transition-colors"
+    class="chip chip--sm chip--flat w-full px-4 py-2 bg-bg-secondary text-text-primary text-sm placeholder:text-text-secondary/50 focus:outline-none"
   />
-  <div id="search-results" class="hidden absolute z-20 top-full left-0 right-0 mt-1 bg-bg-secondary border border-bg-tertiary rounded-lg shadow-lg overflow-hidden max-h-64 overflow-y-auto">
+  <div id="search-results" class="chip chip--sm chip--flat hidden absolute z-20 top-full left-0 right-0 mt-1 bg-bg-secondary overflow-hidden max-h-64 overflow-y-auto">
   </div>
 </div>
 

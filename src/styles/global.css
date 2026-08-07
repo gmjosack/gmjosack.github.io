@@ -1,12 +1,84 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg-primary: #181818;
-  --color-bg-secondary: #212121;
-  --color-bg-tertiary: #2c2c2c;
-  --color-accent-orange: #f97316;
-  --color-text-primary: #e5e5e5;
-  --color-text-secondary: #a3a3a3;
+  /* One accent, orange. An earlier pass split the work between teal and orange
+     — teal for interactive, orange for structure — but that was an invented
+     rule no visitor ever learns, so it just read as two colors picked at random.
+     A single accent carries hierarchy through weight and placement instead.
+
+     Teal is deliberately absent here: it now appears only in the logo, which
+     makes the robot the one teal thing on the page. */
+  --color-accent: #f97316;
+  --color-ink: #000000;
+
+  /* Three faces, three jobs.
+       display — Archivo, run condensed and heavy. Poster grotesque picked to
+                 match the weight and tight fit of the "MADE BY GARE" wordmark.
+       sans    — IBM Plex Sans for reading. Technical without being cold, and it
+                 was drawn alongside the mono, so the two sit together properly.
+       mono    — IBM Plex Mono for data: dates, durations, prices, tags, controls.
+                 On an engineer's site, mono for numbers is honest rather than
+                 decorative, and it separates metadata from prose without color. */
+  --font-display: "Archivo Variable", "Arial Narrow", system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Code", monospace;
+
+  /* Surfaces stay neutral. Tinting them toward the accent turned the whole page
+     green — the texture and the chip shapes carry the character, so the
+     background doesn't need to. The 1–2 point spread here is below the
+     perceptual threshold for hue; it just keeps the grays from being dead flat. */
+  --color-bg-primary: #171918;
+  --color-bg-secondary: #202221;
+  --color-bg-tertiary: #2c2f2e;
+  --color-text-primary: #e6e8e7;
+  --color-text-secondary: #a0a5a4;
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+/* ---------------------------------------------------------------------------
+   Type roles. Three classes rather than repeating four utilities everywhere,
+   since each is a specific combination of family, width, weight and tracking.
+   --------------------------------------------------------------------------- */
+
+/* Content names — project titles, post titles, page headings. Heavy and only
+   lightly condensed, so a card title carries without needing to be large. */
+.display {
+  font-family: var(--font-display);
+  font-stretch: 92%;
+  font-weight: 700;
+  letter-spacing: -0.011em;
+}
+
+/* Structural labels — the headings that organize a page. Pushed further
+   condensed and set in caps so they read as signage rather than as content.
+   Caps are deliberately limited to these short labels; anything that is a real
+   title, and therefore might run long, keeps sentence case. */
+.section-title {
+  font-family: var(--font-display);
+  font-stretch: 80%;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.035em;
+}
+
+/* Data — dates, durations, prices, controls. Tabular figures so stacked numbers
+   align instead of shimmering from row to row. */
+.meta {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Interface chrome — nav, eyebrows, kickers. Wide tracking because uppercase
+   mono at this size closes up otherwise. */
+.label {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 /* Pixel square section divider */
@@ -24,48 +96,131 @@
   margin-bottom: 0.4em;
   background: repeating-linear-gradient(
     90deg,
-    var(--color-accent-orange) 0px,
-    var(--color-accent-orange) 3px,
+    var(--color-accent) 0px,
+    var(--color-accent) 3px,
     transparent 3px,
     transparent 6px
   );
-  opacity: 0.3;
+  opacity: 0.35;
 }
 
-/* Subtle noise background texture */
+/* ---------------------------------------------------------------------------
+   Chip — the one surface shape on this site.
+
+   A notched panel with a hard stroke and an unblurred offset shadow, so every
+   card reads as a sticker rather than a rounded rectangle. The notch is cut
+   from the top-right and bottom-left corners, which keeps the silhouette
+   asymmetric and off-grid.
+
+   clip-path, the inset ring and the drop-shadow all follow the same polygon,
+   so the stroke stays welded to the notch with no extra markup. A real
+   `border` would be sliced off by the clip, so the stroke is an inset ring —
+   don't put `border` or `rounded-*` on a chip.
+   --------------------------------------------------------------------------- */
+.chip {
+  --cut: 14px;
+  --ring: 2px;
+  --lift: 4px;
+  --chip-stroke: var(--color-bg-tertiary);
+  --chip-stroke-hover: var(--color-accent);
+
+  border-radius: 0;
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--cut)) 0,
+    100% var(--cut),
+    100% 100%,
+    var(--cut) 100%,
+    0 calc(100% - var(--cut))
+  );
+  box-shadow: inset 0 0 0 var(--ring) var(--chip-stroke);
+  filter: drop-shadow(var(--lift) var(--lift) 0 var(--color-ink));
+  transition: box-shadow 150ms, transform 150ms, filter 150ms;
+}
+
+/* Chips press in when picked up, like a button that's actually a physical thing. */
+.chip:hover,
+.chip:focus-visible,
+a:hover > .chip,
+a:focus-visible > .chip {
+  --chip-stroke: var(--chip-stroke-hover);
+  transform: translate(calc(var(--lift) / 2), calc(var(--lift) / 2));
+  filter: drop-shadow(calc(var(--lift) / 2) calc(var(--lift) / 2) 0 var(--color-ink));
+}
+
+.chip--sm {
+  --cut: 9px;
+  --lift: 3px;
+}
+
+/* Small enough that a shadow would just read as noise. */
+.chip--xs {
+  --cut: 6px;
+  --ring: 1px;
+  --lift: 0px;
+  filter: none;
+}
+
+.chip--flat {
+  --lift: 0px;
+  filter: none;
+}
+
+/* Marks the one thing on a screen that outranks the rest — its stroke is the
+   accent at rest, where an ordinary chip's is neutral until you hover it. If
+   this shows up twice in a viewport it has stopped meaning anything. */
+.chip--featured {
+  --chip-stroke: var(--color-accent);
+  --chip-stroke-hover: var(--color-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip {
+    transition: box-shadow 150ms;
+  }
+  .chip:hover,
+  .chip:focus-visible,
+  a:hover > .chip,
+  a:focus-visible > .chip {
+    transform: none;
+    filter: drop-shadow(var(--lift) var(--lift) 0 var(--color-ink));
+  }
+}
+
+/* Background texture. Needs to be faint but actually visible — below about
+   0.03 it stops doing anything at all and the page goes back to flat. */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -1;
-  opacity: 0.02;
+  opacity: 0.045;
   background-image: url("/images/noise.png");
   background-repeat: repeat;
   pointer-events: none;
 }
 
-/* Tag filter buttons */
+/* Tag filter buttons. Notched like everything else, but keeping their own
+   per-tag hue rather than borrowing the accent. */
 .tag-filter {
   padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
+  font-family: var(--font-mono);
   font-size: 0.75rem;
-  font-weight: 500;
-  border: 1px solid var(--color-bg-tertiary);
+  letter-spacing: -0.02em;
   background: var(--color-bg-secondary);
   color: var(--color-text-secondary);
   cursor: pointer;
-  transition: all 150ms;
+  transition: box-shadow 150ms, background 150ms, color 150ms;
 }
 
-.tag-filter:hover {
-  border-color: hsl(var(--tag-hs) 50% / 0.45);
+.tag-filter:hover,
+.tag-filter.active {
+  --chip-stroke: hsl(var(--tag-hs) 50% / 0.5);
   color: hsl(var(--tag-hs) 75%);
 }
 
 .tag-filter.active {
   background: hsl(var(--tag-hs) 50% / 0.15);
-  border-color: hsl(var(--tag-hs) 50% / 0.45);
-  color: hsl(var(--tag-hs) 75%);
 }
 
 /* Lightbox controls */
@@ -83,8 +238,8 @@ body::before {
 }
 
 .lb-btn:hover {
-  color: var(--color-accent-orange);
-  border-color: var(--color-accent-orange);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
   background: rgb(0 0 0 / 0.75);
 }
 
@@ -105,17 +260,23 @@ body::before {
 
 .prose h2 {
   color: var(--color-text-primary);
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-top: 2rem;
+  font-family: var(--font-display);
+  font-stretch: 88%;
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  margin-top: 2.25rem;
   margin-bottom: 0.75rem;
 }
 
 .prose h3 {
   color: var(--color-text-primary);
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-top: 1.5rem;
+  font-family: var(--font-display);
+  font-stretch: 92%;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-top: 1.75rem;
   margin-bottom: 0.5rem;
 }
 
@@ -124,7 +285,7 @@ body::before {
 }
 
 .prose a {
-  color: var(--color-accent-orange);
+  color: var(--color-accent);
   text-decoration: none;
 }
 
@@ -136,18 +297,30 @@ body::before {
   color: inherit;
 }
 
+/* Set apart by its surface, not by a hue — a second color here would compete
+   with the accent, which is the only one the page uses. */
 .prose code {
   background: var(--color-bg-tertiary);
-  color: #e879a0;
+  color: var(--color-text-primary);
   padding: 0.15em 0.35em;
-  border-radius: 0.25rem;
   font-size: 0.875em;
 }
 
+/* Code blocks are chips too, but flat — they scroll horizontally, and a
+   drop-shadow on a scroll container just smears. */
 .prose pre {
+  --cut: 10px;
+  --ring: 2px;
   background: var(--color-bg-secondary) !important;
-  border: 1px solid var(--color-bg-tertiary);
-  border-radius: 0.5rem;
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--cut)) 0,
+    100% var(--cut),
+    100% 100%,
+    var(--cut) 100%,
+    0 calc(100% - var(--cut))
+  );
+  box-shadow: inset 0 0 0 var(--ring) var(--color-bg-tertiary);
   padding: 1rem;
   overflow-x: auto;
   margin-bottom: 1.25rem;
@@ -186,7 +359,7 @@ div:hover > .copy-code-btn {
 }
 
 .copy-code-btn.copied {
-  color: var(--color-accent-orange);
+  color: var(--color-accent);
 }
 
 .prose ul,
@@ -208,7 +381,7 @@ div:hover > .copy-code-btn {
 }
 
 .prose blockquote {
-  border-left: 3px solid var(--color-accent-orange);
+  border-left: 3px solid var(--color-accent);
   padding-left: 1rem;
   color: var(--color-text-secondary);
   font-style: italic;
@@ -291,7 +464,7 @@ div:hover > .copy-code-btn {
 }
 
 .prose sup a {
-  color: var(--color-accent-orange);
+  color: var(--color-accent);
   text-decoration: none;
 }
 

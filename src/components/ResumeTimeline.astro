@@ -4,7 +4,7 @@ import ResumeEntry from './ResumeEntry.astro';
 ---
 
 <div class="relative mx-auto max-w-3xl timeline-grid">
-  <div class="absolute left-1/2 top-0 bottom-0 w-0.5 bg-accent-orange/30 -translate-x-px" />
+  <div class="absolute left-1/2 top-0 bottom-0 w-0.5 bg-bg-tertiary -translate-x-px" />
   {jobs.map((job, i) => (
     <ResumeEntry job={job} side={i % 2 === 0 ? 'left' : 'right'} index={i} />
   ))}

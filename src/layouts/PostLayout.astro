@@ -67,11 +67,11 @@ const { frontmatter, headings = [], seriesPosts, readingTime, prevPost, nextPost
     </aside>
     <article class="max-w-3xl w-full min-w-0">
       <header class="mb-8">
-        <h1 class="text-3xl font-bold mb-2">{frontmatter.title}</h1>
+        <h1 class="display text-4xl mb-2">{frontmatter.title}</h1>
         {frontmatter.seriesSubtitle && (
           <p class="text-lg text-text-secondary mb-1">{frontmatter.seriesSubtitle}</p>
         )}
-        <div class="flex items-center gap-2 text-text-secondary text-sm">
+        <div class="meta flex items-center gap-2 text-text-secondary text-xs">
           <time>{frontmatter.date}</time>
           {readingTime && (
             <>
@@ -87,7 +87,7 @@ const { frontmatter, headings = [], seriesPosts, readingTime, prevPost, nextPost
         )}
       </header>
       {frontmatter.coverImage && (
-        <div class="mb-8 rounded-lg overflow-hidden">
+        <div class="chip chip--flat mb-8 overflow-hidden">
           <img
             src={frontmatter.coverImage}
             alt={frontmatter.coverImageAlt || frontmatter.title}
@@ -96,7 +96,7 @@ const { frontmatter, headings = [], seriesPosts, readingTime, prevPost, nextPost
         </div>
       )}
       {frontmatter.series && seriesPosts && seriesPosts.length > 1 && (
-        <div class="xl:hidden mb-8 p-4 rounded-lg bg-bg-secondary">
+        <div class="chip chip--sm chip--flat xl:hidden mb-8 p-4 bg-bg-secondary">
           <SeriesNav seriesName={frontmatter.series} posts={seriesPosts} currentSlug={Astro.params.slug as string} />
         </div>
       )}
@@ -104,7 +104,7 @@ const { frontmatter, headings = [], seriesPosts, readingTime, prevPost, nextPost
         <slot />
       </div>
       {frontmatter.series && seriesPosts && seriesPosts.length > 1 && (
-        <div class="mt-12 p-4 rounded-lg bg-bg-secondary">
+        <div class="chip chip--sm chip--flat mt-12 p-4 bg-bg-secondary">
           <SeriesNav seriesName={frontmatter.series} posts={seriesPosts} currentSlug={Astro.params.slug as string} />
         </div>
       )}

@@ -15,14 +15,14 @@ const filtered = headings.filter(h => h.depth <= 3);
 
 {filtered.length > 0 && (
   <nav class="toc" aria-label="Table of Contents">
-    <p class="text-xs font-semibold uppercase tracking-wider text-text-secondary mb-3">On this page</p>
+    <p class="label text-xs text-text-secondary mb-3">On this page</p>
     <ul class="space-y-1.5 text-sm border-l border-bg-tertiary">
       {filtered.map(h => (
         <li>
           <a
             href={`#${h.slug}`}
             class:list={[
-              "toc-link block text-text-secondary hover:text-accent-orange transition-colors duration-150",
+              "toc-link block text-text-secondary hover:text-accent transition-colors duration-150",
               h.depth === 2 ? "pl-3" : "pl-6",
             ]}
             data-slug={h.slug}
@@ -48,10 +48,10 @@ const filtered = headings.filter(h => h.depth <= 3);
       active = slug;
       links.forEach(l => {
         if (l.dataset.slug === slug) {
-          l.classList.add('text-accent-orange', 'border-l-2', 'border-accent-orange', '-ml-px');
+          l.classList.add('text-accent', 'border-l-2', 'border-accent', '-ml-px');
           l.classList.remove('text-text-secondary');
         } else {
-          l.classList.remove('text-accent-orange', 'border-l-2', 'border-accent-orange', '-ml-px');
+          l.classList.remove('text-accent', 'border-l-2', 'border-accent', '-ml-px');
           l.classList.add('text-text-secondary');
         }
       });

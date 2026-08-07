@@ -13,22 +13,22 @@ const isCurrent = job.dates.includes('Present');
 ---
 
 {isLeft ? (
-  <div class:list={["text-right pb-4", isCurrent ? "pr-4 mr-2 border-r-2 border-accent-orange rounded-r-sm" : "pr-6"]} style={`grid-column: 1; grid-row: ${index + 1};`}>
-    <h3 class="text-lg font-semibold text-text-primary">{job.company}</h3>
-    <span class="text-accent-orange/80 text-xs font-medium italic">{job.dates}</span>
+  <div class:list={["text-right pb-4", isCurrent ? "current-edge pr-4 mr-2" : "pr-6"]} style={`grid-column: 1; grid-row: ${index + 1};`}>
+    <h3 class="display text-lg text-text-primary">{job.company}</h3>
+    <span class:list={["meta text-xs", isCurrent ? "text-accent" : "text-text-secondary"]}>{job.dates}</span>
     <ul class="mt-2 space-y-1">
       {job.roles.map((role) => (
-        <li class="text-text-secondary text-sm flex items-center gap-2 justify-end"><span class="w-1.5 h-1.5 rounded-full bg-accent-orange/50 shrink-0 order-1" /><span>{role}</span></li>
+        <li class="text-text-secondary text-sm flex items-center gap-2 justify-end"><span class="w-1.5 h-1.5 bg-text-secondary/40 shrink-0 order-1" /><span>{role}</span></li>
       ))}
     </ul>
   </div>
 ) : (
-  <div class="pl-4 pb-4" style={`grid-column: 3; grid-row: ${index + 1};`}>
-    <h3 class="text-lg font-semibold text-text-primary">{job.company}</h3>
-    <span class="text-accent-orange/80 text-xs font-medium italic">{job.dates}</span>
+  <div class:list={["pb-4", isCurrent ? "current-edge-left pl-4 ml-2" : "pl-4"]} style={`grid-column: 3; grid-row: ${index + 1};`}>
+    <h3 class="display text-lg text-text-primary">{job.company}</h3>
+    <span class:list={["meta text-xs", isCurrent ? "text-accent" : "text-text-secondary"]}>{job.dates}</span>
     <ul class="mt-2 space-y-1">
       {job.roles.map((role) => (
-        <li class="text-text-secondary text-sm flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-accent-orange/50 shrink-0" />{role}</li>
+        <li class="text-text-secondary text-sm flex items-center gap-2"><span class="w-1.5 h-1.5 bg-text-secondary/40 shrink-0" />{role}</li>
       ))}
     </ul>
   </div>
@@ -38,6 +38,35 @@ const isCurrent = job.dates.includes('Present');
   <img
     src={job.logo}
     alt={job.company}
-    class:list={["w-10 h-10 rounded-full object-cover border-2 z-10", isCurrent ? "border-accent-orange" : "border-bg-primary"]}
+    class:list={["w-10 h-10 rounded-full object-cover border-2 z-10", isCurrent ? "border-accent" : "border-bg-primary"]}
   />
 </div>
+
+<style>
+  /* The current job gets a notched accent edge rather than a rounded rule, so
+     it speaks the same language as the chips. Mirrored for the two columns. */
+  .current-edge,
+  .current-edge-left {
+    position: relative;
+  }
+
+  .current-edge::after,
+  .current-edge-left::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0.75rem;
+    width: 3px;
+    background: var(--color-accent);
+  }
+
+  .current-edge::after {
+    right: 0;
+    clip-path: polygon(0 0, 100% 6px, 100% 100%, 0 100%);
+  }
+
+  .current-edge-left::after {
+    left: 0;
+    clip-path: polygon(0 6px, 100% 0, 100% 100%, 0 100%);
+  }
+</style>

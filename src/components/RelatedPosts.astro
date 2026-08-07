@@ -18,11 +18,11 @@ const { posts } = Astro.props;
 
 {posts.length > 0 && (
   <div class="mt-12">
-    <h2 class="text-sm font-semibold uppercase tracking-wider text-text-secondary mb-4">Related Posts</h2>
+    <h2 class="label text-xs text-text-secondary mb-4">Related Posts</h2>
     <div class="grid gap-4 sm:grid-cols-2">
       {posts.map(post => (
-        <a href={`/posts/${post.slug}/`} class="group p-4 rounded-lg bg-bg-secondary border border-bg-tertiary hover:border-accent-orange/30 transition-colors">
-          <p class="text-sm font-medium text-text-primary group-hover:text-accent-orange transition-colors">
+        <a href={`/posts/${post.slug}/`} class="chip chip--sm group p-4 bg-bg-secondary">
+          <p class="text-sm font-medium text-text-primary group-hover:text-accent transition-colors">
             {post.title}
             {post.seriesSubtitle && <span class="text-text-secondary font-normal ml-1">{post.seriesSubtitle}</span>}
           </p>

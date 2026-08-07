@@ -2,6 +2,15 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+
+// Self-hosted so there's no third-party request on a page load.
+// Archivo's `wdth` file carries the weight AND width axes in one face, which is
+// what lets the display role be both condensed and heavy without a second file.
+import '@fontsource-variable/archivo/wdth.css';
+import '@fontsource-variable/ibm-plex-sans/wght.css';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+
 import '../styles/global.css';
 
 interface Props {

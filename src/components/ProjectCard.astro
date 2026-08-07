@@ -10,16 +10,17 @@ interface Props {
 const { project, compact = false, featured = false } = Astro.props;
 const primary = project.primaryLink || (project.itchUrl ? 'itch' : project.steamUrl ? 'steam' : project.githubUrl ? 'github' : 'url');
 
+// Credit blurbs are dense with links — six or seven per card. At full accent
+// strength they out-shouted the card's own actions, so they stay in the body
+// color with an underline and only pick up the accent on hover.
 function inlineMarkdown(text: string): string {
   return text
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-accent-orange hover:underline">$1</a>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="underline decoration-text-secondary/40 underline-offset-2 hover:text-accent hover:decoration-accent transition-colors">$1</a>')
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/\*([^*]+)\*/g, '<em>$1</em>');
 }
 
 const contextHtml = project.context ? inlineMarkdown(project.context) : '';
-const primaryClass = "text-xs font-medium px-3 py-1.5 rounded bg-accent-orange/10 text-accent-orange hover:bg-accent-orange/20 transition-colors";
-const secondaryClass = "text-xs font-medium px-3 py-1.5 rounded bg-bg-tertiary text-text-secondary hover:text-text-primary transition-colors";
 
 type LinkEntry = { href: string; label: string; key: string };
 const links: LinkEntry[] = [
@@ -36,14 +37,15 @@ const links: LinkEntry[] = [
     href={project.githubUrl || project.url || '#'}
     target="_blank"
     rel="noopener noreferrer"
-    class="bg-bg-secondary border border-bg-tertiary rounded-lg p-3 hover:border-accent-orange/30 transition-colors block"
+    class="chip chip--sm bg-bg-secondary p-3 block"
   >
-    <h4 class="text-sm font-semibold text-text-primary">{project.name}</h4>
+    <h4 class="display text-sm text-text-primary">{project.name}</h4>
     <p class="text-text-secondary text-xs mt-1">{project.description}</p>
   </a>
 ) : (
   <div class:list={[
-    "bg-bg-secondary border border-bg-tertiary rounded-lg overflow-hidden hover:border-accent-orange/30 transition-colors h-full",
+    "chip bg-bg-secondary overflow-hidden h-full",
+    featured && "chip--featured",
     project.image ? "flex flex-col sm:flex-row" : "flex flex-col",
   ]}>
     {project.image && (
@@ -64,7 +66,7 @@ const links: LinkEntry[] = [
     )}
     <div class="flex flex-col flex-1">
       <div class:list={["flex flex-col justify-center flex-1", featured ? "p-6" : "p-5"]}>
-        <h3 class:list={["font-semibold text-text-primary mb-1", featured ? "text-2xl" : "text-lg"]}>{project.name}</h3>
+        <h3 class:list={["display text-text-primary mb-1", featured ? "text-3xl" : "text-xl"]}>{project.name}</h3>
         <p class:list={["text-text-secondary", featured ? "text-base" : "text-sm"]}>{project.description}</p>
         {contextHtml && <p class="text-text-secondary/70 text-xs mt-2 italic"><Fragment set:html={contextHtml} /></p>}
       </div>
@@ -76,9 +78,9 @@ const links: LinkEntry[] = [
               target="_blank"
               rel="noopener noreferrer"
               class:list={[
-                "flex-1 text-center text-xs font-medium py-2 transition-colors border-r border-bg-tertiary last:border-r-0",
+                "meta flex-1 text-center text-xs py-2 transition-colors border-r border-bg-tertiary last:border-r-0",
                 link.key === primary
-                  ? "text-accent-orange hover:bg-accent-orange/10"
+                  ? "text-accent hover:bg-accent/10"
                   : "text-text-secondary hover:text-text-primary hover:bg-bg-tertiary",
               ]}
             >

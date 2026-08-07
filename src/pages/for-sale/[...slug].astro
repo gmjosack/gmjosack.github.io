@@ -89,24 +89,24 @@ const productSchema: Record<string, unknown> = {
   </Fragment>
 
   <article class="max-w-4xl">
-    <a href="/for-sale/" class="inline-flex items-center gap-1.5 text-sm text-text-secondary hover:text-accent-orange transition-colors mb-6">
+    <a href="/for-sale/" class="inline-flex items-center gap-1.5 text-sm text-text-secondary hover:text-accent transition-colors mb-6">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
       All items
     </a>
 
-    <h1 class="text-2xl font-semibold text-text-primary">{item.title}</h1>
+    <h1 class="display text-3xl text-text-primary">{item.title}</h1>
     {item.summary && <p class="text-text-secondary leading-relaxed mt-2">{item.summary}</p>}
 
     <div class="mt-5 mb-8 py-3 border-t border-b border-bg-tertiary flex flex-wrap items-baseline gap-x-5 gap-y-2">
       {item.price != null ? (
-        <span class="text-2xl font-semibold text-accent-orange">
+        <span class="meta text-2xl font-medium text-accent">
           {formatPrice(item.price)}
           {item.priceNote && <span class="text-sm font-normal text-text-secondary ml-2">{item.priceNote}</span>}
         </span>
       ) : (
-        <span class="text-xl font-semibold text-accent-orange">{item.priceNote || 'Make an offer'}</span>
+        <span class="meta text-xl font-medium text-accent">{item.priceNote || 'Make an offer'}</span>
       )}
       {item.condition && <span class="text-sm text-text-secondary">{item.condition}</span>}
       {(item.retailUrl || item.retailPrice != null) && (
@@ -115,7 +115,7 @@ const productSchema: Record<string, unknown> = {
             href={item.retailUrl}
             target="_blank"
             rel="noopener noreferrer"
-            class="text-sm text-text-secondary hover:text-accent-orange transition-colors inline-flex items-center gap-1.5 sm:ml-auto"
+            class="text-sm text-text-secondary hover:text-accent transition-colors inline-flex items-center gap-1.5 sm:ml-auto"
           >
             {retailText}
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -138,8 +138,8 @@ const productSchema: Record<string, unknown> = {
 
     {item.includes.length > 0 && (
       <section class="mt-8">
-        <h2 class="text-lg font-semibold text-text-primary mb-3">What's included</h2>
-        <ul class="list-disc pl-5 space-y-1 text-sm text-text-secondary marker:text-accent-orange/60">
+        <h2 class="display text-lg text-text-primary mb-3">What's included</h2>
+        <ul class="list-disc pl-5 space-y-1 text-sm text-text-secondary marker:text-accent/60">
           {item.includes.map((line) => <li>{line}</li>)}
         </ul>
       </section>
@@ -147,7 +147,7 @@ const productSchema: Record<string, unknown> = {
 
     {related.length > 0 && (
       <section class="mt-12 border-t border-bg-tertiary pt-8">
-        <h2 class="text-lg font-semibold text-text-primary mb-2">Also listed</h2>
+        <h2 class="display text-lg text-text-primary mb-2">Also listed</h2>
         {item.seeAlsoNote && <p class="text-text-secondary text-sm mb-4">{item.seeAlsoNote}</p>}
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {related.map((r) => (
