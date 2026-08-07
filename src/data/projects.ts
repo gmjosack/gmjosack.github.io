@@ -18,14 +18,14 @@ export interface Project {
 
 export interface ProjectGroup {
   description?: string;
-  columns?: number;
   projects: Project[];
 }
 
 export interface Subsection {
   label: string;
   description?: string;
-  compact?: boolean;
+  /** No longer maintained. Renders quieter rather than carrying a badge. */
+  archived?: boolean;
   groups: ProjectGroup[];
 }
 
@@ -198,7 +198,6 @@ export const softwareSubsections: Subsection[] = [
       {
         description:
           "Low-level libraries for injecting into and modding Spelunky HD.",
-        columns: 3,
         projects: [
           {
             name: "HDDLL",
@@ -225,7 +224,6 @@ export const softwareSubsections: Subsection[] = [
       },
       {
         description: "End-user tools for managing and modding Spelunky games.",
-        columns: 2,
         projects: [
           {
             name: "HD Toolbox",
@@ -249,7 +247,7 @@ export const softwareSubsections: Subsection[] = [
     label: "Graveyard",
     description:
       "These are large or interesting projects I'd worked on in the past but are currently either unmaintained or I no longer work for the company where they were created.",
-    compact: true,
+    archived: true,
     groups: [
       {
         projects: [

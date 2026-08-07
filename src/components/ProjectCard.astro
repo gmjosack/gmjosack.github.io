@@ -3,11 +3,10 @@ import type { Project } from '../data/projects';
 
 interface Props {
   project: Project;
-  compact?: boolean;
   featured?: boolean;
 }
 
-const { project, compact = false, featured = false } = Astro.props;
+const { project, featured = false } = Astro.props;
 const primary = project.primaryLink || (project.itchUrl ? 'itch' : project.steamUrl ? 'steam' : project.githubUrl ? 'github' : 'url');
 
 // Credit blurbs are dense with links — six or seven per card. At full accent
@@ -32,63 +31,51 @@ const links: LinkEntry[] = [
  .sort((a, b) => (a.key === primary ? -1 : b.key === primary ? 1 : 0));
 ---
 
-{compact ? (
-  <a
-    href={project.githubUrl || project.url || '#'}
-    target="_blank"
-    rel="noopener noreferrer"
-    class="chip chip--sm bg-bg-secondary p-3 block"
-  >
-    <h4 class="display text-sm text-text-primary">{project.name}</h4>
-    <p class="text-text-secondary text-xs mt-1">{project.description}</p>
-  </a>
-) : (
-  <div class:list={[
-    "chip bg-bg-secondary overflow-hidden h-full",
-    featured && "chip--featured",
-    project.image ? "flex flex-col sm:flex-row" : "flex flex-col",
-  ]}>
-    {project.image && (
-      <div class:list={[
-        "shrink-0 relative overflow-hidden flex items-center",
-        featured ? "w-full sm:w-72" : "w-full sm:w-48",
-      ]}>
-        <div
-          class="absolute inset-0 scale-125 blur-xl bg-cover bg-center opacity-50"
-          style={`background-image: url('${project.image}');`}
-        />
-        <img
-          src={project.image}
-          alt={project.name}
-          class="w-full object-cover relative z-10"
-        />
+<div class:list={[
+  "chip bg-bg-secondary overflow-hidden h-full",
+  featured && "chip--featured",
+  project.image ? "flex flex-col sm:flex-row" : "flex flex-col",
+]}>
+  {project.image && (
+    <div class:list={[
+      "shrink-0 relative overflow-hidden flex items-center",
+      featured ? "w-full sm:w-72" : "w-full sm:w-48",
+    ]}>
+      <div
+        class="absolute inset-0 scale-125 blur-xl bg-cover bg-center opacity-50"
+        style={`background-image: url('${project.image}');`}
+      />
+      <img
+        src={project.image}
+        alt={project.name}
+        class="w-full object-cover relative z-10"
+      />
+    </div>
+  )}
+  <div class="flex flex-col flex-1">
+    <div class:list={["flex flex-col justify-center flex-1", featured ? "p-6" : "p-5"]}>
+      <h3 class:list={["display text-text-primary mb-1", featured ? "text-3xl" : "text-xl"]}>{project.name}</h3>
+      <p class:list={["text-text-secondary", featured ? "text-base" : "text-sm"]}>{project.description}</p>
+      {contextHtml && <p class="text-text-secondary/70 text-xs mt-2 italic"><Fragment set:html={contextHtml} /></p>}
+    </div>
+    {links.length > 0 && (
+      <div class="flex border-t border-bg-tertiary">
+        {links.map((link) => (
+          <a
+            href={link.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class:list={[
+              "meta flex-1 text-center text-xs py-2 transition-colors border-r border-bg-tertiary last:border-r-0",
+              link.key === primary
+                ? "text-accent hover:bg-accent/10"
+                : "text-text-secondary hover:text-text-primary hover:bg-bg-tertiary",
+            ]}
+          >
+            {link.label}
+          </a>
+        ))}
       </div>
     )}
-    <div class="flex flex-col flex-1">
-      <div class:list={["flex flex-col justify-center flex-1", featured ? "p-6" : "p-5"]}>
-        <h3 class:list={["display text-text-primary mb-1", featured ? "text-3xl" : "text-xl"]}>{project.name}</h3>
-        <p class:list={["text-text-secondary", featured ? "text-base" : "text-sm"]}>{project.description}</p>
-        {contextHtml && <p class="text-text-secondary/70 text-xs mt-2 italic"><Fragment set:html={contextHtml} /></p>}
-      </div>
-      {links.length > 0 && (
-        <div class="flex border-t border-bg-tertiary">
-          {links.map((link) => (
-            <a
-              href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              class:list={[
-                "meta flex-1 text-center text-xs py-2 transition-colors border-r border-bg-tertiary last:border-r-0",
-                link.key === primary
-                  ? "text-accent hover:bg-accent/10"
-                  : "text-text-secondary hover:text-text-primary hover:bg-bg-tertiary",
-              ]}
-            >
-              {link.label}
-            </a>
-          ))}
-        </div>
-      )}
-    </div>
   </div>
-)}
+</div>

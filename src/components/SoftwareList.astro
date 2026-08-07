@@ -1,0 +1,176 @@
+---
+import type { Project } from '../data/projects';
+import Icon from './Icon.astro';
+
+interface Props {
+  projects: Project[];
+  /** No longer maintained. Renders quieter *and* denser — see the styles below.
+      Dimming alone left dead projects taking up as much room as live ones. */
+  archived?: boolean;
+}
+
+const { projects, archived = false } = Astro.props;
+
+type IconName = 'github' | 'itchio' | 'steam' | 'globe';
+type LinkEntry = { href: string; label: string; key: string; icon: IconName };
+
+/** Every link on a project, primary first.
+ *
+ *  The primary is what the row itself points at; all of them render as marks on
+ *  the right so a row always says where it goes. Today each project has one
+ *  link, so that's a single glyph. When a project grows a landing page it
+ *  becomes a globe next to the GitHub mark, with no layout change.
+ *
+ *  The label survives as the icon's accessible name and hover tooltip. */
+function linksFor(project: Project): LinkEntry[] {
+  const primary =
+    project.primaryLink ||
+    (project.url ? 'url' : project.githubUrl ? 'github' : project.itchUrl ? 'itch' : 'steam');
+
+  return (
+    [
+      project.url
+        ? { href: project.url, label: project.urlLabel || 'Website', key: 'url', icon: 'globe' as const }
+        : null,
+      project.githubUrl
+        ? { href: project.githubUrl, label: 'Source on GitHub', key: 'github', icon: 'github' as const }
+        : null,
+      project.itchUrl
+        ? { href: project.itchUrl, label: 'itch.io', key: 'itch', icon: 'itchio' as const }
+        : null,
+      project.steamUrl
+        ? { href: project.steamUrl, label: 'Steam', key: 'steam', icon: 'steam' as const }
+        : null,
+    ].filter((l): l is LinkEntry => l !== null)
+      // Only the primary moves; the rest hold their declared order.
+      .sort((a, b) => (a.key === primary ? -1 : b.key === primary ? 1 : 0))
+  );
+}
+
+const rows = projects.map((project) => ({ project, links: linksFor(project) }));
+
+const isExternal = (href: string) => /^https?:/.test(href);
+---
+
+<ul class:list={['chip chip--sm chip--static bg-bg-secondary', archived && 'is-archived']}>
+  {rows.map(({ project, links }) => (
+    <li class="software-row relative grid gap-x-5 gap-y-1 px-4 transition-colors">
+      {links.length > 0 ? (
+        <a
+          href={links[0].href}
+          target={isExternal(links[0].href) ? '_blank' : undefined}
+          rel={isExternal(links[0].href) ? 'noopener noreferrer' : undefined}
+          class:list={[
+            'row-target display text-sm self-baseline transition-colors',
+            archived ? 'text-text-secondary' : 'text-text-primary',
+          ]}
+        >
+          {project.name}
+        </a>
+      ) : (
+        <span
+          class:list={[
+            'display text-sm self-baseline',
+            archived ? 'text-text-secondary' : 'text-text-primary',
+          ]}
+        >
+          {project.name}
+        </span>
+      )}
+
+      <p class="row-desc text-text-secondary text-sm self-baseline">{project.description}</p>
+
+      {links.length > 0 && (
+        <div class="row-links flex items-center gap-2.5 self-start mt-0.5">
+          {links.map((link) => (
+            <a
+              href={link.href}
+              target={isExternal(link.href) ? '_blank' : undefined}
+              rel={isExternal(link.href) ? 'noopener noreferrer' : undefined}
+              title={link.label}
+              aria-label={`${project.name} — ${link.label}`}
+              class="text-text-secondary hover:text-accent transition-colors"
+            >
+              <Icon name={link.icon} class="w-4 h-4" />
+            </a>
+          ))}
+        </div>
+      )}
+    </li>
+  ))}
+</ul>
+
+<style>
+  /* Names align in their own column so the list scans vertically. Below `sm`
+     everything stacks and the columns are dropped. */
+  .software-row {
+    grid-template-columns: 1fr;
+    padding-block: 0.75rem;
+    border-bottom: 1px solid var(--color-bg-tertiary);
+  }
+
+  .software-row:last-child {
+    border-bottom: 0;
+  }
+
+  @media (min-width: 640px) {
+    .software-row {
+      grid-template-columns: minmax(7rem, 11rem) 1fr auto;
+    }
+  }
+
+  .software-row:hover {
+    background: color-mix(in srgb, var(--color-bg-tertiary) 45%, transparent);
+  }
+
+  /* The primary link covers the whole row, so the row is one big target rather
+     than a small piece of text. The link labels sit above it and stay
+     independently clickable. */
+  .row-target::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  .software-row:hover .row-target,
+  .row-target:focus-visible {
+    color: var(--color-accent);
+  }
+
+  .row-links {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ---------------------------------------------------------------------------
+     Archived work is skimmed, not read. Two columns, one line each, no row
+     rules, and the description truncates rather than wrapping — eight dead
+     projects should not occupy the same page real estate as eight live ones.
+     --------------------------------------------------------------------------- */
+  @media (min-width: 640px) {
+    .is-archived {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 0.5rem;
+    }
+
+    .is-archived .software-row {
+      grid-template-columns: minmax(5.5rem, auto) 1fr auto;
+      padding-block: 0.3rem;
+      border-bottom: 0;
+      align-items: baseline;
+    }
+
+    /* A vertical rule between the two columns instead of a rule under every
+       row — it separates the halves without adding eight more lines. */
+    .is-archived .software-row:nth-child(even) {
+      border-left: 1px solid var(--color-bg-tertiary);
+    }
+
+    .is-archived .row-desc {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+</style>
