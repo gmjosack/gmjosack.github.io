@@ -1,5 +1,20 @@
 export type ProjectCategory = "game" | "site" | "software";
 
+export type Platform = "web" | "windows" | "mac" | "linux";
+
+/** Icon and human label per platform, in the order they render. */
+export const platformMeta: Record<
+  Platform,
+  { icon: "globe" | "windows" | "apple" | "linux"; label: string }
+> = {
+  web: { icon: "globe", label: "Browser" },
+  windows: { icon: "windows", label: "Windows" },
+  mac: { icon: "apple", label: "macOS" },
+  linux: { icon: "linux", label: "Linux" },
+};
+
+export const platformOrder: Platform[] = ["web", "windows", "mac", "linux"];
+
 export interface Project {
   name: string;
   description: string;
@@ -12,8 +27,27 @@ export interface Project {
   urlLabel?: string;
   primaryLink?: "itch" | "steam" | "github" | "url";
   featured?: boolean;
+  /** The story behind the project. Facts that belong in the stat strip below
+      should live in their own fields, not be restated here. */
   context?: string;
   spacer?: boolean;
+
+  // --- Stat strip -----------------------------------------------------------
+  // All optional. Not every project is a jam entry, and the strip renders only
+  // what is present.
+  engine?: string;
+  year?: number;
+  jam?: { name: string; url?: string };
+  /** For work that hasn't shipped. Use instead of a year rather than alongside
+      one, so an in-progress game isn't stamped with a date it never launched. */
+  status?: string;
+  // Note: there is deliberately no `credits` field. Who worked on a project
+  // stays in `context` as a normal sentence — a structured crew list was tried
+  // and pulled, because it read as a rigid roster where the prose reads like
+  // someone talking about their friends.
+  /** What it actually runs on. "web" means playable in a browser, which is not
+      the same as having a web page — a downloadable game on itch is not web. */
+  platforms?: Platform[];
 }
 
 export interface ProjectGroup {
@@ -45,8 +79,15 @@ export const projects: Project[] = [
     urlLabel: "Play",
     primaryLink: "url",
     itchUrl: "https://madebygare.itch.io/corvian-cards",
+    engine: "TypeScript",
+    year: 2026,
+    platforms: ["web"],
+    jam: {
+      name: "Secret Jam of Games #29",
+      url: "https://itch.io/jam/secret-jam-of-games-29",
+    },
     context:
-      "[bumperoyster](https://bumperoyster.itch.io/) again on art and [bronxtaco](https://bronxtaco.itch.io/) on audio and our one man QA team. Made for the [29th Secret Jam of Games](https://itch.io/jam/secret-jam-of-games-29). I've been playing a lot of trick taking games lately and wanted to look into making one into a daily web game. It was a fun challenge but I missed working in Godot heh.",
+      "[bumperoyster](https://bumperoyster.itch.io/) again on art and [bronxtaco](https://bronxtaco.itch.io/) on audio and our one man QA team. I've been playing a lot of trick taking games lately and wanted to look into making one into a daily web game. It was a fun challenge but I missed working in Godot heh.",
   },
   {
     name: "The Curator",
@@ -55,8 +96,15 @@ export const projects: Project[] = [
     category: "game",
     image: "/images/games/the-curator.png",
     itchUrl: "https://madebygare.itch.io/the-curator",
+    engine: "Godot 4",
+    year: 2025,
+    platforms: ["web"],
+    jam: {
+      name: "GMTK Game Jam 2025",
+      url: "https://itch.io/jam/gmtk-2025/rate/3746438",
+    },
     context:
-      "[bumperoyster](https://bumperoyster.itch.io/), [bronxtaco](https://bronxtaco.itch.io/) and I teamed up again, this time for the [GMTK Game Jam 2025](https://itch.io/jam/gmtk-2025/rate/3746438). This game was inspired by Night Manor from UFO 50. I learned how stressful making a content heavy game in a short jam is with this one but I'm very happy with what we pulled off!  ",
+      "[bumperoyster](https://bumperoyster.itch.io/), [bronxtaco](https://bronxtaco.itch.io/) and I teamed up again. This game was inspired by Night Manor from UFO 50. I learned how stressful making a content heavy game in a short jam is with this one but I'm very happy with what we pulled off!",
   },
   {
     name: "Broom",
@@ -65,8 +113,15 @@ export const projects: Project[] = [
     category: "game",
     image: "/images/games/broom.png",
     itchUrl: "https://madebygare.itch.io/broom",
+    engine: "Godot 4",
+    year: 2024,
+    platforms: ["windows", "mac"],
+    jam: {
+      name: "GMTK Patreon Jam 2024",
+      url: "https://itch.io/jam/gmtk-patreon-2024/rate/3183013",
+    },
     context:
-      "Another jam game with [bumperoyster](https://bumperoyster.itch.io/) and [bronxtaco](https://bronxtaco.itch.io/). My first foray into 3D, we made a Doom-like about a squire that has to save his knight, who's also a jerk. Made for the [GMTK Patreon Jam 2024](https://itch.io/jam/gmtk-patreon-2024/rate/3183013).",
+      "Another jam game with [bumperoyster](https://bumperoyster.itch.io/) and [bronxtaco](https://bronxtaco.itch.io/). My first foray into 3D, we made a Doom-like about a squire that has to save his knight, who's also a jerk.",
   },
   {
     name: "Speluika",
@@ -74,6 +129,9 @@ export const projects: Project[] = [
     category: "game",
     image: "/images/games/speluika.png",
     itchUrl: "https://madebygare.itch.io/speluika",
+    engine: "Godot 4",
+    year: 2023,
+    platforms: ["web", "windows", "mac"],
     context:
       'I made this mostly as a joke when Suika was popular. I thought "That can\'t take very long to make..." I used assets from Spelunky Classic and had it working in a few hours. Embarrassingly, it has been one of my most popular games.',
   },
@@ -86,8 +144,11 @@ export const projects: Project[] = [
     itchUrl: "https://madebygare.itch.io/corvian-curse",
     steamUrl: "https://store.steampowered.com/app/2626080/Corvian_Curse/",
     primaryLink: "steam",
+    engine: "Godot 4",
+    status: "In development",
+    platforms: ["windows", "linux"],
     context:
-      "After working on [Bit Chunky](https://madebygare.itch.io/bit-chunky) I decided I'd like to make full release of a Spelunky-like. This was the first time [bumperoyster](https://bumperoyster.itch.io/), [bronxtaco](https://bronxtaco.itch.io/), and I all teamed up together. As of this writing this is still an ongoing project, definitely my biggest game to date.",
+      "After working on [Bit Chunky](https://madebygare.itch.io/bit-chunky) I decided I'd like to make full release of a Spelunky-like. This was the first time [bumperoyster](https://bumperoyster.itch.io/), [bronxtaco](https://bronxtaco.itch.io/), and I all teamed up together. Definitely my biggest game to date.",
     featured: true,
   },
   {
@@ -97,8 +158,15 @@ export const projects: Project[] = [
     category: "game",
     image: "/images/games/cant-stop-must-survive.png",
     itchUrl: "https://madebygare.itch.io/cant-stop-must-survive",
+    engine: "Godot 4",
+    year: 2023,
+    platforms: ["web", "mac"],
+    jam: {
+      name: "Pass the GAME Challenge 2023",
+      url: "https://itch.io/jam/day-2/rate/2189029",
+    },
     context:
-      "Made for the [DAY 2 - Pass the GAME Challenge 2023](https://itch.io/jam/day-2/rate/2189029). This was an interesting jam where you take a game someone else made the day before, and someone else will continue from what you made in 24h.",
+      "This was an interesting jam where you take a game someone else made the day before, and someone else will continue from what you made in 24h.",
   },
   {
     name: "Bit Chunky",
@@ -106,8 +174,15 @@ export const projects: Project[] = [
     category: "game",
     image: "/images/games/bit-chunky.png",
     itchUrl: "https://madebygare.itch.io/bit-chunky",
+    engine: "Godot 4",
+    year: 2023,
+    platforms: ["web", "windows", "mac"],
+    jam: {
+      name: "Kenney Jam 2023",
+      url: "https://itch.io/jam/kenney-jam-2023/rate/2183722",
+    },
     context:
-      "Back to solo jamming for the [Kenney Jam 2023](https://itch.io/jam/kenney-jam-2023/rate/2183722). Only 48 hours, I used the excuse of provided assets to focus on making a Spelunky-like platforming, specifically focusing on the random generation with tilemaps in Godot. This was the precursor to [Corvian Curse](https://store.steampowered.com/app/2626080/Corvian_Curse/).",
+      "Back to solo jamming. Only 48 hours, I used the excuse of provided assets to focus on making a Spelunky-like platforming, specifically focusing on the random generation with tilemaps in Godot. This was the precursor to [Corvian Curse](https://store.steampowered.com/app/2626080/Corvian_Curse/).",
   },
   {
     name: "Grind the Rich",
@@ -115,8 +190,15 @@ export const projects: Project[] = [
     category: "game",
     image: "/images/games/grind-the-rich.png",
     itchUrl: "https://madebygare.itch.io/grind-the-rich",
+    engine: "Godot 4",
+    year: 2023,
+    platforms: ["web", "windows", "mac"],
+    jam: {
+      name: "Fuck Capitalism Jam 2023",
+      url: "https://itch.io/jam/fuck-capitalism-jam-2023/rate/2133498",
+    },
     context:
-      "Made for the [🤭 Fuck Capitalism Jam 2023 🤭](https://itch.io/jam/fuck-capitalism-jam-2023/rate/2133498) with [bumperoyster](https://bumperoyster.itch.io/). This was really fun and the start of bumper and I collabing on more games.",
+      "Made with [bumperoyster](https://bumperoyster.itch.io/). This was really fun and the start of bumper and I collabing on more games.",
   },
   {
     name: "Fish Hell",
@@ -124,8 +206,15 @@ export const projects: Project[] = [
     category: "game",
     image: "/images/games/fish-hell.png",
     itchUrl: "https://madebygare.itch.io/fish-hell",
+    engine: "Godot 4",
+    year: 2023,
+    platforms: ["web", "windows", "mac"],
+    jam: {
+      name: "Bullet Hell Jam 2023",
+      url: "https://itch.io/jam/bullet-hell-jam-2023/rate/2053487",
+    },
     context:
-      "Made for the [Bullet Hell Jam 2023](https://itch.io/jam/bullet-hell-jam-2023/rate/2053487). Was a fun excuse to look into object pooling and making customizable bullet emitters to see how many bullets I could spam while keeping performance. First time collabing with [bronxtaco](https://bronxtaco.itch.io/) on audio.",
+      "Was a fun excuse to look into object pooling and making customizable bullet emitters to see how many bullets I could spam while keeping performance. First time collabing with [bronxtaco](https://bronxtaco.itch.io/) on audio.",
   },
   {
     name: "Word Cave",
@@ -133,8 +222,15 @@ export const projects: Project[] = [
     category: "game",
     image: "/images/games/word-cave.png",
     itchUrl: "https://madebygare.itch.io/word-cave",
+    engine: "Godot 4",
+    year: 2023,
+    platforms: ["web", "windows", "mac"],
+    jam: {
+      name: "Eggjam #17",
+      url: "https://itch.io/jam/eggjam-17-designing-around-language/rate/1991636",
+    },
     context:
-      "Made for the [Eggjam #17 - Designing Around Language](https://itch.io/jam/eggjam-17-designing-around-language/rate/1991636) game jam. I took inspiration from SpellTower for the input system but with a character that needs to avoid obstacles while making words.",
+      "I took inspiration from SpellTower for the input system but with a character that needs to avoid obstacles while making words.",
   },
   {
     name: "Jetpack Scream",
@@ -142,8 +238,15 @@ export const projects: Project[] = [
     category: "game",
     image: "/images/games/jetpack-scream.png",
     itchUrl: "https://madebygare.itch.io/jetpack-scream",
+    engine: "Godot 3",
+    year: 2022,
+    platforms: ["web"],
+    jam: {
+      name: "Godot Wild Jam #49",
+      url: "https://itch.io/jam/godot-wild-jam-49/rate/1700967",
+    },
     context:
-      "This was my first game in Godot and where I fell in love with the engine. I made this for [Godot Wild Jam #49](https://itch.io/jam/godot-wild-jam-49/rate/1700967). I really liked the premise of having to skid to stop yourself from going too far forward while something behind you prevents you from going too far back.",
+      "This was my first game in Godot and where I fell in love with the engine. I really liked the premise of having to skid to stop yourself from going too far forward while something behind you prevents you from going too far back.",
   },
 
   // Sites

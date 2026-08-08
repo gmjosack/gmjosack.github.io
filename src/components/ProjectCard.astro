@@ -1,5 +1,7 @@
 ---
 import type { Project } from '../data/projects';
+import { platformMeta, platformOrder } from '../data/projects';
+import Icon from './Icon.astro';
 
 interface Props {
   project: Project;
@@ -20,6 +22,24 @@ function inlineMarkdown(text: string): string {
 }
 
 const contextHtml = project.context ? inlineMarkdown(project.context) : '';
+
+/* Facts pulled out of the prose so they can be scanned and compared across the
+   grid: engine, when, which jam. `status` stands in for a year on work that
+   hasn't shipped, so nothing in flight gets stamped with a launch date.
+   Collaborators deliberately stay in the prose, not here. */
+type Stat = { label: string; href?: string };
+const stats: Stat[] = [
+  project.engine ? { label: project.engine } : null,
+  project.year ? { label: String(project.year) } : null,
+  project.status ? { label: project.status } : null,
+  project.jam ? { label: project.jam.name, href: project.jam.url } : null,
+].filter((s): s is Stat => s !== null);
+
+/* Sorted into a fixed order so the same combination always looks the same from
+   card to card — otherwise the eye can't compare them down the grid. */
+const platforms = platformOrder
+  .filter((p) => project.platforms?.includes(p))
+  .map((p) => ({ ...platformMeta[p], key: p }));
 
 type LinkEntry = { href: string; label: string; key: string };
 const links: LinkEntry[] = [
@@ -53,10 +73,54 @@ const links: LinkEntry[] = [
     </div>
   )}
   <div class="flex flex-col flex-1">
-    <div class:list={["flex flex-col justify-center flex-1", featured ? "p-6" : "p-5"]}>
-      <h3 class:list={["display text-text-primary mb-1", featured ? "text-3xl" : "text-xl"]}>{project.name}</h3>
+    {/* Top-aligned, not centered. Grid rows stretch every card to the tallest
+        in the row, so centering pushed the title of a short card halfway down
+        and left titles sitting at different heights across a row. */}
+    <div class:list={["flex flex-col flex-1", featured ? "px-6 py-5" : "px-5 py-4"]}>
+      {/* Platforms ride the title rather than the stat line: they answer "can I
+          run this", which is a different question from engine/year/jam and
+          doesn't belong in the same slash-separated run. */}
+      <div class="flex items-center justify-between gap-3 mb-1">
+        <h3 class:list={["display text-text-primary", featured ? "text-3xl" : "text-xl"]}>{project.name}</h3>
+        {platforms.length > 0 && (
+          <span
+            class="flex items-center gap-1.5 shrink-0 text-text-secondary/70"
+            role="img"
+            aria-label={`Runs on ${platforms.map((p) => p.label).join(', ')}`}
+          >
+            {platforms.map((p) => (
+              <Icon name={p.icon} class={featured ? 'w-4 h-4' : 'w-3.5 h-3.5'} />
+            ))}
+          </span>
+        )}
+      </div>
       <p class:list={["text-text-secondary", featured ? "text-base" : "text-sm"]}>{project.description}</p>
-      {contextHtml && <p class="text-text-secondary/70 text-xs mt-2 italic"><Fragment set:html={contextHtml} /></p>}
+
+      {stats.length > 0 && (
+        <div class="stat-strip mt-2.5 pt-2">
+          <p class="meta flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-text-secondary">
+            {stats.map((stat, i) => (
+              <>
+                {i > 0 && <span class="text-text-secondary/35" aria-hidden="true">/</span>}
+                {stat.href ? (
+                  <a
+                    href={stat.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="hover:text-accent transition-colors"
+                  >
+                    {stat.label}
+                  </a>
+                ) : (
+                  <span>{stat.label}</span>
+                )}
+              </>
+            ))}
+          </p>
+        </div>
+      )}
+
+      {contextHtml && <p class="text-text-secondary/70 text-xs mt-2.5 italic"><Fragment set:html={contextHtml} /></p>}
     </div>
     {links.length > 0 && (
       <div class="flex border-t border-bg-tertiary">
@@ -79,3 +143,12 @@ const links: LinkEntry[] = [
     )}
   </div>
 </div>
+
+<style>
+  /* A hairline above the strip separates fact from story without boxing it in.
+     It sits inside the card's padding, so it reads as a rule under the
+     description rather than as a full-width divider like the link row's. */
+  .stat-strip {
+    border-top: 1px solid var(--color-bg-tertiary);
+  }
+</style>
