@@ -1,0 +1,435 @@
+/* ————————————————————————————————————————————————————————————————
+   madebygare.itch.io — profile page theme. SOURCE FILE.
+
+   Do not paste this one. itch's CSS box holds 5120 characters, and this
+   file is over that before it starts. Run `node itch/build.mjs`, which
+   strips the comments and minifies, and paste `profile.min.css`.
+
+   The theme ports madebygare.com onto the profile: the same neutral dark
+   ground and faint grain, one orange accent, Archivo condensed for names
+   and IBM Plex Mono for data — and the chip, the notched sticker panel
+   with a hard stroke and a black offset shadow that presses in when you
+   pick it up. Every game cell in the grid becomes one.
+
+   The character budget is the whole design constraint here. Comments are
+   free, since the minifier drops them; declarations are not. That is why
+   the tokens are two letters instead of `--color-bg-secondary`, why the
+   clip polygon is a variable used twice rather than written twice, and
+   why anything speculative — a bio kit, price tags, the banner case — is
+   absent rather than carried. See the README for what was cut and how to
+   buy room back if a section of the page ever needs it.
+
+   itch's rules, all of which this file keeps:
+     - every rule is scoped inside #wrapper
+     - external references are HTTPS and few: two woff2 from Google's CDN
+       and one grain tile from madebygare.com, which is the sanctioned way
+       to reference fonts and images. Both degrade to nothing worse than a
+       flatter page.
+     - the footer stays visible, and every role holds its contrast floor
+     - nothing here sets a property itch uses to toggle state, with one
+       documented exception; see "Never style state" in the README
+   ———————————————————————————————————————————————————————————————— */
+
+/* The three faces, latin subset only — the same roles global.css sets up.
+
+   Archivo's single file holds BOTH the weight and width axes, which is
+   what lets the display role be condensed and heavy for one download.
+   Plex Sans is the variable file, so 400 and 600 come from one URL.
+   Plex Mono comes in at 400 only; the label role asks for 500 and gets a
+   synthesized weight, which at 11px is not a difference you can see, and
+   the real 500 file costs 185 characters. */
+@font-face {
+  font-family: "Archivo";
+  font-style: normal;
+  font-weight: 400 800;
+  font-stretch: 62% 125%;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/archivo/v25/k3kQo8UDI-1M0wlSfdnoLg.woff2)
+    format("woff2");
+}
+
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/ibmplexsans/v23/zYXzKVElMYYaJe8bpLHnCwDKr932-G7dytD-Dmu1syxeKYY.woff2)
+    format("woff2");
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/ibmplexmono/v20/-F63fjptAgt5VM-kVkqdyU8n1i8q1w.woff2)
+    format("woff2");
+}
+
+/* ————————————————————————————————————————————————————————————————
+   Tokens. Two jobs in one block.
+
+   The short names are the site's ramp from src/styles/global.css:
+
+     --a   accent          --b1  bg-primary     --t1  text-primary
+     --k   ink             --b2  bg-secondary   --t2  text-secondary
+                           --b3  bg-tertiary    --t3  text-secondary/70
+
+   The --itchio_* half re-points itch's OWN variables at that ramp, which
+   is the cheapest lever on the page: every itch rule that reads one —
+   empty states, collection rows, scrollbar thumbs, things this file never
+   names — lands in the right register for free, without overriding the
+   rule that uses it. Nine variables do more work here than fifty rules.
+
+   Declared on `#wrapper` AND `#wrapper .user_page` because the theme
+   editor emits its own `.user_page { --itchio_link_color: … }` block. A
+   variable set on an element beats one it inherits, so #wrapper alone
+   would not reach it; `#wrapper .user_page` carries an ID and outranks
+   it. The footer sits outside .user_page, which is why both are here.
+   ———————————————————————————————————————————————————————————————— */
+#wrapper,
+#wrapper .user_page {
+  --a: #f97316;
+  --k: #000;
+  --b1: #171918;
+  --b2: #202221;
+  --b3: #2c2f2e;
+  --t1: #e6e8e7;
+  --t2: #a0a5a4;
+  --t3: rgba(160, 165, 164, 0.7);
+
+  /* Both the variable and static family names: the site self-hosts these
+     through @fontsource as "Archivo Variable", Google serves the same
+     face as "Archivo". Listing both means one stack works either way. */
+  --fd: "Archivo Variable", Archivo, "Arial Narrow", system-ui, sans-serif;
+  --fs: "IBM Plex Sans Variable", "IBM Plex Sans", system-ui, sans-serif;
+  --fm: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+
+  --itchio_white_back: var(--b1);
+  --itchio_gray_back: var(--b2);
+  --itchio_body_color: var(--t1);
+  --itchio_body_color_light: var(--t2);
+  --itchio_body_color_lighter: var(--t3);
+  --itchio_border_color: var(--b3);
+  --itchio_link_color: var(--a);
+
+  /* Nothing on the site is rounded — the notch is the corner treatment,
+     and a radius next to it reads as a mistake. One line reaches every
+     rounded corner itch draws. */
+  --itchio_border_radius: 0;
+
+  /* The grid's column gap. itch reads this directly, so the grid widens
+     without this file touching its display or its tracks. */
+  --itchio_grid_gap: 18px;
+}
+
+/* The ground. Neutral, not tinted toward the accent — the grain and the
+   chip silhouettes carry the character, so the background doesn't need
+   to. The grain is one 16KB tile washed back to ~4.5% by a near-opaque
+   layer of the background color over it; the site gets there with
+   `opacity` on a fixed ::before, which doesn't port, because #wrapper is
+   positioned and would paint over a negative-z-index child. Two layers
+   on one element have no such ordering problem — the first is topmost.
+   Both layers repeat by default, so no background-repeat is spent. */
+#wrapper {
+  min-height: 100vh;
+  background-color: var(--b1);
+  background-image: linear-gradient(#171918f4, #171918f4),
+    url(https://madebygare.com/images/noise.png);
+}
+
+/* The theme editor sets `.user_page { font-size: 131% }`, which itch's
+   own em ladder then multiplies. Pinning it makes the sizes below mean
+   what they say. */
+#wrapper .user_page {
+  font-family: var(--fs);
+  font-size: 16px;
+  color: var(--t1);
+}
+
+/* Keyboard focus is the accent; pointer focus stays invisible. Never
+   remove this — it is the page's only visible focus affordance. */
+#wrapper :focus-visible {
+  outline: 2px solid var(--a);
+  outline-offset: 2px;
+}
+
+/* ————————————————————————————————————————————————————————————————
+   The title: the account name in the site's structural-label register —
+   condensed, heavy, caps — with the pixel rule under it.
+
+   The rule is drawn as a background on the heading's own padding rather
+   than as a `::after { flex: 1 }`, which is how global.css does it. That
+   costs the dash its indent under the text, and buys not setting
+   `display` on an element itch owns: on project pages itch already
+   toggles an h1's display when a banner exists, and a rule here would
+   outrank that. It is also 40 characters cheaper.
+   ———————————————————————————————————————————————————————————————— */
+#wrapper .text_header h1 {
+  font-family: var(--fd);
+  font-stretch: 80%;
+  font-weight: 800;
+  font-size: 2.5rem;
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: 0.035em;
+  color: var(--t1);
+  margin: 40px 0 0;
+  padding-bottom: 14px;
+  background: repeating-linear-gradient(
+      90deg,
+      #f9731659 0 3px,
+      #0000 3px 6px
+    )
+    0 100% / 100% 3px no-repeat;
+}
+
+/* Banner uploaded: itch hides .text_header outright and the image becomes
+   the only thing naming the page, so the rule moves to the header, where
+   it runs edge to edge underneath. Scoped to .has_banner so it can never
+   draw twice. Delete this block to buy back ~120 characters if you are
+   never going to upload one. */
+#wrapper .has_banner .header {
+  padding-bottom: 14px;
+  background: repeating-linear-gradient(
+      90deg,
+      #f9731659 0 3px,
+      #0000 3px 6px
+    )
+    0 100% / 100% 3px no-repeat;
+}
+
+/* ————————————————————————————————————————————————————————————————
+   The links row: the site's social row, which is a run of small chips.
+   Each .link_group is already a flex box holding an icon and a link, so
+   it wears the chip at its smallest — a one-pixel ring and no shadow,
+   which at this size would only read as noise.
+   ———————————————————————————————————————————————————————————————— */
+/* The polygon is written out here and again on the game cell rather than
+   held in a shared `--clip` variable, which is what this file tried
+   first. It does not work: `var()` inside a custom property resolves
+   against the element the property is DECLARED on, not the one that uses
+   it. Declared up in the token block, its `var(--cut)` found nothing on
+   #wrapper, the whole value went guaranteed-invalid, and `clip-path`
+   silently dropped — a chip with no notch, and no error anywhere. The
+   duplication costs ~110 characters and is the shape of the thing. */
+#wrapper .link_group {
+  --s: var(--b3);
+  padding: 5px 10px;
+  gap: 7px;
+  background: var(--b2);
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+  box-shadow: inset 0 0 0 1px var(--s);
+  transition: 0.15s;
+}
+
+#wrapper .link_group:hover,
+#wrapper .link_group:focus-within {
+  --s: var(--a);
+}
+
+/* The data register, not the label register: these are handles and URLs,
+   and uppercasing a URL misrepresents a path that may be case-sensitive. */
+#wrapper .user_links a {
+  font-family: var(--fm);
+  font-size: 0.8125rem;
+  letter-spacing: -0.02em;
+  color: var(--t2);
+  text-decoration: none;
+}
+
+/* itch dims the icons to 0.7 and the theme editor paints the SVGs flat
+   white. Both are replaced, so an icon travels with the label beside it. */
+#wrapper .user_links .svgicon,
+#wrapper .user_links .icon {
+  opacity: 1;
+  color: var(--t2);
+  fill: currentColor;
+}
+
+#wrapper .link_group:hover a,
+#wrapper .link_group:hover .svgicon,
+#wrapper .link_group:hover .icon {
+  color: var(--a);
+}
+
+/* ————————————————————————————————————————————————————————————————
+   The game grid — the page, really.
+
+   itch already lays this out as `repeat(auto-fill, minmax(250px, 1fr))`,
+   close enough to the site's project grid that nothing here touches the
+   tracks; the column gap came from --itchio_grid_gap above.
+
+   `align-items` is the one layout property this file changes, and the one
+   deliberate exception to the rule in the README. itch starts every cell
+   at its natural height; with a hard stroke around each one, a row ending
+   at four different heights reads as broken rather than as loose.
+   ———————————————————————————————————————————————————————————————— */
+#wrapper .game_grid_widget {
+  align-items: stretch;
+}
+
+/* The chip at full size. clip-path, the inset ring and the drop-shadow
+   all follow the same polygon, so the stroke stays welded to the notch
+   with no extra markup — a real `border` would be sliced off by the clip,
+   which is why the stroke is an inset ring. */
+#wrapper .game_cell {
+  --cut: 12px;
+  --lift: 4px;
+  --s: var(--b3);
+  background: var(--b2);
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--cut)) 0,
+    100% var(--cut),
+    100% 100%,
+    var(--cut) 100%,
+    0 calc(100% - var(--cut))
+  );
+  box-shadow: inset 0 0 0 2px var(--s);
+  filter: drop-shadow(var(--lift) var(--lift) 0 var(--k));
+  transition: 0.15s;
+}
+
+/* Chips press in when picked up, like a button that's actually a physical
+   thing: the card travels half the shadow's distance and the shadow
+   shortens by the same amount, so it reads as movement toward the page
+   rather than as a slide across it.
+
+   :focus-within rather than :focus-visible — the cell is not itself a
+   link, it is a box holding two, and a keyboard user tabbing into one
+   should get the feedback the mouse gets. */
+#wrapper .game_cell:hover,
+#wrapper .game_cell:focus-within {
+  --s: var(--a);
+  --lift: 2px;
+  transform: translate(2px, 2px);
+}
+
+/* The cover runs to the edges and the clip takes its top-right corner
+   along with the card's. itch's soft shadow and the theme editor's 6px
+   radius both come off — the chip is the only shape here. */
+#wrapper .game_thumb {
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--b3);
+}
+
+/* The cover link fills the card's full width, so a focus ring drawn
+   outside it would be sliced off by the clip. Pulled inside instead. */
+#wrapper .thumb_link:focus-visible {
+  outline-offset: -3px;
+}
+
+/* Everything below the cover sits in the card's padding. itch supplies
+   the flex column and the top margin; this only sets the inset. */
+#wrapper .game_cell_data {
+  padding: 0 14px 14px;
+  gap: 6px;
+}
+
+/* A content name: heavy, only lightly condensed, so it carries at card
+   size without being large. No hover underline — the card restrokes and
+   presses in, and the title takes the accent, which is more feedback
+   than the underline was giving. */
+#wrapper .game_title a.title {
+  font-family: var(--fd);
+  font-stretch: 92%;
+  font-size: 1.0625em;
+  letter-spacing: -0.011em;
+  color: var(--t1);
+  text-decoration: none;
+}
+
+#wrapper .game_cell:hover .game_title a.title {
+  color: var(--a);
+}
+
+/* itch sets this to nowrap-with-ellipsis on most grids and to wrapping on
+   your own; only the leading needs saying. */
+#wrapper .game_text {
+  line-height: 1.5;
+}
+
+/* Genre and platform are the stat strip: facts pulled out of the prose so
+   they can be scanned down the grid. Mono, because on an engineer's page
+   mono for data is honest rather than decorative, and it separates
+   metadata from prose without spending a color on it. */
+#wrapper .game_genre,
+#wrapper .game_platform {
+  font-family: var(--fm);
+  font-size: 0.8125em;
+  letter-spacing: -0.02em;
+  border-top: 1px solid var(--b3);
+  margin-top: 2px;
+  padding-top: 8px;
+}
+
+/* The hairline belongs above the strip, not between its rows. Either row
+   can be missing — some cards have a genre and no platform, some the
+   reverse — so both claim the rule and a platform following a genre gives
+   it back. General sibling rather than adjacent, because itch leaves the
+   hidden .game_author in the DOM between them. */
+#wrapper .game_genre ~ .game_platform {
+  border-top: 0;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+/* "Play in browser" is the one thing on a card you can act on before
+   you've clicked it, which is what the accent is for. The interface-chrome
+   register: mono caps tracked out, because uppercase mono closes up at
+   this size. */
+#wrapper .web_flag {
+  background: #f973161a;
+  color: var(--a);
+  font-family: var(--fm);
+  font-size: 0.6875em;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 6px;
+}
+
+/* itch requires the footer to stay visible. It holds text-secondary
+   against the ground, about 7:1, and takes the accent on hover like every
+   other link that isn't in prose. */
+#wrapper .footer {
+  border-top: 1px solid var(--b3);
+  font-family: var(--fm);
+  font-size: 11px;
+}
+
+#wrapper .footer,
+#wrapper .footer a {
+  color: var(--t2);
+}
+
+#wrapper .footer a:hover {
+  color: var(--a);
+}
+
+/* Mobile. itch asks that the page hold up at a phone width. The notch and
+   the shadow are scaled to card size, so they come down with it: a 12px
+   cut on a card that is now 300px wide reads as a chunk missing rather
+   than as a corner. */
+@media (max-width: 650px) {
+  #wrapper .text_header h1 {
+    font-size: 1.75rem;
+    margin-top: 28px;
+  }
+
+  #wrapper .game_cell {
+    --cut: 9px;
+    --lift: 3px;
+  }
+}
+
+/* The press-in is the only motion worth suppressing. The stroke still
+   changes, so a card keeps its hover feedback. */
+@media (prefers-reduced-motion: reduce) {
+  #wrapper .game_cell:hover,
+  #wrapper .game_cell:focus-within {
+    --lift: 4px;
+    transform: none;
+  }
+}
