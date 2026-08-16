@@ -71,6 +71,26 @@ export interface CategoryConfig {
 export const projects: Project[] = [
   // Games
   {
+    name: "Celestial Particles",
+    description: "An idle game with procedural visual and audio generation.",
+    category: "game",
+    image: "/images/games/celestial-particles.png",
+    url: "/games/celestial-particles/",
+    urlLabel: "Play",
+    primaryLink: "url",
+    itchUrl: "https://madebygare.itch.io/celestial-particles",
+    engine: "TypeScript",
+    year: 2026,
+    platforms: ["web"],
+    jam: {
+      name: "Secret Jam of Games #30",
+      url: "https://itch.io/jam/secret-jam-of-games-30",
+    },
+    featured: true,
+    context:
+      "Celestial Particles is my first idle game. I've been thinking about this game for a while, an idle game where the currency is tied to particle generation. The idea to have no assets and just particle generation just sounded kind of fun as I've always liked noodling with particle settings. Additionally all audio is synthesized in code.",
+  },
+  {
     name: "Corvian Cards",
     description: "A daily trick taking game set in the world of Corvian Curse.",
     category: "game",
