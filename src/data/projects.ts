@@ -268,6 +268,21 @@ export const projects: Project[] = [
     context:
       "This was my first game in Godot and where I fell in love with the engine. I really liked the premise of having to skid to stop yourself from going too far forward while something behind you prevents you from going too far back.",
   },
+  {
+    name: "Get to the Choppa",
+    description: "Find the gears and escape the zombies.",
+    category: "game",
+    image: "/images/games/get-to-the-choppa.png",
+    itchUrl: "https://madebygare.itch.io/get-to-the-choppa",
+    engine: "Originally ActionScript/FlashPunk, Ported to TypeScript",
+    year: 2010,
+    platforms: ["web"],
+    jam: {
+      name: "FlashPunk Game Jam 2010",
+    },
+    context:
+      `This was my first ever game jam game made originally in ActionScript 3 for a FlashPunk game jam in December 2010! The theme was 96x96 resolution and had to showcase black and hot pink (to match the FlashPunk colors).`,
+  },
 
   // Sites
   {
