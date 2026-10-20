@@ -71,6 +71,24 @@ export interface CategoryConfig {
 export const projects: Project[] = [
   // Games
   {
+    name: "Fearwell",
+    description: "Find all the tickets and escape the carnival.",
+    category: "game",
+    image: "/images/games/fearwell.png",
+    primaryLink: "itch",
+    itchUrl: "https://madebygare.itch.io/fearwell",
+    engine: "TypeScript",
+    year: 2026,
+    platforms: ["web", "windows", "mac", "linux"],
+    jam: {
+      name: "Synty Spooky Jam - October 2026",
+      url: "https://itch.io/jam/synty-spooky-jam-oct26",
+    },
+    featured: true,
+    context:
+      "My first proper 3D game and my first complete asset flip. I've bought a few Synty assets from Humble Bundles over the years and when I saw this jame I used it as an excuse to finally put them to use. Since I was already using existing assets I also dipped into the Ovani assets I've bought from bundles for Music and SFX. I've always wanted to do a spooky game for halloween so this worked out great.",
+  },
+  {
     name: "Celestial Particles",
     description: "An idle game with procedural visual and audio generation.",
     category: "game",
